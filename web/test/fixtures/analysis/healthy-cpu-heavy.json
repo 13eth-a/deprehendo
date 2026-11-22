@@ -1,0 +1,1019 @@
+{
+  "document_version": 1,
+  "engine": {
+    "analyzer_version": "0.4.0",
+    "signature_version": 5,
+    "signature_set_version": 2,
+    "causal_rules": "5167716d106987cd77cc0da5247f1f883afc1ed432ee8efe77ddf93bde719c70",
+    "privacy_policy": "conservative-v1",
+    "bundle_formats": [
+      {
+        "format_version": 1,
+        "schema_version": 1
+      }
+    ]
+  },
+  "bundle": {
+    "sha256": "5478fd7607394d45ebb87e6db7b5497a05641e384408a9d023d6b4644c59ea61",
+    "incident_id": "inc_0000000000000000000000000000000b",
+    "schema_version": 1,
+    "format_version": 1,
+    "snapshot_encoding": "json-v1",
+    "created_at": "2026-10-01T12:01:05Z",
+    "agent_version": "0.2.0",
+    "platform": "linux",
+    "architecture": "arm64",
+    "files": {
+      "events.jsonl": {
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "metadata.json": {
+        "size": 693,
+        "sha256": "4aad024cecd57c8e6e9f12d951ac37c02d03011dedc619f06b71b6fc6a0eea7a"
+      },
+      "privacy.json": {
+        "size": 200,
+        "sha256": "ecfef96b81d282ac3a8111ec3df692bc4f58b815d5bfbc3c3d3c077e47e4f834"
+      },
+      "snapshots.json": {
+        "size": 11373,
+        "sha256": "35eeab6113d976a53dfc38ad4eb52fdbe27e3b967adc8b1aca0596cf8e0be5ee"
+      }
+    }
+  },
+  "privacy": {
+    "policy": "conservative-v1",
+    "hostname": false,
+    "command_lines": false,
+    "environment": false,
+    "repository_name": false,
+    "network_addresses": false,
+    "filesystem_paths": true,
+    "process_names": true,
+    "user_note": false
+  },
+  "diagnosis": {
+    "incident_id": "inc_0000000000000000000000000000000b",
+    "trigger": "manual",
+    "triggered_at": "2026-10-01T12:01:05Z",
+    "analyzer_version": "0.4.0",
+    "signature_set_version": 2,
+    "min_confidence": 0.55,
+    "matches": [],
+    "rejections": [
+      {
+        "signature": "BROKER_SOCKET_STALL",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "network telemetry was unavailable for most of the capture"
+      },
+      {
+        "signature": "CPU_SPIN",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "contradicting": [
+          {
+            "code": "CPU_NO_CHILD_CHANGES",
+            "source": "process_table",
+            "at": "2026-10-01T12:01:05Z",
+            "weight": 0.05,
+            "observed": false
+          }
+        ],
+        "rejected": "sustained CPU came with observed child process churn, which is consistent with legitimate build or pipeline work",
+        "missing_evidence": [
+          "APPLICATION_PROGRESS_TELEMETRY"
+        ],
+        "related_events": [
+          "EV_f05b7e9418f4"
+        ],
+        "process_identities": [
+          {
+            "pid": 100,
+            "start_ticks": 100
+          }
+        ]
+      },
+      {
+        "signature": "DISK_EXHAUSTION",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "CRITICAL",
+        "summary": "",
+        "rejected": "disk free space bottomed at 80.0% but never stayed near zero for the required span"
+      },
+      {
+        "signature": "FROZEN_PROCESS",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "no sustained stopped-state episode was observed"
+      },
+      {
+        "signature": "NETWORK_PATH_FAILURE",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "network telemetry was unavailable for most of the capture; no path conclusion is possible"
+      },
+      {
+        "signature": "OOM_KILL",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "CRITICAL",
+        "summary": "",
+        "rejected": "host and cgroup memory never approached the exhaustion boundary"
+      },
+      {
+        "signature": "ORPHAN_PROCESS_TREE",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "no surviving process was observed losing its parent and being reparented"
+      },
+      {
+        "signature": "PROCESS_GROUP_TERMINATION",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "CRITICAL",
+        "summary": "",
+        "rejected": "no process group lost multiple members at the same time"
+      },
+      {
+        "signature": "RESOURCE_STARVATION",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "pressure telemetry was unavailable for most of the capture",
+        "related_events": [
+          "EV_f05b7e9418f4"
+        ]
+      }
+    ],
+    "unknown": true
+  },
+  "causal": {
+    "healthy": true,
+    "other_exits": 0,
+    "nodes": [
+      {
+        "event": {
+          "id": "EV_f05b7e9418f4",
+          "type": "CPU_SATURATION_STARTED",
+          "timestamp": "2026-10-01T12:00:00Z",
+          "sequence": 0,
+          "subject": {
+            "Kind": "process",
+            "ID": "100@100"
+          },
+          "provenance": {
+            "rule_id": "TIMELINE_BUILD@1",
+            "sources": [
+              {
+                "kind": "snapshot",
+                "ref": "2"
+              }
+            ]
+          },
+          "class": "CONTEXT",
+          "episode": "cpu:100@100#1",
+          "onset_unknown": true,
+          "pid": 100,
+          "start_ticks": 100
+        },
+        "evidence_class": "DERIVED_SNAPSHOT"
+      },
+      {
+        "event": {
+          "id": "EV_e7103db5d10a",
+          "type": "INCIDENT_TRIGGERED",
+          "timestamp": "2026-10-01T12:01:05Z",
+          "sequence": 1,
+          "subject": {
+            "Kind": "host",
+            "ID": "local"
+          },
+          "data": {
+            "trigger": "manual"
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "trigger",
+                "ref": "incident"
+              }
+            ]
+          },
+          "class": "CONTEXT"
+        },
+        "evidence_class": "AGENT"
+      }
+    ],
+    "edges": null,
+    "failures": []
+  },
+  "timeline": [
+    {
+      "id": "EV_f05b7e9418f4",
+      "type": "CPU_SATURATION_STARTED",
+      "timestamp": "2026-10-01T12:00:00Z",
+      "sequence": 0,
+      "subject": {
+        "Kind": "process",
+        "ID": "100@100"
+      },
+      "provenance": {
+        "rule_id": "TIMELINE_BUILD@1",
+        "sources": [
+          {
+            "kind": "snapshot",
+            "ref": "2"
+          }
+        ]
+      },
+      "class": "CONTEXT",
+      "episode": "cpu:100@100#1",
+      "onset_unknown": true,
+      "pid": 100,
+      "start_ticks": 100,
+      "evidence_class": "DERIVED_SNAPSHOT"
+    },
+    {
+      "id": "EV_e7103db5d10a",
+      "type": "INCIDENT_TRIGGERED",
+      "timestamp": "2026-10-01T12:01:05Z",
+      "sequence": 1,
+      "subject": {
+        "Kind": "host",
+        "ID": "local"
+      },
+      "data": {
+        "trigger": "manual"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "trigger",
+            "ref": "incident"
+          }
+        ]
+      },
+      "class": "CONTEXT",
+      "evidence_class": "AGENT"
+    }
+  ],
+  "series": [
+    {
+      "timestamp": "2026-10-01T12:00:00Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:05Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:10Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 602,
+          "ppid": 100,
+          "pgid": 602,
+          "sid": 602,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 602,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:15Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 603,
+          "ppid": 100,
+          "pgid": 603,
+          "sid": 603,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 603,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:20Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 604,
+          "ppid": 100,
+          "pgid": 604,
+          "sid": 604,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 604,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:25Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 605,
+          "ppid": 100,
+          "pgid": 605,
+          "sid": 605,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 605,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:30Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 606,
+          "ppid": 100,
+          "pgid": 606,
+          "sid": 606,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 606,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:35Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 607,
+          "ppid": 100,
+          "pgid": 607,
+          "sid": 607,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 607,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:40Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 608,
+          "ppid": 100,
+          "pgid": 608,
+          "sid": 608,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 608,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:45Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 609,
+          "ppid": 100,
+          "pgid": 609,
+          "sid": 609,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 609,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:50Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 610,
+          "ppid": 100,
+          "pgid": 610,
+          "sid": 610,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 610,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:55Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 611,
+          "ppid": 100,
+          "pgid": 611,
+          "sid": 611,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 611,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:01:00Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 612,
+          "ppid": 100,
+          "pgid": 612,
+          "sid": 612,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 612,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:01:05Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 100,
+          "cpu_percent": 120,
+          "open_fds": -1
+        },
+        {
+          "pid": 613,
+          "ppid": 100,
+          "pgid": 613,
+          "sid": 613,
+          "name": "[REDACTED]",
+          "state": "R",
+          "start_ticks": 613,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    }
+  ]
+}

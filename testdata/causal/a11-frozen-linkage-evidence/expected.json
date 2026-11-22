@@ -1,0 +1,64 @@
+{
+  "name": "a11-frozen-linkage-evidence",
+  "class": "GOLDEN",
+  "notes": [
+    "A11 (10 item 7): FROZEN_PROCESS is a stopped process with no CPU progress; its signature-linked evidence must not include another process's CPU saturation events. The ban names types present on the timeline, so it cannot pass vacuously.",
+    "The other process's saturation episode remains on the timeline with its own recovery edge; the ban constrains FROZEN_PROCESS linked evidence, not other subjects' episodes.",
+    "The stopped worker keeps its honest unknown-cause analysis (stop-sender telemetry is not in v1); the stop never resumes, so the graph is unhealthy.",
+    "Re-audit 2026-10-28 (principal, causal-semantics.md \u00a75.2 clarified): a failure is never its own candidate, and an escalation-only path is the anchor's own episode (known chain), not a contributing factor. Suspected-kill/write-failure alternatives explain exit failures only, never a condition anchor."
+  ],
+  "events": [
+    {
+      "type": "CPU_SATURATION_ENDED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "CPU_SATURATION_STARTED",
+      "count": 1,
+      "onset_unknown": true
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_STOPPED",
+      "count": 1,
+      "onset_unknown": true
+    }
+  ],
+  "edges": [
+    {
+      "from_type": "CPU_SATURATION_STARTED",
+      "to_type": "CPU_SATURATION_ENDED",
+      "relation": "RECOVERY_OF",
+      "rule": "CPU_SATURATION_RESOLVES@1",
+      "confidence": "HIGH"
+    }
+  ],
+  "failures": [
+    {
+      "anchor_type": "PROCESS_STOPPED",
+      "status": "UNKNOWN",
+      "candidates": [],
+      "chain_types": [
+        "PROCESS_STOPPED"
+      ],
+      "missing_evidence_includes": [
+        "stop-sender telemetry (who sent SIGSTOP/ptrace) is not captured in v1 bundles"
+      ]
+    }
+  ],
+  "signature_bans": [
+    {
+      "signature": "FROZEN_PROCESS",
+      "types": [
+        "CPU_SATURATION_STARTED",
+        "CPU_SATURATION_ENDED"
+      ]
+    }
+  ],
+  "graph_healthy": false
+}

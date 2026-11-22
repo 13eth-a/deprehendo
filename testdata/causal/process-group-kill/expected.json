@@ -1,0 +1,43 @@
+{
+  "name": "process-group-kill",
+  "class": "GOLDEN",
+  "notes": [
+    "Three recorded exits in the same PGID inside the 5s coordinated window derive one PROCESS_GROUP_TERMINATED at the first exit.",
+    "The group event is an aggregate built FROM the member exits (P2): no edge may leave it into them (the aggregate-cause rule is retired).",
+    "v1 records no signal stream, so the group anchor is UNKNOWN and cites the missing signal-sender telemetry.",
+    "Re-audit R8: the three member exits fall inside the group's coordinated window, so they are the group anchor's evidence (provenance), not three more primary failures. Exit events now carry the typed PGID that failureAnchors folds on.",
+    "Re-audit 2026-10-28 (principal, causal-semantics.md \u00a75.2 clarified): a failure is never its own candidate, and an escalation-only path is the anchor's own episode (known chain), not a contributing factor. Suspected-kill/write-failure alternatives explain exit failures only, never a condition anchor."
+  ],
+  "events": [
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_EXITED",
+      "count": 3,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_GROUP_TERMINATED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "edges": [],
+  "failures": [
+    {
+      "anchor_type": "PROCESS_GROUP_TERMINATED",
+      "status": "UNKNOWN",
+      "candidates": [],
+      "chain_types": [
+        "PROCESS_GROUP_TERMINATED"
+      ],
+      "missing_evidence_includes": [
+        "no signal-sender telemetry: who signalled the group is not captured in v1 bundles"
+      ]
+    }
+  ],
+  "graph_healthy": false
+}

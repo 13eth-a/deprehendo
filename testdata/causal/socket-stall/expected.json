@@ -1,0 +1,29 @@
+{
+  "name": "socket-stall",
+  "class": "GOLDEN",
+  "notes": [
+    "The flagship honesty case: the connection is established for the whole capture and never closes.",
+    "This socket records no Tier B progress counters (progress_available is false), so NETWORK_PROGRESS_STOPPED is never fabricated and no stall causal chain exists.",
+    "The graph is empty; a user asking why the job stalled gets UNKNOWN with the missing telemetry named, not an invented broker-stall cause."
+  ],
+  "events": [
+    {
+      "type": "CONNECTION_OPENED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "NETWORK_PROGRESS_STOPPED",
+    "NETWORK_PROGRESS_RESUMED",
+    "OOM_EVENT"
+  ],
+  "edges": [],
+  "failures": [],
+  "graph_healthy": true
+}

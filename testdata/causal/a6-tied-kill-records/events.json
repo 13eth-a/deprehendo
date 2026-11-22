@@ -1,0 +1,36 @@
+{
+  "events": [
+    {
+      "type": "OOM_EVENT",
+      "at": "2026-10-27T12:00:00Z",
+      "subject": { "kind": "process", "id": "42@7" },
+      "data": { "event": "oom", "scope": "host", "victim_pid": 42, "victim_start_ticks": 7 }
+    },
+    {
+      "type": "OOM_EVENT",
+      "at": "2026-10-27T12:00:00.2Z",
+      "subject": { "kind": "process", "id": "42@7" },
+      "data": { "event": "oom", "scope": "cgroup", "cgroup": "/run/runner", "victim_pid": 42, "victim_start_ticks": 7 }
+    },
+    {
+      "type": "PROCESS_EXITED",
+      "at": "2026-10-27T12:00:00.5Z",
+      "subject": { "kind": "process", "id": "42@7" },
+      "data": { "exit_state": "killed" },
+      "pid": 42,
+      "start_ticks": 7
+    }
+  ],
+  "injected": [
+    {
+      "rule": "OOM_CAUSES_PROCESS_EXIT@2",
+      "from": { "type": "OOM_EVENT", "at": "2026-10-27T12:00:00Z" },
+      "to": { "type": "PROCESS_EXITED" }
+    },
+    {
+      "rule": "OOM_CAUSES_PROCESS_EXIT@2",
+      "from": { "type": "OOM_EVENT", "at": "2026-10-27T12:00:00.2Z" },
+      "to": { "type": "PROCESS_EXITED" }
+    }
+  ]
+}

@@ -1,0 +1,205 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "gofmt needed:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: build
+        run: go build ./...
+
+      - name: vet
+        run: go vet ./...
+
+      - name: test
+        # Runs as root: internal/platform reads /proc/1/fd, which a normal user cannot open.
+        run: |
+          sudo -E env "PATH=$PATH" "GOCACHE=$(go env GOCACHE)" "GOMODCACHE=$(go env GOMODCACHE)" \
+            go test -race -count=1 -timeout=5m ./...
+
+  cloud:
+    # Phase 7 backend against a real Postgres (7.57 migrations are tested, not
+    # hand-checked): migrations applied twice to prove idempotence, then the
+    # gated server suite: the 7.36 organization matrix, dedupe (7.30),
+    # hostile storage refusal (7.37/7.38) and the CLI upload path (7.11).
+    # The suite skips without RUNOPSY_CLOUD_TEST_DSN, so this job is what
+    # actually runs it in CI.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: runopsy
+          POSTGRES_DB: runopsy
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U postgres -d runopsy"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: migrations (applied twice)
+        run: |
+          go build -o bin/runopsy-cloud ./cmd/runopsy-cloud
+          DSN='postgres://postgres:runopsy@127.0.0.1:55432/runopsy?sslmode=disable'
+          bin/runopsy-cloud migrate -database "$DSN"
+          bin/runopsy-cloud migrate -database "$DSN" | tee /tmp/second.txt
+          grep -q 'schema is current' /tmp/second.txt
+
+      - name: gated server suite
+        # The tests package builds runopsy-agent and runopsy-analyzer itself
+        # (TestMain), so only the database and the DSN are needed here.
+        run: |
+          DSN='postgres://postgres:runopsy@127.0.0.1:55432/runopsy?sslmode=disable'
+          RUNOPSY_CLOUD_TEST_DSN="$DSN" go test -count=1 -timeout=5m -run 'TestPhase7Server' ./tests
+
+  trace-rs:
+    # Phase 6 (6.55): lint and test the Rust tracer on Linux, its only
+    # supported target. The tracer crate is Linux-only by design; macOS CI is
+    # covered by the Go matrix above.
+    #
+    # The eBPF backend needs clang (CO-RE compile) and libbpf; build.rs
+    # compiles src/ebpf/runopsy.bpf.c at cargo build time, so a job that
+    # skips these tools builds a binary that honestly reports eBPF
+    # unavailable but does not cover the code paths this job claims to.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: trace-rs
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install eBPF toolchain
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq clang libbpf-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: trace-rs
+
+      - name: fmt
+        run: cargo fmt --all -- --check
+
+      - name: clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: test
+        run: cargo test --all-targets
+
+      - name: bpf object embedded
+        # The whole point of this job: the built binary actually carries a
+        # CO-RE object, not an honest-but-empty environment report.
+        run: |
+          cargo build --release
+          if ! strings target/release/runopsy-trace | grep -q sched_process_exec; then
+            echo "release binary does not embed the BPF object"
+            exit 1
+          fi
+
+  trace-live:
+    # Phase 6 performance/churn acceptance (6.37/6.49-6.51): build the real
+    # tracer and run the live measurements plus the churn pipeline on Linux.
+    # The live tests skip with a reason when a backend cannot be used, so a
+    # skipped measurement is visible instead of silently passing.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: install eBPF toolchain
+        # build.rs links libbpf on Linux by design (a missing library is a link
+        # error, not a silent downgrade), and clang needs libbpf's headers.
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq clang libbpf-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: trace-rs
+
+      - name: build tracer
+        run: |
+          cargo build --release --manifest-path trace-rs/Cargo.toml
+          sudo install -m 0755 trace-rs/target/release/runopsy-trace /usr/local/bin/runopsy-trace
+
+      - name: live tracer measurements
+        run: go test -count=1 -v -run 'TestLive' ./internal/trace
+
+      - name: churn pipeline
+        run: RUNOPSY_TRACE_CHURN=10000 go test -count=1 -run 'TestPipelineChurn' -v ./internal/trace
+
+  trace-ebpf-live:
+    # The eBPF backend against a real kernel (contract §2.4 acceptance):
+    # unattachable environment refuses honestly (checked below), a real attach
+    # must capture exec/exit/signal/exit-code for a watched subtree, including
+    # the exit(7) and the kill -TERM pair driven by scripts/ebpf-e2e.sh.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install eBPF toolchain
+        # Ubuntu 24.04 has no bpftool package; it ships in linux-tools for the
+        # running kernel. bpftool only feeds the e2e script's optional stats
+        # dump, so a missing one must not fail the job.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq clang libbpf-dev
+          sudo apt-get install -y -qq "linux-tools-$(uname -r)" linux-tools-common \
+            || echo "bpftool unavailable; the e2e stats dump will be skipped"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: trace-rs
+
+      - name: build tracer
+        run: cargo build --release --manifest-path trace-rs/Cargo.toml
+
+      - name: capabilities attach as root
+        run: sudo trace-rs/target/release/runopsy-trace capabilities | tee /tmp/caps.txt
+
+      - name: live eBPF E2E
+        run: sudo bash scripts/ebpf-e2e.sh trace-rs/target/release/runopsy-trace

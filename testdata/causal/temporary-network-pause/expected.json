@@ -1,0 +1,32 @@
+{
+  "name": "temporary-network-pause",
+  "class": "HEALTHY",
+  "notes": [
+    "A connection closes and is re-established from a new inode: churn, not a stall.",
+    "With no progress telemetry the reconnect yields only recorded socket facts and no causal claim."
+  ],
+  "events": [
+    {
+      "type": "CONNECTION_CLOSED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "CONNECTION_OPENED",
+      "count": 2,
+      "onset_unknown": false
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "NETWORK_PROGRESS_STOPPED",
+    "NETWORK_PROGRESS_RESUMED"
+  ],
+  "edges": [],
+  "failures": [],
+  "graph_healthy": true
+}

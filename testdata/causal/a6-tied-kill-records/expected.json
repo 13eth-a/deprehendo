@@ -1,0 +1,74 @@
+{
+  "name": "a6-tied-kill-records",
+  "class": "GOLDEN",
+  "notes": [
+    "A6 (5.4 item 3, 6): two independent kernel OOM records name the same victim 42@7 within the rule gap; neither record reaches the other, so they are independent candidates with equal support.",
+    "Both candidates stay COMPETING and the anchor status is AMBIGUOUS: canonical order is a determinism device for display only, never a role.",
+    "6.1: two CAUSES edges into the same target from non-ancestral sources are alternatives - each edge carries a D3 demotion (band capped at MEDIUM) and references the other; the candidates' bands fall to the weakest link (MEDIUM).",
+    "Events-mode fixture: the OOM records and the injected rule edges carry truthful OOM_RECORD_IDENTIFIES_VICTIM / SAME_SUBJECT_AS_VICTIM / EXIT_NOT_NORMAL evidence notes; NORMAL_EXIT_BEFORE_OOM is checked and absent."
+  ],
+  "events": [
+    {
+      "type": "OOM_EVENT",
+      "count": 2,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_EXITED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "edges": [
+    {
+      "from_type": "OOM_EVENT",
+      "to_type": "PROCESS_EXITED",
+      "relation": "CAUSES",
+      "rule": "OOM_CAUSES_PROCESS_EXIT@2",
+      "confidence": "MEDIUM",
+      "explain_must_mention": [
+        "D3"
+      ]
+    },
+    {
+      "from_type": "OOM_EVENT",
+      "to_type": "PROCESS_EXITED",
+      "relation": "CAUSES",
+      "rule": "OOM_CAUSES_PROCESS_EXIT@2",
+      "confidence": "MEDIUM",
+      "explain_must_mention": [
+        "D3"
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "anchor_type": "PROCESS_EXITED",
+      "status": "AMBIGUOUS",
+      "candidates": [
+        {
+          "type": "OOM_EVENT",
+          "kind": "ROOT_CAUSE",
+          "role": "COMPETING",
+          "confidence": "MEDIUM",
+          "onset_unknown": false
+        },
+        {
+          "type": "OOM_EVENT",
+          "kind": "ROOT_CAUSE",
+          "role": "COMPETING",
+          "confidence": "MEDIUM",
+          "onset_unknown": false
+        }
+      ],
+      "chain_types": [
+        "PROCESS_EXITED"
+      ],
+      "missing_evidence_includes": [
+        "OOM_RECORD_IDENTIFIES_VICTIM unobservable in this bundle is not checkable in v1 bundles",
+        "exit status and signal lineage are not captured in v1 bundles"
+      ]
+    }
+  ],
+  "graph_healthy": false
+}

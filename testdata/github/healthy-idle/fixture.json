@@ -1,0 +1,50 @@
+{
+  "name": "healthy-idle",
+  "notes": "Idle persistent runner with a long-lived control connection. Must produce no failure facts (5.40).",
+  "install": [
+    {
+      "key": "a",
+      "name": "linux-prod-03",
+      "version": "2.320.0",
+      "runner_log": [
+        "2026-10-28 11:59:58.000 +00:00 [RUNNER 1] Runner version 2.320.0",
+        "2026-10-28 11:59:59.000 +00:00 [RUNNER 1] Listening for Jobs"
+      ]
+    }
+  ],
+  "snapshots": [
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:05Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:10Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:15Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    }
+  ],
+  "expected": {
+    "runners": 1,
+    "runner_name": "linux-prod-03",
+    "runner_version": "2.320.0",
+    "lifecycle": "PERSISTENT",
+    "health": "AVAILABLE",
+    "events": ["GITHUB_RUNNER_STARTED"],
+    "absent_events": ["GITHUB_WORKER_STARTED", "GITHUB_JOB_ASSIGNED", "GITHUB_JOB_PROGRESS_STOPPED", "GITHUB_COMMUNICATION_STALLED", "GITHUB_RUNNER_STOPPED", "GITHUB_WORKER_EXITED"],
+    "workers": 0,
+    "jobs": 0,
+    "socket_roles": ["CONTROL_CHANNEL"],
+    "absent_conflict_topics": ["JOB_STATE", "TERMINATION_INTENT", "JOB_BINDING"]
+  }
+}

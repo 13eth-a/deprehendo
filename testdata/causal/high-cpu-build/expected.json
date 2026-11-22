@@ -1,0 +1,29 @@
+{
+  "name": "high-cpu-build",
+  "class": "HEALTHY",
+  "notes": [
+    "A build pins one process at 130% CPU for the whole capture and still completes: sustained saturation is an episode, not a failure.",
+    "CPU_SATURATION_CONTRIBUTES_TO_FREEZE requires an observed stop plus no competing cause; neither is present, so no causal edge exists.",
+    "The saturation is onset_unknown because no unsaturated sample was ever recorded."
+  ],
+  "events": [
+    {
+      "type": "CPU_SATURATION_STARTED",
+      "count": 1,
+      "onset_unknown": true
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "PROCESS_STOPPED",
+    "MEMORY_LIMIT_REACHED",
+    "DISK_EXHAUSTED"
+  ],
+  "edges": [],
+  "failures": [],
+  "graph_healthy": true
+}

@@ -1,0 +1,29 @@
+{
+  "name": "high-memory-build",
+  "class": "HEALTHY",
+  "notes": [
+    "Memory pressure is real (91-95%) but peaks below the 98% limit boundary; the episode never becomes a limit claim.",
+    "The dip to 88% is inside the 5pt hysteresis band, so no recovery is claimed either.",
+    "A pressure episode without a consequence and without a cause has no root candidate."
+  ],
+  "events": [
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "MEMORY_PRESSURE_STARTED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "MEMORY_LIMIT_REACHED",
+    "OOM_EVENT",
+    "MEMORY_RECOVERED"
+  ],
+  "edges": [],
+  "failures": [],
+  "graph_healthy": true
+}

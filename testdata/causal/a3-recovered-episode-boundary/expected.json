@@ -1,0 +1,67 @@
+{
+  "name": "a3-recovered-episode-boundary",
+  "class": "GOLDEN",
+  "notes": [
+    "A3 (P3, reviewed post-fix contract): the first pressure episode recovered at T+2s, so it is history and independent of the second episode.",
+    "Exactly one ESCALATES_TO edge reaches the limit - from the second pressure start inside the same reopened episode. No causal or escalation edge may cross the recovered episode boundary.",
+    "The unrecovered limit is a severe unresolved condition: it gets its own failure analysis with root cause UNKNOWN and the known escalation chain (5.1, 5.6 oom-chain row: the reopened episode's onset is the contributing factor).",
+    "Today the audited engine emits TWO escalation edges (both starts tie to the limit), leaves episode numbering unincremented after recovery, and produces no limit analysis at all.",
+    "If the fix version-bumps the escalation rule id (4.18), this expectation updates in the same change.",
+    "Episode numbering itself is not asserted here; the post-fix limit analysis shape is.",
+    "Re-audit 2026-10-28 (principal, causal-semantics.md \u00a75.2 clarified): a failure is never its own candidate, and an escalation-only path is the anchor's own episode (known chain), not a contributing factor. Suspected-kill/write-failure alternatives explain exit failures only, never a condition anchor."
+  ],
+  "events": [
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "MEMORY_LIMIT_REACHED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "MEMORY_PRESSURE_STARTED",
+      "count": 2,
+      "onset_unknown": false
+    },
+    {
+      "type": "MEMORY_RECOVERED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "edges": [
+    {
+      "from_type": "MEMORY_PRESSURE_STARTED",
+      "to_type": "MEMORY_LIMIT_REACHED",
+      "relation": "ESCALATES_TO",
+      "rule": "MEMORY_PRESSURE_ESCALATES_TO_LIMIT@1",
+      "confidence": "MEDIUM"
+    },
+    {
+      "from_type": "MEMORY_PRESSURE_STARTED",
+      "to_type": "MEMORY_RECOVERED",
+      "relation": "RECOVERY_OF",
+      "rule": "MEMORY_RECOVERY_FOLLOWS_ONSET@2",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "failures": [
+    {
+      "anchor_type": "MEMORY_LIMIT_REACHED",
+      "status": "UNKNOWN",
+      "candidates": [],
+      "chain_types": [
+        "MEMORY_PRESSURE_STARTED",
+        "MEMORY_LIMIT_REACHED"
+      ],
+      "missing_evidence_includes": [
+        "the originating allocation growth (or a kernel OOM record) is not captured in v1 bundles"
+      ],
+      "alternatives": []
+    }
+  ],
+  "graph_healthy": false
+}

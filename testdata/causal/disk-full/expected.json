@@ -1,0 +1,52 @@
+{
+  "name": "disk-full",
+  "class": "GOLDEN",
+  "notes": [
+    "Disk free space crosses the 15% pressure boundary at T+5s and the 5% exhaustion boundary at T+15s.",
+    "Pressure escalates to exhaustion within one free-space episode (ESCALATES_TO): v1 cannot observe write failures or inode state, so no CAUSES claim is made.",
+    "With no rule-backed causal edge, the report names DISK_EXHAUSTED as the observed failure and root cause UNKNOWN.",
+    "Re-audit 2026-10-28 (principal, causal-semantics.md \u00a75.2 clarified): a failure is never its own candidate, and an escalation-only path is the anchor's own episode (known chain), not a contributing factor. Suspected-kill/write-failure alternatives explain exit failures only, never a condition anchor."
+  ],
+  "events": [
+    {
+      "type": "DISK_EXHAUSTED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "DISK_PRESSURE_STARTED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "edges": [
+    {
+      "from_type": "DISK_PRESSURE_STARTED",
+      "to_type": "DISK_EXHAUSTED",
+      "relation": "ESCALATES_TO",
+      "rule": "DISK_PRESSURE_ESCALATES_TO_EXHAUSTION@1",
+      "confidence": "HIGH"
+    }
+  ],
+  "failures": [
+    {
+      "anchor_type": "DISK_EXHAUSTED",
+      "status": "UNKNOWN",
+      "candidates": [],
+      "chain_types": [
+        "DISK_PRESSURE_STARTED",
+        "DISK_EXHAUSTED"
+      ],
+      "missing_evidence_includes": [
+        "write-failure / ENOSPC telemetry is not captured in v1 bundles"
+      ],
+      "alternatives": []
+    }
+  ],
+  "graph_healthy": false
+}

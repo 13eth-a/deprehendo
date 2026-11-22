@@ -1,0 +1,128 @@
+{
+  "name": "normal-ephemeral-exit",
+  "notes": "Ephemeral runner accepts one job, the worker exits, then the listener stops. A normal lifecycle, not an unexplained death.",
+  "install": [
+    {
+      "key": "a",
+      "name": "ci-ephemeral-07",
+      "version": "2.320.0",
+      "ephemeral": true,
+      "runner_log": [
+        "2026-10-28 11:59:59.000 +00:00 [RUNNER 1] Listening for Jobs"
+      ]
+    }
+  ],
+  "snapshots": [
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "processes": [
+        {
+          "pid": 5218,
+          "ppid": 1,
+          "pgid": 5218,
+          "start_ticks": 10,
+          "name": "Runner.Listener",
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:01Z",
+      "processes": [
+        {
+          "pid": 5218,
+          "ppid": 1,
+          "pgid": 5218,
+          "start_ticks": 10,
+          "name": "Runner.Listener",
+          "state": "S"
+        },
+        {
+          "pid": 6001,
+          "ppid": 5218,
+          "pgid": 6001,
+          "start_ticks": 20,
+          "name": "Runner.Worker",
+          "state": "S"
+        }
+      ],
+      "runner_log": [
+        "2026-10-28 12:00:00.500 +00:00 [RUNNER 1] Received job message"
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:04Z",
+      "processes": [
+        {
+          "pid": 5218,
+          "ppid": 1,
+          "pgid": 5218,
+          "start_ticks": 10,
+          "name": "Runner.Listener",
+          "state": "S"
+        },
+        {
+          "pid": 6001,
+          "ppid": 5218,
+          "pgid": 6001,
+          "start_ticks": 20,
+          "name": "Runner.Worker",
+          "state": "S"
+        },
+        {
+          "pid": 7001,
+          "ppid": 6001,
+          "pgid": 6001,
+          "start_ticks": 30,
+          "name": "bash",
+          "state": "R",
+          "cpu_percent": 20
+        }
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:06Z",
+      "processes": [
+        {
+          "pid": 5218,
+          "ppid": 1,
+          "pgid": 5218,
+          "start_ticks": 10,
+          "name": "Runner.Listener",
+          "state": "S"
+        }
+      ],
+      "worker_log": [
+        "2026-10-28 12:00:06.000 +00:00 [WORKER 1] Job completed with result: Succeeded"
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:08Z",
+      "processes": []
+    }
+  ],
+  "expected": {
+    "runners": 1,
+    "runner_name": "ci-ephemeral-07",
+    "runner_version": "2.320.0",
+    "lifecycle": "EPHEMERAL",
+    "health": "AVAILABLE",
+    "events": [
+      "GITHUB_RUNNER_STARTED",
+      "GITHUB_WORKER_STARTED",
+      "GITHUB_JOB_ASSIGNED",
+      "GITHUB_WORKER_EXITED",
+      "GITHUB_RUNNER_STOPPED"
+    ],
+    "absent_events": [
+      "GITHUB_COMMUNICATION_STALLED",
+      "GITHUB_JOB_PROGRESS_STOPPED"
+    ],
+    "workers": 1,
+    "jobs": 1,
+    "absent_conflict_topics": [
+      "TERMINATION_INTENT",
+      "JOB_STATE"
+    ]
+  }
+}

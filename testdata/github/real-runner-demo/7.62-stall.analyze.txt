@@ -1,0 +1,63 @@
+
+GitHub Actions
+Runner        WITHHELD source=UNKNOWN
+Version       24.04.5 source=RUNNER_LOG
+----------------------------------------------------------------
+RUNOPSY INCIDENT ANALYSIS
+Incident: inc_e85ce6f4df31da1ed746898e7cbcd276    Analyzer: 0.4.0    Signature set: 2
+Trigger: manual at 07:21:10.325Z
+
+ROOT CAUSE
+Unknown
+
+No known signature met its evidence requirements and the 0.55 confidence threshold.
+
+BROKER_SOCKET_STALL rejected: no long-lived established connection with a surviving owner was observed
+
+CPU_SPIN rejected: no surviving process sustained near-full core CPU for the required span
+
+DISK_EXHAUSTION rejected: disk free space bottomed at 78.5% but never stayed near zero for the required span
+
+FROZEN_PROCESS rejected: no sustained stopped-state episode was observed
+
+NETWORK_PATH_FAILURE rejected: no socket was observed leaving ESTABLISHED and no SYN churn was seen
+
+OOM_KILL rejected: host and cgroup memory never approached the exhaustion boundary
+
+ORPHAN_PROCESS_TREE rejected: no surviving process was observed losing its parent and being reparented
+
+PROCESS_GROUP_TERMINATION rejected: no process group lost multiple members at the same time
+
+RESOURCE_STARVATION rejected: no resource pressure reached the severe boundary
+----------------------------------------------------------------
+
+CAUSAL ANALYSIS — primary failure (NETWORK_PROGRESS_STOPPED)
+Failure NETWORK_PROGRESS_STOPPED on socket:inode-10117 at 2026-11-21T07:18:40Z (relative T+2m30.056s)
+Evidence quality: inferred
+Root cause: UNKNOWN
+Known chain:
+  T+2m30.056s  NETWORK_PROGRESS_STOPPED (on socket:inode-10117)  [snapshot inference]
+Missing evidence:
+- job/application progress over the stalled socket is not observed in v1 (WORKER_PROGRESS_STOPPED), and Tier C blocked-in-read evidence is not captured
+Alternatives:
+- network stall shape UNKNOWN: BROKER_SOCKET_STALL and NETWORK_PATH_FAILURE cannot be discriminated without Tier A (send-queue state, retransmit timer)
+
+Secondary failure
+Failure NETWORK_PROGRESS_STOPPED on socket:inode-48907 at 2026-11-21T07:19:45Z (relative T+3m34.936s)
+Evidence quality: inferred
+Root cause: UNKNOWN
+Known chain:
+  T+3m34.936s  NETWORK_PROGRESS_STOPPED (on socket:inode-48907)  [snapshot inference]
+Missing evidence:
+- job/application progress over the stalled socket is not observed in v1 (WORKER_PROGRESS_STOPPED), and Tier C blocked-in-read evidence is not captured
+Alternatives:
+- network stall shape ZERO_WINDOW points at the peer not reading (peer-side application stall); broker and path hypotheses stay unconfirmed
+
+PROVIDER EVIDENCE
+github-actions  health=AVAILABLE
+  Runner WITHHELD version=24.04.5 lifecycle=PERSISTENT
+  2026-11-21T07:16:39Z RUNNER_STARTED source=LOCAL_PROCESS
+  SIGNATURE GITHUB_RUNNER_COMMUNICATION_STALL onset=2026-11-21T07:19:19Z confidence=MEDIUM runner=rnr_e98964795cd1280e job=
+GITHUB ACTIONS TIMELINE (UTC)
+07:16:39.256  GITHUB_RUNNER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e process=6272@342835
+07:19:19.258  GITHUB_COMMUNICATION_STALLED source=DERIVED runner=rnr_e98964795cd1280e provenance=sample:160

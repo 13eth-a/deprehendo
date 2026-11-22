@@ -1,0 +1,78 @@
+{
+  "name": "healthy-job",
+  "notes": "Job assigned, worker started, job process tree running. Correct correlation and no failure facts (5.40).",
+  "install": [
+    {
+      "key": "a",
+      "name": "linux-prod-03",
+      "version": "2.320.0",
+      "runner_log": [
+        "2026-10-28 11:59:59.000 +00:00 [RUNNER 1] Listening for Jobs"
+      ]
+    }
+  ],
+  "snapshots": [
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:01Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"},
+        {"pid": 6001, "ppid": 5218, "pgid": 6001, "start_ticks": 20, "name": "Runner.Worker", "state": "S"}
+      ],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}],
+      "runner_log": [
+        "2026-10-28 12:00:01.100 +00:00 [RUNNER 1] Received job message",
+        "2026-10-28 12:00:01.400 +00:00 [RUNNER 1] Running job: linux-tests"
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:02Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"},
+        {"pid": 6001, "ppid": 5218, "pgid": 6001, "start_ticks": 20, "name": "Runner.Worker", "state": "S"},
+        {"pid": 7001, "ppid": 6001, "pgid": 6001, "start_ticks": 30, "name": "bash", "state": "S"},
+        {"pid": 7002, "ppid": 7001, "pgid": 6001, "start_ticks": 31, "name": "bash", "state": "R", "cpu_percent": 25}
+      ],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:04Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"},
+        {"pid": 6001, "ppid": 5218, "pgid": 6001, "start_ticks": 20, "name": "Runner.Worker", "state": "S"},
+        {"pid": 7001, "ppid": 6001, "pgid": 6001, "start_ticks": 30, "name": "bash", "state": "S"},
+        {"pid": 7002, "ppid": 7001, "pgid": 6001, "start_ticks": 31, "name": "bash", "state": "R", "cpu_percent": 40}
+      ],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:06Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"},
+        {"pid": 6001, "ppid": 5218, "pgid": 6001, "start_ticks": 20, "name": "Runner.Worker", "state": "S"},
+        {"pid": 7001, "ppid": 6001, "pgid": 6001, "start_ticks": 30, "name": "bash", "state": "S"},
+        {"pid": 7002, "ppid": 7001, "pgid": 6001, "start_ticks": 31, "name": "bash", "state": "R", "cpu_percent": 10}
+      ],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    }
+  ],
+  "expected": {
+    "runners": 1,
+    "runner_name": "linux-prod-03",
+    "runner_version": "2.320.0",
+    "lifecycle": "PERSISTENT",
+    "health": "AVAILABLE",
+    "events": ["GITHUB_RUNNER_STARTED", "GITHUB_WORKER_STARTED", "GITHUB_JOB_ASSIGNED", "GITHUB_JOB_ACCEPTED"],
+    "absent_events": ["GITHUB_JOB_PROGRESS_STOPPED", "GITHUB_COMMUNICATION_STALLED", "GITHUB_WORKER_EXITED", "GITHUB_RUNNER_STOPPED"],
+    "workers": 1,
+    "jobs": 1,
+    "job_roles": {"JOB_ROOT": 1, "JOB_PROCESS": 1},
+    "job_outcomes": ["RUNNING"],
+    "socket_roles": ["CONTROL_CHANNEL"],
+    "absent_conflict_topics": ["JOB_STATE", "TERMINATION_INTENT", "JOB_BINDING"]
+  }
+}

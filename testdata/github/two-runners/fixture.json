@@ -1,0 +1,49 @@
+{
+  "name": "two-runners",
+  "notes": "Two installations on one host. Each worker must bind to its own listener; identities must stay distinct (5.31).",
+  "install": [
+    {
+      "key": "a",
+      "name": "runner-a",
+      "version": "2.320.0",
+      "runner_log": ["2026-10-28 11:59:59.000 +00:00 [RUNNER 1] Listening for Jobs"]
+    },
+    {
+      "key": "b",
+      "name": "runner-b",
+      "version": "2.321.0",
+      "runner_log": ["2026-10-28 11:59:59.000 +00:00 [RUNNER 2] Listening for Jobs"]
+    }
+  ],
+  "snapshots": [
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "install": "a"},
+        {"pid": 5219, "ppid": 1, "pgid": 5219, "start_ticks": 11, "name": "Runner.Listener", "install": "b"},
+        {"pid": 6001, "ppid": 5218, "pgid": 6001, "start_ticks": 20, "name": "Runner.Worker", "install": "a"},
+        {"pid": 6002, "ppid": 5219, "pgid": 6002, "start_ticks": 21, "name": "Runner.Worker", "install": "b"}
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:02Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "install": "a"},
+        {"pid": 5219, "ppid": 1, "pgid": 5219, "start_ticks": 11, "name": "Runner.Listener", "install": "b"},
+        {"pid": 6001, "ppid": 5218, "pgid": 6001, "start_ticks": 20, "name": "Runner.Worker", "install": "a"},
+        {"pid": 6002, "ppid": 5219, "pgid": 6002, "start_ticks": 21, "name": "Runner.Worker", "install": "b"},
+        {"pid": 7001, "ppid": 6001, "pgid": 6001, "start_ticks": 30, "name": "bash", "install": "a", "cpu_percent": 20}
+      ]
+    }
+  ],
+  "expected": {
+    "runners": 2,
+    "health": "AVAILABLE",
+    "events": ["GITHUB_RUNNER_STARTED", "GITHUB_WORKER_STARTED"],
+    "workers": 2,
+    "worker_listener": {"6001": 5218, "6002": 5219},
+    "jobs": 0,
+    "job_roles": {"JOB_ROOT": 1},
+    "absent_conflict_topics": ["JOB_STATE", "TERMINATION_INTENT"]
+  }
+}

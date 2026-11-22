@@ -1,0 +1,437 @@
+{
+  "$": [
+    "bundle:object",
+    "causal:object",
+    "diagnosis:object",
+    "document_version:int",
+    "engine:object",
+    "privacy:object",
+    "series:array",
+    "timeline:array"
+  ],
+  "$.bundle": [
+    "agent_version:string",
+    "architecture:string",
+    "created_at:string",
+    "files:object",
+    "format_version:int",
+    "incident_id:string",
+    "platform:string",
+    "schema_version:int",
+    "sha256:string",
+    "snapshot_encoding:string"
+  ],
+  "$.bundle.files": [
+    "events.jsonl:object",
+    "metadata.json:object",
+    "privacy.json:object",
+    "snapshots.json:object"
+  ],
+  "$.bundle.files.events.jsonl": [
+    "sha256:string",
+    "size:int"
+  ],
+  "$.bundle.files.metadata.json": [
+    "sha256:string",
+    "size:int"
+  ],
+  "$.bundle.files.privacy.json": [
+    "sha256:string",
+    "size:int"
+  ],
+  "$.bundle.files.snapshots.json": [
+    "sha256:string",
+    "size:int"
+  ],
+  "$.causal": [
+    "edges:array",
+    "edges:null",
+    "failures:array",
+    "healthy:bool",
+    "nodes:array",
+    "other_exits:int",
+    "unconfirmed_severe:array"
+  ],
+  "$.causal.edges[]": [
+    "checks:array",
+    "confidence:string",
+    "demotions:array",
+    "from:string",
+    "id:string",
+    "mechanism:string",
+    "relation:string",
+    "rule:string",
+    "same_instant:bool",
+    "to:string"
+  ],
+  "$.causal.edges[].checks[]": [
+    "code:string",
+    "detail:string",
+    "kind:string",
+    "status:string"
+  ],
+  "$.causal.failures[]": [
+    "alternatives:array",
+    "anchor:string",
+    "anchor_type:string",
+    "claim:string",
+    "known_chain:array",
+    "missing_evidence:array",
+    "status:string"
+  ],
+  "$.causal.nodes[]": [
+    "event:object",
+    "evidence_class:string"
+  ],
+  "$.causal.nodes[].event": [
+    "class:string",
+    "data:object",
+    "episode:string",
+    "id:string",
+    "onset_unknown:bool",
+    "onset_window:object",
+    "pid:int",
+    "ppid:int",
+    "provenance:object",
+    "sequence:int",
+    "start_ticks:int",
+    "subject:object",
+    "timestamp:string",
+    "type:string"
+  ],
+  "$.causal.nodes[].event.data": [
+    "capture_start:string",
+    "duration_ms:int",
+    "from_ppid:int",
+    "memory_percent:float",
+    "severe_samples:int",
+    "to_ppid:int",
+    "trigger:string"
+  ],
+  "$.causal.nodes[].event.onset_window": [
+    "not_before:string",
+    "observed_at:string"
+  ],
+  "$.causal.nodes[].event.provenance": [
+    "rule_id:string",
+    "sources:array"
+  ],
+  "$.causal.nodes[].event.provenance.sources[]": [
+    "kind:string",
+    "ref:string"
+  ],
+  "$.causal.nodes[].event.subject": [
+    "ID:string",
+    "Kind:string"
+  ],
+  "$.diagnosis": [
+    "analyzer_version:string",
+    "incident_id:string",
+    "matches:array",
+    "min_confidence:float",
+    "rejections:array",
+    "signature_set_version:int",
+    "strong_observations:array",
+    "trigger:string",
+    "triggered_at:string",
+    "unknown:bool"
+  ],
+  "$.diagnosis.matches[]": [
+    "attributes:object",
+    "confidence:float",
+    "confidence_band:string",
+    "missing_evidence:array",
+    "process_group_id:int",
+    "process_identities:array",
+    "related_events:array",
+    "severity:string",
+    "signature:string",
+    "signature_version:int",
+    "summary:string",
+    "supporting:array"
+  ],
+  "$.diagnosis.matches[].attributes": [
+    "connections_affected:string",
+    "disconnected:string",
+    "low_free_span:string",
+    "min_free_percent:string",
+    "parent_pid:string",
+    "parent_start_ticks:string",
+    "pgid:string",
+    "pid:string",
+    "resource:string",
+    "start_ticks:string",
+    "stopped_span:string",
+    "vanished:string"
+  ],
+  "$.diagnosis.matches[].process_identities[]": [
+    "pid:int",
+    "start_ticks:int"
+  ],
+  "$.diagnosis.matches[].supporting[]": [
+    "at:string",
+    "code:string",
+    "observed:bool",
+    "observed:float",
+    "observed:int",
+    "observed:object",
+    "source:string",
+    "threshold:int",
+    "weight:float"
+  ],
+  "$.diagnosis.matches[].supporting[].observed": [
+    "count:int",
+    "from:string",
+    "from_ppid:string",
+    "pgid:int",
+    "pid:int",
+    "ppid:string",
+    "span_ms:int",
+    "start_ticks:int",
+    "to:string",
+    "vanished:int",
+    "window_ms:int"
+  ],
+  "$.diagnosis.rejections[]": [
+    "attributes:object",
+    "confidence:float",
+    "confidence:int",
+    "confidence_band:string",
+    "contradicting:array",
+    "missing_evidence:array",
+    "process_identities:array",
+    "rejected:string",
+    "related_events:array",
+    "severity:string",
+    "signature:string",
+    "signature_version:int",
+    "summary:string",
+    "supporting:array"
+  ],
+  "$.diagnosis.rejections[].attributes": [
+    "memory_peak_percent:string",
+    "pid:string",
+    "rss_share_percent:string",
+    "spin_span:string",
+    "start_ticks:string"
+  ],
+  "$.diagnosis.rejections[].contradicting[]": [
+    "at:string",
+    "code:string",
+    "observed:bool",
+    "observed:int",
+    "source:string",
+    "weight:float"
+  ],
+  "$.diagnosis.rejections[].process_identities[]": [
+    "pid:int",
+    "start_ticks:int"
+  ],
+  "$.diagnosis.rejections[].supporting[]": [
+    "at:string",
+    "code:string",
+    "observed:bool",
+    "observed:float",
+    "observed:object",
+    "source:string",
+    "threshold:float",
+    "threshold:int",
+    "weight:float"
+  ],
+  "$.diagnosis.rejections[].supporting[].observed": [
+    "local:string",
+    "pid:int",
+    "remote:string",
+    "span_ms:int",
+    "start_ticks:int"
+  ],
+  "$.diagnosis.strong_observations[]": [
+    "at:string",
+    "code:string",
+    "observed:float",
+    "observed:int",
+    "source:string",
+    "threshold:int",
+    "weight:int"
+  ],
+  "$.engine": [
+    "analyzer_version:string",
+    "bundle_formats:array",
+    "causal_rules:string",
+    "privacy_policy:string",
+    "signature_set_version:int",
+    "signature_version:int"
+  ],
+  "$.engine.bundle_formats[]": [
+    "format_version:int",
+    "schema_version:int"
+  ],
+  "$.privacy": [
+    "command_lines:bool",
+    "environment:bool",
+    "filesystem_paths:bool",
+    "hostname:bool",
+    "network_addresses:bool",
+    "policy:string",
+    "process_names:bool",
+    "repository_name:bool",
+    "user_note:bool"
+  ],
+  "$.series[]": [
+    "CaptureIndex:int",
+    "connections:array",
+    "pressure:object",
+    "processes:array",
+    "system:object",
+    "timestamp:string"
+  ],
+  "$.series[].connections[]": [
+    "fd:int",
+    "inode:int",
+    "local_addr:string",
+    "local_port:int",
+    "pid:int",
+    "remote_addr:string",
+    "remote_port:int",
+    "state:string"
+  ],
+  "$.series[].pressure": [
+    "cpu:object",
+    "io:object",
+    "memory:object"
+  ],
+  "$.series[].pressure.cpu": [
+    "full:object",
+    "has_full:bool",
+    "has_some:bool",
+    "some:object"
+  ],
+  "$.series[].pressure.cpu.full": [
+    "avg10:int",
+    "avg300:int",
+    "avg60:int",
+    "total_us:int"
+  ],
+  "$.series[].pressure.cpu.some": [
+    "avg10:int",
+    "avg300:int",
+    "avg60:int",
+    "total_us:int"
+  ],
+  "$.series[].pressure.io": [
+    "full:object",
+    "has_full:bool",
+    "has_some:bool",
+    "some:object"
+  ],
+  "$.series[].pressure.io.full": [
+    "avg10:int",
+    "avg300:int",
+    "avg60:int",
+    "total_us:int"
+  ],
+  "$.series[].pressure.io.some": [
+    "avg10:int",
+    "avg300:int",
+    "avg60:int",
+    "total_us:int"
+  ],
+  "$.series[].pressure.memory": [
+    "full:object",
+    "has_full:bool",
+    "has_some:bool",
+    "some:object"
+  ],
+  "$.series[].pressure.memory.full": [
+    "avg10:int",
+    "avg300:int",
+    "avg60:int",
+    "total_us:int"
+  ],
+  "$.series[].pressure.memory.some": [
+    "avg10:int",
+    "avg300:int",
+    "avg60:int",
+    "total_us:int"
+  ],
+  "$.series[].processes[]": [
+    "cpu_percent:int",
+    "name:string",
+    "open_fds:int",
+    "pgid:int",
+    "pid:int",
+    "ppid:int",
+    "rss_bytes:int",
+    "sid:int",
+    "start_ticks:int",
+    "state:string"
+  ],
+  "$.series[].system": [
+    "cpu_available:bool",
+    "cpu_count:int",
+    "cpu_percent:int",
+    "cpu_percent_available:bool",
+    "disk_available:int",
+    "disk_filesystem:string",
+    "disk_free:int",
+    "disk_free_inodes:int",
+    "disk_stats_available:bool",
+    "disk_total:int",
+    "disk_total_inodes:int",
+    "disk_used:int",
+    "load_available:bool",
+    "load_average:int",
+    "memory_buffers:int",
+    "memory_cached:int",
+    "memory_free:int",
+    "memory_stats_available:bool",
+    "memory_total:int",
+    "memory_used:int",
+    "process_count:int",
+    "process_count_available:bool",
+    "swap_free:int",
+    "swap_total:int"
+  ],
+  "$.timeline[]": [
+    "class:string",
+    "data:object",
+    "episode:string",
+    "evidence_class:string",
+    "id:string",
+    "onset_unknown:bool",
+    "onset_window:object",
+    "pid:int",
+    "ppid:int",
+    "provenance:object",
+    "sequence:int",
+    "start_ticks:int",
+    "subject:object",
+    "timestamp:string",
+    "type:string"
+  ],
+  "$.timeline[].data": [
+    "capture_start:string",
+    "duration_ms:int",
+    "from_ppid:int",
+    "memory_percent:float",
+    "severe_samples:int",
+    "to_ppid:int",
+    "trigger:string"
+  ],
+  "$.timeline[].onset_window": [
+    "not_before:string",
+    "observed_at:string"
+  ],
+  "$.timeline[].provenance": [
+    "rule_id:string",
+    "sources:array"
+  ],
+  "$.timeline[].provenance.sources[]": [
+    "kind:string",
+    "ref:string"
+  ],
+  "$.timeline[].subject": [
+    "ID:string",
+    "Kind:string"
+  ]
+}

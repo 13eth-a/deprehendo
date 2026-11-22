@@ -1,0 +1,898 @@
+{
+  "document_version": 1,
+  "engine": {
+    "analyzer_version": "0.4.0",
+    "signature_version": 5,
+    "signature_set_version": 2,
+    "causal_rules": "5167716d106987cd77cc0da5247f1f883afc1ed432ee8efe77ddf93bde719c70",
+    "privacy_policy": "conservative-v1",
+    "bundle_formats": [
+      {
+        "format_version": 1,
+        "schema_version": 1
+      }
+    ]
+  },
+  "bundle": {
+    "sha256": "0fa3f98d2a2c374e892127d0e63dd894d6954f196fb142f0fee801a9374d6bdd",
+    "incident_id": "inc_0000000000000000000000000000000e",
+    "schema_version": 1,
+    "format_version": 1,
+    "snapshot_encoding": "json-v1",
+    "created_at": "2026-10-01T12:01:05Z",
+    "agent_version": "0.2.0",
+    "platform": "linux",
+    "architecture": "arm64",
+    "files": {
+      "events.jsonl": {
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "metadata.json": {
+        "size": 727,
+        "sha256": "e621466a4448c3219a409eeb543c871b3eb0c25d3f708e1a25d2a187d114c0aa"
+      },
+      "privacy.json": {
+        "size": 200,
+        "sha256": "ecfef96b81d282ac3a8111ec3df692bc4f58b815d5bfbc3c3d3c077e47e4f834"
+      },
+      "snapshots.json": {
+        "size": 10169,
+        "sha256": "ffcc96dc2a0b10d4c03bb4201256829ddec787ebbff53c93febe331b6af912bf"
+      }
+    }
+  },
+  "privacy": {
+    "policy": "conservative-v1",
+    "hostname": false,
+    "command_lines": false,
+    "environment": false,
+    "repository_name": false,
+    "network_addresses": false,
+    "filesystem_paths": true,
+    "process_names": true,
+    "user_note": false
+  },
+  "diagnosis": {
+    "incident_id": "inc_0000000000000000000000000000000e",
+    "trigger": "process_exit",
+    "triggered_at": "2026-10-01T12:01:05Z",
+    "analyzer_version": "0.4.0",
+    "signature_set_version": 2,
+    "min_confidence": 0.55,
+    "matches": [],
+    "rejections": [
+      {
+        "signature": "BROKER_SOCKET_STALL",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "network telemetry was unavailable for most of the capture"
+      },
+      {
+        "signature": "CPU_SPIN",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "no surviving process sustained near-full core CPU for the required span"
+      },
+      {
+        "signature": "DISK_EXHAUSTION",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "CRITICAL",
+        "summary": "",
+        "rejected": "disk free space bottomed at 80.0% but never stayed near zero for the required span"
+      },
+      {
+        "signature": "FROZEN_PROCESS",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "no sustained stopped-state episode was observed"
+      },
+      {
+        "signature": "NETWORK_PATH_FAILURE",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "network telemetry was unavailable for most of the capture; no path conclusion is possible"
+      },
+      {
+        "signature": "OOM_KILL",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "CRITICAL",
+        "summary": "",
+        "rejected": "host and cgroup memory never approached the exhaustion boundary"
+      },
+      {
+        "signature": "ORPHAN_PROCESS_TREE",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "no surviving process was observed losing its parent and being reparented"
+      },
+      {
+        "signature": "PROCESS_GROUP_TERMINATION",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "CRITICAL",
+        "summary": "",
+        "rejected": "no process group lost multiple members at the same time"
+      },
+      {
+        "signature": "RESOURCE_STARVATION",
+        "signature_version": 5,
+        "confidence": 0,
+        "confidence_band": "NONE",
+        "severity": "WARNING",
+        "summary": "",
+        "rejected": "pressure telemetry was unavailable for most of the capture"
+      }
+    ],
+    "unknown": true
+  },
+  "causal": {
+    "healthy": true,
+    "other_exits": 0,
+    "nodes": [
+      {
+        "event": {
+          "id": "EV_1f93983b221e",
+          "type": "PROCESS_REPARENTED",
+          "timestamp": "2026-10-01T12:00:40Z",
+          "sequence": 0,
+          "subject": {
+            "Kind": "process",
+            "ID": "500@900"
+          },
+          "data": {
+            "capture_start": "2026-10-01T12:00:00Z",
+            "from_ppid": 100,
+            "to_ppid": 1
+          },
+          "provenance": {
+            "rule_id": "TIMELINE_BUILD@1",
+            "sources": [
+              {
+                "kind": "snapshot",
+                "ref": "8"
+              }
+            ]
+          },
+          "class": "CONTEXT",
+          "pid": 500,
+          "start_ticks": 900,
+          "ppid": 100
+        },
+        "evidence_class": "DERIVED_SNAPSHOT"
+      },
+      {
+        "event": {
+          "id": "EV_27341edd3c8e",
+          "type": "INCIDENT_TRIGGERED",
+          "timestamp": "2026-10-01T12:01:05Z",
+          "sequence": 1,
+          "subject": {
+            "Kind": "host",
+            "ID": "local"
+          },
+          "data": {
+            "trigger": "process_exit"
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "trigger",
+                "ref": "incident"
+              }
+            ]
+          },
+          "class": "CONTEXT",
+          "pid": 100,
+          "start_ticks": 100
+        },
+        "evidence_class": "AGENT"
+      }
+    ],
+    "edges": null,
+    "failures": []
+  },
+  "timeline": [
+    {
+      "id": "EV_1f93983b221e",
+      "type": "PROCESS_REPARENTED",
+      "timestamp": "2026-10-01T12:00:40Z",
+      "sequence": 0,
+      "subject": {
+        "Kind": "process",
+        "ID": "500@900"
+      },
+      "data": {
+        "capture_start": "2026-10-01T12:00:00Z",
+        "from_ppid": 100,
+        "to_ppid": 1
+      },
+      "provenance": {
+        "rule_id": "TIMELINE_BUILD@1",
+        "sources": [
+          {
+            "kind": "snapshot",
+            "ref": "8"
+          }
+        ]
+      },
+      "class": "CONTEXT",
+      "pid": 500,
+      "start_ticks": 900,
+      "ppid": 100,
+      "evidence_class": "DERIVED_SNAPSHOT"
+    },
+    {
+      "id": "EV_27341edd3c8e",
+      "type": "INCIDENT_TRIGGERED",
+      "timestamp": "2026-10-01T12:01:05Z",
+      "sequence": 1,
+      "subject": {
+        "Kind": "host",
+        "ID": "local"
+      },
+      "data": {
+        "trigger": "process_exit"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "trigger",
+            "ref": "incident"
+          }
+        ]
+      },
+      "class": "CONTEXT",
+      "pid": 100,
+      "start_ticks": 100,
+      "evidence_class": "AGENT"
+    }
+  ],
+  "series": [
+    {
+      "timestamp": "2026-10-01T12:00:00Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:05Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:10Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:15Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:20Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:25Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:30Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:35Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 100,
+          "ppid": 1,
+          "pgid": 100,
+          "sid": 100,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 100,
+          "cpu_percent": 0,
+          "open_fds": -1
+        },
+        {
+          "pid": 500,
+          "ppid": 100,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:40Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      },
+      "processes": [
+        {
+          "pid": 500,
+          "ppid": 1,
+          "pgid": 500,
+          "sid": 500,
+          "name": "[REDACTED]",
+          "state": "S",
+          "start_ticks": 900,
+          "cpu_percent": 0,
+          "open_fds": -1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-01T12:00:45Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-01T12:00:50Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-01T12:00:55Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-01T12:01:00Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-01T12:01:05Z",
+      "CaptureIndex": 0,
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 5153960755,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "[REDACTED]",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 879609302220,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    }
+  ]
+}

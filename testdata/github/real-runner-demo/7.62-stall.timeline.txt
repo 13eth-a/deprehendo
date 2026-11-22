@@ -1,0 +1,67 @@
+TIMELINE (UTC; order only, no cross-provider causal edges)
+07:16:39.256  GITHUB_RUNNER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e process=6272@342835
+07:16:47.265  CONNECTION_CLOSED subject=socket:port:[REDACTED]:34268:[REDACTED]:443
+07:16:59.258  CONNECTION_CLOSED subject=socket:port:[REDACTED]:38194:[REDACTED]:443
+07:17:00.258  CONNECTION_CLOSED subject=socket:inode-45797
+07:17:01.265  CONNECTION_CLOSED subject=socket:inode-45802
+07:17:13.258  NETWORK_PROGRESS_STOPPED subject=socket:inode-10117
+07:17:35.259  NETWORK_PROGRESS_STOPPED subject=socket:inode-48907
+07:18:09.259  NETWORK_PROGRESS_RESUMED subject=socket:inode-48907
+07:18:10.260  NETWORK_PROGRESS_RESUMED subject=socket:inode-10117
+07:18:39.260  NETWORK_PROGRESS_STOPPED subject=socket:inode-48907
+07:18:40.381  NETWORK_PROGRESS_STOPPED subject=socket:inode-10117
+07:19:14.258  NETWORK_PROGRESS_RESUMED subject=socket:inode-48907
+07:19:19.258  GITHUB_COMMUNICATION_STALLED source=DERIVED runner=rnr_e98964795cd1280e provenance=sample:160
+07:19:45.261  NETWORK_PROGRESS_STOPPED subject=socket:inode-48907
+07:20:54.262  CONNECTION_CLOSED subject=socket:inode-48907
+07:20:54.262  CONNECTION_OPENED subject=socket:port:[REDACTED]:48856:[REDACTED]:443
+07:21:07.259  CONNECTION_OPENED subject=socket:inode-50182
+07:21:10.325  INCIDENT_TRIGGERED subject=host:local
+RUNOPSY ANALYSIS
+
+GitHub Actions
+Runner        WITHHELD source=UNKNOWN
+Version       24.04.5 source=RUNNER_LOG
+
+Kernel trace evidence
+Tracing            active (proc_connector)
+Events lost        0 observed on the wire
+Coverage           complete for the traced event classes
+
+Underlying systems diagnosis
+UNKNOWN — no Phase 3 signature met its evidence requirements.
+
+Causal reconstruction
+
+CAUSAL ANALYSIS — primary failure (NETWORK_PROGRESS_STOPPED)
+Failure NETWORK_PROGRESS_STOPPED on socket:inode-10117 at 2026-11-21T07:18:40Z (relative T+2m30.056s)
+Evidence quality: inferred
+Root cause: UNKNOWN
+Known chain:
+  T+2m30.056s  NETWORK_PROGRESS_STOPPED (on socket:inode-10117)  [snapshot inference]
+Missing evidence:
+- job/application progress over the stalled socket is not observed in v1 (WORKER_PROGRESS_STOPPED), and Tier C blocked-in-read evidence is not captured
+Alternatives:
+- network stall shape UNKNOWN: BROKER_SOCKET_STALL and NETWORK_PATH_FAILURE cannot be discriminated without Tier A (send-queue state, retransmit timer)
+
+Secondary failure
+Failure NETWORK_PROGRESS_STOPPED on socket:inode-48907 at 2026-11-21T07:19:45Z (relative T+3m34.936s)
+Evidence quality: inferred
+Root cause: UNKNOWN
+Known chain:
+  T+3m34.936s  NETWORK_PROGRESS_STOPPED (on socket:inode-48907)  [snapshot inference]
+Missing evidence:
+- job/application progress over the stalled socket is not observed in v1 (WORKER_PROGRESS_STOPPED), and Tier C blocked-in-read evidence is not captured
+Alternatives:
+- network stall shape ZERO_WINDOW points at the peer not reading (peer-side application stall); broker and path hypotheses stay unconfirmed
+
+Incident: inc_e85ce6f4df31da1ed746898e7cbcd276  Triggered: 2026-11-21T07:21:10.325411425Z
+
+PROVIDER EVIDENCE
+github-actions  health=AVAILABLE
+  Runner WITHHELD version=24.04.5 lifecycle=PERSISTENT
+  2026-11-21T07:16:39Z RUNNER_STARTED source=LOCAL_PROCESS
+  SIGNATURE GITHUB_RUNNER_COMMUNICATION_STALL onset=2026-11-21T07:19:19Z confidence=MEDIUM runner=rnr_e98964795cd1280e job=
+GITHUB ACTIONS TIMELINE (UTC)
+07:16:39.256  GITHUB_RUNNER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e process=6272@342835
+07:19:19.258  GITHUB_COMMUNICATION_STALLED source=DERIVED runner=rnr_e98964795cd1280e provenance=sample:160

@@ -1,0 +1,286 @@
+{
+  "schema_version": 1,
+  "id": "inc_11e6bbc484d9b9c836a845ca901b53f6",
+  "created_at": "2026-10-27T12:00:30Z",
+  "triggered_at": "2026-10-27T12:00:25Z",
+  "capture_start": "2026-10-27T12:00:00Z",
+  "capture_end": "2026-10-27T12:00:30Z",
+  "window": {
+    "pre_trigger": 25000000000,
+    "post_trigger": 5000000000
+  },
+  "trigger": {
+    "type": "manual"
+  },
+  "metadata": {
+    "agent_version": "0.2.0",
+    "host": {
+      "os": "linux",
+      "architecture": "arm64",
+      "cpu_count": 4,
+      "memory_total": 17179869184
+    },
+    "processes": null
+  },
+  "truncated": false,
+  "privacy": {
+    "policy": "conservative",
+    "hostname": false,
+    "command_lines": false,
+    "environment": false,
+    "repository_name": false,
+    "network_addresses": false,
+    "filesystem_paths": false,
+    "process_names": false,
+    "user_note": false
+  },
+  "snapshots": [
+    {
+      "timestamp": "2026-10-27T12:00:00Z",
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 6871947673,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "/var/lib/docker",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 659706976665,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:05Z",
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 6871947673,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "/var/lib/docker",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 659706976665,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:10Z",
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 6871947673,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "/var/lib/docker",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 659706976665,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:15Z",
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 6871947673,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "/var/lib/docker",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 659706976665,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:20Z",
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 6871947673,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "/var/lib/docker",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 659706976665,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:25Z",
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 6871947673,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "/var/lib/docker",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 659706976665,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:30Z",
+      "system": {
+        "load_available": true,
+        "cpu_available": true,
+        "cpu_percent_available": true,
+        "memory_stats_available": true,
+        "disk_stats_available": true,
+        "process_count_available": true,
+        "load_average": 0,
+        "cpu_count": 4,
+        "cpu_percent": 10,
+        "memory_total": 17179869184,
+        "memory_used": 6871947673,
+        "memory_free": 0,
+        "memory_buffers": 0,
+        "memory_cached": 0,
+        "swap_total": 0,
+        "swap_free": 0,
+        "disk_filesystem": "/var/lib/docker",
+        "disk_available": 0,
+        "disk_total_inodes": 0,
+        "disk_free_inodes": 0,
+        "disk_total": 1099511627776,
+        "disk_free": 659706976665,
+        "disk_used": 0,
+        "process_count": 0
+      }
+    }
+  ],
+  "events": [
+    {
+      "timestamp": "2026-10-27T12:00:01Z",
+      "type": "CONNECTION_OPENED",
+      "connection": {
+        "local_addr": "127.0.0.1",
+        "local_port": 40001,
+        "remote_addr": "203.0.113.10",
+        "remote_port": 443,
+        "state": "ESTABLISHED",
+        "inode": 88201,
+        "pid": 300,
+        "fd": 7
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:10Z",
+      "type": "CONNECTION_CLOSED",
+      "connection": {
+        "local_addr": "127.0.0.1",
+        "local_port": 40001,
+        "remote_addr": "203.0.113.10",
+        "remote_port": 443,
+        "state": "CLOSE_WAIT",
+        "inode": 88201,
+        "pid": 300,
+        "fd": 7
+      }
+    },
+    {
+      "timestamp": "2026-10-27T12:00:12Z",
+      "type": "CONNECTION_OPENED",
+      "connection": {
+        "local_addr": "127.0.0.1",
+        "local_port": 40001,
+        "remote_addr": "203.0.113.10",
+        "remote_port": 443,
+        "state": "ESTABLISHED",
+        "inode": 88202,
+        "pid": 300,
+        "fd": 7
+      }
+    }
+  ]
+}

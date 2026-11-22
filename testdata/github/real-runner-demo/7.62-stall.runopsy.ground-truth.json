@@ -1,0 +1,5 @@
+{
+  "expected_signature": "GITHUB_RUNNER_COMMUNICATION_STALL",
+  "fault": "idle self-hosted runner; outbound HTTPS (tcp/443) dropped with iptables for 3 minutes, then restored",
+  "captured": "2026-11-21, 7.62, docs/github/real-runner-demo.md"
+}

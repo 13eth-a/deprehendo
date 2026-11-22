@@ -1,0 +1,53 @@
+{
+  "name": "orphan-job",
+  "notes": "Worker exits while its job process survives reparented; the runner stays up and the job-tree tag stays sticky.",
+  "install": [
+    {
+      "key": "a",
+      "name": "linux-prod-03",
+      "version": "2.320.0",
+      "runner_log": [
+        "2026-10-28 11:59:59.000 +00:00 [RUNNER 1] Listening for Jobs",
+        "2026-10-28 11:59:59.500 +00:00 [RUNNER 1] Received job message"
+      ]
+    }
+  ],
+  "snapshots": [
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"},
+        {"pid": 6001, "ppid": 5218, "pgid": 6001, "start_ticks": 20, "name": "Runner.Worker", "state": "S"},
+        {"pid": 7001, "ppid": 6001, "pgid": 6001, "start_ticks": 30, "name": "bash", "state": "R", "cpu_percent": 20},
+        {"pid": 7002, "ppid": 7001, "pgid": 6001, "start_ticks": 31, "name": "make", "state": "S", "cpu_percent": 5}
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:03Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"},
+        {"pid": 7001, "ppid": 1, "pgid": 6001, "start_ticks": 30, "name": "bash", "state": "S"},
+        {"pid": 7002, "ppid": 7001, "pgid": 6001, "start_ticks": 31, "name": "make", "state": "S"}
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:14Z",
+      "processes": [
+        {"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"},
+        {"pid": 7001, "ppid": 1, "pgid": 6001, "start_ticks": 30, "name": "bash", "state": "S"},
+        {"pid": 7002, "ppid": 7001, "pgid": 6001, "start_ticks": 31, "name": "make", "state": "S"}
+      ]
+    }
+  ],
+  "expected": {
+    "runners": 1,
+    "runner_version": "2.320.0",
+    "health": "AVAILABLE",
+    "events": ["GITHUB_RUNNER_STARTED", "GITHUB_WORKER_STARTED", "GITHUB_JOB_ASSIGNED", "GITHUB_WORKER_EXITED", "GITHUB_JOB_ORPHANED"],
+    "absent_events": ["GITHUB_RUNNER_STOPPED", "GITHUB_COMMUNICATION_STALLED"],
+    "workers": 1,
+    "jobs": 1,
+    "job_roles": {"JOB_ROOT": 1, "JOB_PROCESS": 1},
+    "job_outcomes": ["UNKNOWN"]
+  }
+}

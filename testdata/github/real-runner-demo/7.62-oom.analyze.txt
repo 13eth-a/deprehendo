@@ -1,0 +1,104 @@
+
+GitHub Actions
+Runner        WITHHELD source=UNKNOWN
+Version       24.04.5 source=RUNNER_LOG
+Repository    UNKNOWN source=UNKNOWN
+Workflow      UNKNOWN source=UNKNOWN
+Job           UNKNOWN source=UNKNOWN ref=job_f702db9122cbd022
+Run           UNKNOWN source=UNKNOWN
+Attempt       UNKNOWN source=UNKNOWN
+Job outcome   FAILED source=RUNNER_LOG
+----------------------------------------------------------------
+RUNOPSY INCIDENT ANALYSIS
+Incident: inc_742cd5839ae9712ae70fdb65361042ea    Analyzer: 0.4.0    Signature set: 2
+Trigger: process_exit at 07:15:56.508Z
+
+Primary diagnosis
+OOM_KILL
+Confidence
+HIGH — 0.80   Severity: CRITICAL
+process vanished while memory was at or near exhaustion
+
+Supporting evidence:
++ KERNEL_OOM_COUNTER_ROSE oom_kill_delta=1 at 07:15:56.250Z (cgroup_collector)
++ HOST_MEMORY_NEAR_LIMIT 96.79 threshold 92.00 at 07:15:54.246Z (host_sensor)
++ PROCESS_DEPARTURE_NEAR_MEMORY_PEAK pid=8076,start_ticks=1462598 threshold 1m30s at 07:15:56.496Z (process_table)
++ CANDIDATE_RSS_LARGE 0.83 threshold 0.30 at 07:15:56.250Z (process_table)
+
+Unknown evidence: EXIT_SIGNAL_DETAILS
+Attributes:
+  memory_peak_percent=96.8
+  pid=8076
+  rss_share_percent=83.2
+  start_ticks=1462598
+
+BROKER_SOCKET_STALL rejected: socket byte counters and application progress are unavailable; an idle healthy connection and a broker stall are indistinguishable (scored 0.25)
+Supporting observations (insufficient for diagnosis):
++ OWNER_STAYS_ALIVE pid=6272,start_ticks=342835 at 07:16:06.147Z (process_table)
++ STABLE_CONNECTION local=[REDACTED]:43574,remote=[REDACTED]:443,span_ms=20901 threshold 10s at 07:15:45.245Z (network_collector)
+Against:
+- NO_RECONNECT_CHURN new sockets appeared while the owner lived: reconnect activity at 07:16:06.147Z (network_collector)
+Unknown: SOCKET_RX_TX_BYTE_COUNTERS, APPLICATION_LOG_PROGRESS
+
+CPU_SPIN rejected: no surviving process sustained near-full core CPU for the required span
+
+DISK_EXHAUSTION rejected: disk free space bottomed at 78.5% but never stayed near zero for the required span
+
+FROZEN_PROCESS rejected: no sustained stopped-state episode was observed
+
+NETWORK_PATH_FAILURE rejected: socket disconnects were repaired by reconnects and SYN churn stayed below the threshold
+
+ORPHAN_PROCESS_TREE rejected: no surviving process was observed losing its parent and being reparented
+
+PROCESS_GROUP_TERMINATION rejected: no process group lost multiple members at the same time
+
+RESOURCE_STARVATION rejected: no resource pressure reached the severe boundary
+----------------------------------------------------------------
+
+CAUSAL ANALYSIS — primary failure (PROCESS_EXITED)
+Failure PROCESS_EXITED on process:8076@1462598 at 2026-11-21T07:15:56Z (relative T+1m29.786s)
+Evidence quality: direct
+Root cause: UNKNOWN
+Known chain:
+  T+1m29.786s  PROCESS_EXITED (on process:8076@1462598)  [kernel trace]
+Missing evidence:
+- OOM_RECORD_IDENTIFIES_VICTIM unobservable in this bundle is not checkable in v1 bundles
+- exit status and signal lineage are not captured in v1 bundles
+
+Secondary failure
+Failure PROCESS_EXITED on process:8074@1462597 at 2026-11-21T07:15:56Z (relative T+1m29.793s)
+Evidence quality: direct
+Root cause: UNKNOWN
+Known chain:
+  T+1m29.793s  PROCESS_EXITED (on process:8074@1462597)  [kernel trace]
+Missing evidence:
+- OOM_RECORD_IDENTIFIES_VICTIM unobservable in this bundle is not checkable in v1 bundles
+- exit status and signal lineage are not captured in v1 bundles
+
+Secondary failure
+Failure PROCESS_EXITED on process:8058@1462439 at 2026-11-21T07:15:58Z (relative T+1m31.969s)
+Evidence quality: direct
+Root cause: UNKNOWN
+Known chain:
+  T+1m31.969s  PROCESS_EXITED (on process:8058@1462439)  [kernel trace]
+Missing evidence:
+- exit status and signal lineage are not captured in v1 bundles
+
+PROVIDER EVIDENCE
+github-actions  health=AVAILABLE
+  Runner WITHHELD version=24.04.5 lifecycle=PERSISTENT
+  job job_f702db9122cbd022 repository=UNKNOWN workflow=UNKNOWN name=UNKNOWN run=UNKNOWN attempt=UNKNOWN outcome=FAILED
+  2026-11-21T07:15:27Z RUNNER_STARTED source=LOCAL_PROCESS
+  2026-11-21T07:15:45Z WORK_ASSIGNED source=RUNNER_LOG
+  2026-11-21T07:15:45Z WORK_ASSIGNED source=RUNNER_LOG
+  2026-11-21T07:15:45Z WORKER_STARTED source=LOCAL_PROCESS
+  2026-11-21T07:15:58Z WORKER_EXITED source=LOCAL_PROCESS
+GITHUB ACTIONS TIMELINE (UTC)
+07:15:27.515  GITHUB_RUNNER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e process=6272@342835
+07:15:45.000  GITHUB_JOB_ACCEPTED source=RUNNER_LOG runner=rnr_e98964795cd1280e provenance=file:2@33806
+07:15:45.000  GITHUB_JOB_ASSIGNED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 provenance=file:2@33226
+07:15:45.995  GITHUB_WORKER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e worker=wkr_166a83cc3159a556 process=8058@1462439
+07:15:56.000  GITHUB_JOB_COMPLETED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 outcome=FAILED provenance=file:4@61301
+07:15:56.496  GITHUB_JOB_TREE_EMPTIED source=DERIVED runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 process=8058@1462439 provenance=sample:114
+07:15:58.000  GITHUB_JOB_COMPLETED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 outcome=FAILED provenance=file:2@36315
+07:15:58.495  GITHUB_WORKER_EXITED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e worker=wkr_166a83cc3159a556 process=8058@1462439

@@ -1,0 +1,83 @@
+{
+  "name": "stalled-reader",
+  "class": "GOLDEN",
+  "notes": [
+    "A reader process is SIGSTOPed while its socket is ESTABLISHED and carries unread data in the receive queue.",
+    "Tier B counters (bytes acked/received) advance until the stop, then freeze past the 30s stall threshold: NETWORK_PROGRESS_STOPPED is observed, not fabricated.",
+    "PROCESS_STOP_CAUSES_NETWORK_PROGRESS_LOSS@1 links the stop to the stall: the owner binds to the stopped incarnation and recv_q is non-zero.",
+    "The stop event carries the LOCAL_NOT_READING stamp (§7.2): the receive queue is observed non-empty while the Tier B counters are frozen, so receipt fails, not broker receipt or path failure.",
+    "The open stall is itself anchored (§7.3): its analysis stays UNKNOWN with an UNEXPLAINED_HEAD candidate — the stop explains the stall but the cause of the stop is not captured — and its alternatives cite the shape discriminators: LOCAL_NOT_READING reverses the arrow, broker and path hypotheses are abandoned for the LOCAL_NOT_READING shape."
+  ],
+  "events": [
+    {
+      "type": "CONNECTION_OPENED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "NETWORK_PROGRESS_STOPPED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_STOPPED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "NETWORK_PROGRESS_RESUMED",
+    "OOM_EVENT"
+  ],
+  "edges": [
+    {
+      "from_type": "PROCESS_STOPPED",
+      "to_type": "NETWORK_PROGRESS_STOPPED",
+      "relation": "CAUSES",
+      "rule": "PROCESS_STOP_CAUSES_NETWORK_PROGRESS_LOSS@1",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "failures": [
+    {
+      "anchor_type": "PROCESS_STOPPED",
+      "status": "UNKNOWN",
+      "candidates": [],
+      "chain_types": [
+        "PROCESS_STOPPED",
+        "NETWORK_PROGRESS_STOPPED"
+      ],
+      "missing_evidence_includes": [
+        "stop-sender telemetry (who sent SIGSTOP/ptrace) is not captured in v1 bundles"
+      ]
+    },
+    {
+      "anchor_type": "NETWORK_PROGRESS_STOPPED",
+      "status": "UNKNOWN",
+      "candidates": [
+        {
+          "type": "PROCESS_STOPPED",
+          "kind": "UNEXPLAINED_HEAD",
+          "role": "PRIMARY",
+          "confidence": "MEDIUM",
+          "onset_unknown": false
+        }
+      ],
+      "chain_types": [
+        "NETWORK_PROGRESS_STOPPED"
+      ],
+      "missing_evidence_includes": [
+        "job/application progress over the stalled socket is not observed in v1 (WORKER_PROGRESS_STOPPED), and Tier C blocked-in-read evidence is not captured"
+      ],
+      "alternatives": [
+        "network stall shape LOCAL_NOT_READING points at the local process not reading: the stall is an effect of a local stop, not a broker or path failure"
+      ]
+    }
+  ],
+  "graph_healthy": false
+}

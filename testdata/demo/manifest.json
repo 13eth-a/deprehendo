@@ -1,0 +1,93 @@
+{
+  "version": 2,
+  "scope": "Dashboard fixture mode (7.41) and screenshot-quality demo incidents (7.42). The dashboard reads this file instead of a database. Bundles come from the checked-in Phase 2-6 corpus (source \"fixture\") or from real GitHub runner captures made for 7.62 (source \"real-runner\"), so frontend work never waits for a real CI failure.",
+  "bundle_roots": ["testdata/incidents", "testdata/github/real-runner-demo"],
+  "engine_note": "engine_verdict is the verdict the current engine reaches on each bundle. The OOM kill and the communication stall were first synthetic fixtures that abstained, because their discriminators (a kernel OOM signal, socket progress) did not exist there. They are now real traced captures from a self-hosted GitHub runner (7.62, November 21, 2026): the OOM kill reaches OOM_KILL from the job cgroup's kernel OOM counter. The communication stall still abstains in the generic engine by design (bundles carry no socket byte counters), and its finding is the GitHub provider signature, recorded in provider_signature. The dashboard must render the abstention honestly, not infer a cause.",
+  "scenarios": [
+    {
+      "id": "oom-kill",
+      "title": "OOM kill",
+      "checklist": "7.41 oom",
+      "source": "real-runner",
+      "bundle": "testdata/github/real-runner-demo/7.62-oom.runopsy",
+      "declared_label": "OOM_KILL",
+      "engine_verdict": "OOM_KILL",
+      "headline": true,
+      "summary": "A GitHub Actions job on a 4 GiB self-hosted runner allocates 4 GiB and the kernel kills it. The job cgroup's OOM counter rises as host memory peaks at 96.8%, and the killed process held 83% of resident memory, so the engine names OOM_KILL at HIGH confidence; the job fails with exit code 137.",
+      "panels": ["overview", "diagnosis", "causal", "resources", "timeline"]
+    },
+    {
+      "id": "frozen-worker",
+      "title": "Frozen worker",
+      "checklist": "7.41 frozen worker",
+      "source": "fixture",
+      "bundle": "testdata/incidents/frozen-worker.runopsy",
+      "declared_label": "FROZEN_PROCESS",
+      "engine_verdict": "FROZEN_PROCESS",
+      "headline": true,
+      "summary": "The watched Runner.Worker stops running and never resumes. The stopped state is visible in every sample, so the engine names the signature with high confidence.",
+      "panels": ["overview", "diagnosis", "causal", "timeline", "process-tree", "events"]
+    },
+    {
+      "id": "broker-stall",
+      "title": "GitHub communication stall",
+      "checklist": "7.41 broker stall",
+      "source": "real-runner",
+      "bundle": "testdata/github/real-runner-demo/7.62-stall.runopsy",
+      "declared_label": "GITHUB_RUNNER_COMMUNICATION_STALL",
+      "engine_verdict": "UNKNOWN",
+      "provider_signature": "GITHUB_RUNNER_COMMUNICATION_STALL",
+      "headline": true,
+      "summary": "An idle self-hosted runner loses all outbound HTTPS for three minutes. The GitHub provider reports GITHUB_RUNNER_COMMUNICATION_STALL at MEDIUM confidence; the generic engine abstains because bundles carry no socket byte counters, and the network panel shows the runner's sockets stop progressing.",
+      "panels": ["overview", "diagnosis", "network", "timeline", "events"]
+    },
+    {
+      "id": "network-failure",
+      "title": "Network path failure",
+      "checklist": "7.41 network failure",
+      "source": "fixture",
+      "bundle": "testdata/incidents/network-failure.runopsy",
+      "declared_label": "NETWORK_PATH_FAILURE",
+      "engine_verdict": "NETWORK_PATH_FAILURE",
+      "headline": false,
+      "summary": "The established connection leaves ESTABLISHED with no replacement and SYN attempts accumulate against two peers; the engine names the network path.",
+      "panels": ["overview", "diagnosis", "network", "timeline", "events"]
+    },
+    {
+      "id": "orphan-worker",
+      "title": "Orphaned job",
+      "checklist": "7.41 orphan worker",
+      "source": "fixture",
+      "bundle": "testdata/incidents/orphan.runopsy",
+      "declared_label": "ORPHAN_PROCESS_TREE",
+      "engine_verdict": "ORPHAN_PROCESS_TREE",
+      "headline": true,
+      "summary": "The listener exits, the worker is adopted by PID 1 and keeps running to the end of the capture. The process tree panel shows the reparenting.",
+      "panels": ["overview", "diagnosis", "causal", "process-tree", "timeline"]
+    },
+    {
+      "id": "runner-self-kill",
+      "title": "Runner self-termination",
+      "checklist": "7.41 runner self-kill",
+      "source": "fixture",
+      "bundle": "testdata/incidents/process-group-kill.runopsy",
+      "declared_label": "PROCESS_GROUP_TERMINATION",
+      "engine_verdict": "PROCESS_GROUP_TERMINATION",
+      "headline": true,
+      "summary": "Three processes in one process group vanish between two samples. The causal chain and the process tree together show the whole group going away at once.",
+      "panels": ["overview", "diagnosis", "causal", "process-tree", "timeline", "events"]
+    },
+    {
+      "id": "healthy-cancellation",
+      "title": "Healthy job cancellation",
+      "checklist": "7.41 healthy cancellation",
+      "source": "fixture",
+      "bundle": "testdata/incidents/healthy-parent-exit.runopsy",
+      "declared_label": "NO_KNOWN_FAILURE",
+      "engine_verdict": "UNKNOWN",
+      "headline": false,
+      "summary": "The watched parent exits by design and its child finishes and exits before capture end. A correct dashboard shows no failure here; this is the corpus's nearest clean-teardown baseline.",
+      "panels": ["overview", "diagnosis", "timeline", "process-tree"]
+    }
+  ]
+}

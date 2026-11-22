@@ -1,0 +1,37 @@
+{
+  "events": [
+    {
+      "type": "MEMORY_LIMIT_REACHED",
+      "at": "2026-10-27T12:00:00Z",
+      "subject": { "kind": "host", "id": "local" },
+      "data": { "memory_percent": 99 },
+      "episode": "memory:host:local#1"
+    },
+    {
+      "type": "OOM_EVENT",
+      "at": "2026-10-27T12:00:00.2Z",
+      "subject": { "kind": "process", "id": "42@7" },
+      "data": { "event": "oom", "scope": "host", "victim_pid": 42, "victim_start_ticks": 7 }
+    },
+    {
+      "type": "PROCESS_EXITED",
+      "at": "2026-10-27T12:00:00.4Z",
+      "subject": { "kind": "process", "id": "42@7" },
+      "data": { "exit_state": "killed" },
+      "pid": 42,
+      "start_ticks": 7
+    }
+  ],
+  "injected": [
+    {
+      "rule": "MEMORY_LIMIT_CAUSES_OOM@2",
+      "from": { "type": "MEMORY_LIMIT_REACHED" },
+      "to": { "type": "OOM_EVENT" }
+    },
+    {
+      "rule": "OOM_CAUSES_PROCESS_EXIT@2",
+      "from": { "type": "OOM_EVENT" },
+      "to": { "type": "PROCESS_EXITED" }
+    }
+  ]
+}

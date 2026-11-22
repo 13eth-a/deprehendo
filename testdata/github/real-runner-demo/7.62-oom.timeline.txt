@@ -1,0 +1,128 @@
+TIMELINE (UTC; order only, no cross-provider causal edges)
+07:15:27.515  GITHUB_RUNNER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e process=6272@342835
+07:15:44.245  CONNECTION_OPENED subject=socket:inode-46797
+07:15:44.995  CONNECTION_CLOSED subject=socket:inode-46797
+07:15:44.995  CONNECTION_OPENED subject=socket:inode-45797
+07:15:44.995  CONNECTION_OPENED subject=socket:port:[REDACTED]:34268:[REDACTED]:443
+07:15:45.000  GITHUB_JOB_ACCEPTED source=RUNNER_LOG runner=rnr_e98964795cd1280e provenance=file:2@33806
+07:15:45.000  GITHUB_JOB_ASSIGNED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 provenance=file:2@33226
+07:15:45.748  CONNECTION_OPENED subject=socket:inode-45802
+07:15:45.871  PROCESS_STARTED subject=process:8058@1462439
+07:15:45.995  GITHUB_WORKER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e worker=wkr_166a83cc3159a556 process=8058@1462439
+07:15:46.995  CONNECTION_OPENED subject=socket:inode-46955
+07:15:47.245  CONNECTION_OPENED subject=socket:inode-45956
+07:15:47.245  CONNECTION_OPENED subject=socket:inode-46982
+07:15:47.245  CONNECTION_OPENED subject=socket:inode-46985
+07:15:47.446  PROCESS_STARTED subject=process:8074@1462597
+07:15:47.454  PROCESS_STARTED subject=process:8076@1462598
+07:15:47.496  CONNECTION_CLOSED subject=socket:inode-46982
+07:15:47.496  CONNECTION_OPENED subject=socket:inode-45966
+07:15:47.496  CONNECTION_OPENED subject=socket:port:[REDACTED]:43620:[REDACTED]:443
+07:15:47.746  CONNECTION_CLOSED subject=socket:port:[REDACTED]:43620:[REDACTED]:443
+07:15:48.503  CONNECTION_CLOSED subject=socket:inode-45956
+07:15:48.503  CONNECTION_OPENED subject=socket:port:[REDACTED]:57870:[REDACTED]:443
+07:15:48.748  CONNECTION_CLOSED subject=socket:port:[REDACTED]:57870:[REDACTED]:443
+07:15:48.748  CONNECTION_OPENED subject=socket:inode-45991
+07:15:49.496  CONNECTION_OPENED subject=socket:inode-47042
+07:15:53.998  MEMORY_PRESSURE_STARTED subject=host:local
+07:15:55.995  OOM_EVENT subject=cgroup:[REDACTED]
+07:15:56.000  GITHUB_JOB_COMPLETED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 outcome=FAILED provenance=file:4@61301
+07:15:56.250  MEMORY_RECOVERED subject=host:local
+07:15:56.295  PROCESS_EXITED subject=process:8076@1462598
+07:15:56.302  PROCESS_EXITED subject=process:8074@1462597
+07:15:56.496  CONNECTION_CLOSED subject=socket:inode-46985
+07:15:56.496  CONNECTION_OPENED subject=socket:port:[REDACTED]:43608:[REDACTED]:443
+07:15:56.496  GITHUB_JOB_TREE_EMPTIED source=DERIVED runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 process=8058@1462439 provenance=sample:114
+07:15:56.508  INCIDENT_TRIGGERED subject=host:local
+07:15:56.747  CONNECTION_CLOSED subject=socket:port:[REDACTED]:43608:[REDACTED]:443
+07:15:58.000  GITHUB_JOB_COMPLETED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 outcome=FAILED provenance=file:2@36315
+07:15:58.478  PROCESS_EXITED subject=process:8058@1462439
+07:15:58.495  CONNECTION_CLOSED subject=socket:inode-43995
+07:15:58.495  CONNECTION_CLOSED subject=socket:inode-45966
+07:15:58.495  CONNECTION_CLOSED subject=socket:inode-45991
+07:15:58.495  CONNECTION_CLOSED subject=socket:inode-46955
+07:15:58.495  CONNECTION_CLOSED subject=socket:inode-47042
+07:15:58.495  CONNECTION_OPENED subject=socket:port:[REDACTED]:38194:[REDACTED]:443
+07:15:58.495  CONNECTION_OPENED subject=socket:port:[REDACTED]:48852:[REDACTED]:443
+07:15:58.495  CONNECTION_OPENED subject=socket:port:[REDACTED]:55558:[REDACTED]:443
+07:15:58.495  CONNECTION_OPENED subject=socket:port:[REDACTED]:57876:[REDACTED]:443
+07:15:58.495  GITHUB_WORKER_EXITED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e worker=wkr_166a83cc3159a556 process=8058@1462439
+07:15:58.745  CONNECTION_CLOSED subject=socket:port:[REDACTED]:48852:[REDACTED]:443
+07:15:58.745  CONNECTION_CLOSED subject=socket:port:[REDACTED]:55558:[REDACTED]:443
+07:15:58.745  CONNECTION_CLOSED subject=socket:port:[REDACTED]:57876:[REDACTED]:443
+07:15:58.745  CONNECTION_OPENED subject=socket:inode-48907
+RUNOPSY ANALYSIS
+
+GitHub Actions
+Runner        WITHHELD source=UNKNOWN
+Version       24.04.5 source=RUNNER_LOG
+Repository    UNKNOWN source=UNKNOWN
+Workflow      UNKNOWN source=UNKNOWN
+Job           UNKNOWN source=UNKNOWN ref=job_f702db9122cbd022
+Run           UNKNOWN source=UNKNOWN
+Attempt       UNKNOWN source=UNKNOWN
+Job outcome   FAILED source=RUNNER_LOG
+
+Kernel trace evidence
+Tracing            active (proc_connector)
+Events lost        0 observed on the wire
+Coverage           complete for the traced event classes
+
+Underlying systems diagnosis
+OOM_KILL
+Confidence: HIGH (0.80)
+process vanished while memory was at or near exhaustion
+Evidence quality: direct
+Related events: EV_32c91dd83c67
+
+Causal reconstruction
+
+CAUSAL ANALYSIS — primary failure (PROCESS_EXITED)
+Failure PROCESS_EXITED on process:8076@1462598 at 2026-11-21T07:15:56Z (relative T+1m29.786s)
+Evidence quality: direct
+Root cause: UNKNOWN
+Known chain:
+  T+1m29.786s  PROCESS_EXITED (on process:8076@1462598)  [kernel trace]
+Missing evidence:
+- OOM_RECORD_IDENTIFIES_VICTIM unobservable in this bundle is not checkable in v1 bundles
+- exit status and signal lineage are not captured in v1 bundles
+
+Secondary failure
+Failure PROCESS_EXITED on process:8074@1462597 at 2026-11-21T07:15:56Z (relative T+1m29.793s)
+Evidence quality: direct
+Root cause: UNKNOWN
+Known chain:
+  T+1m29.793s  PROCESS_EXITED (on process:8074@1462597)  [kernel trace]
+Missing evidence:
+- OOM_RECORD_IDENTIFIES_VICTIM unobservable in this bundle is not checkable in v1 bundles
+- exit status and signal lineage are not captured in v1 bundles
+
+Secondary failure
+Failure PROCESS_EXITED on process:8058@1462439 at 2026-11-21T07:15:58Z (relative T+1m31.969s)
+Evidence quality: direct
+Root cause: UNKNOWN
+Known chain:
+  T+1m31.969s  PROCESS_EXITED (on process:8058@1462439)  [kernel trace]
+Missing evidence:
+- exit status and signal lineage are not captured in v1 bundles
+
+Incident: inc_742cd5839ae9712ae70fdb65361042ea  Triggered: 2026-11-21T07:15:56.508857411Z
+
+PROVIDER EVIDENCE
+github-actions  health=AVAILABLE
+  Runner WITHHELD version=24.04.5 lifecycle=PERSISTENT
+  job job_f702db9122cbd022 repository=UNKNOWN workflow=UNKNOWN name=UNKNOWN run=UNKNOWN attempt=UNKNOWN outcome=FAILED
+  2026-11-21T07:15:27Z RUNNER_STARTED source=LOCAL_PROCESS
+  2026-11-21T07:15:45Z WORK_ASSIGNED source=RUNNER_LOG
+  2026-11-21T07:15:45Z WORK_ASSIGNED source=RUNNER_LOG
+  2026-11-21T07:15:45Z WORKER_STARTED source=LOCAL_PROCESS
+  2026-11-21T07:15:58Z WORKER_EXITED source=LOCAL_PROCESS
+GITHUB ACTIONS TIMELINE (UTC)
+07:15:27.515  GITHUB_RUNNER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e process=6272@342835
+07:15:45.000  GITHUB_JOB_ACCEPTED source=RUNNER_LOG runner=rnr_e98964795cd1280e provenance=file:2@33806
+07:15:45.000  GITHUB_JOB_ASSIGNED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 provenance=file:2@33226
+07:15:45.995  GITHUB_WORKER_STARTED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e worker=wkr_166a83cc3159a556 process=8058@1462439
+07:15:56.000  GITHUB_JOB_COMPLETED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 outcome=FAILED provenance=file:4@61301
+07:15:56.496  GITHUB_JOB_TREE_EMPTIED source=DERIVED runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 process=8058@1462439 provenance=sample:114
+07:15:58.000  GITHUB_JOB_COMPLETED source=RUNNER_LOG runner=rnr_e98964795cd1280e job=job_f702db9122cbd022 worker=wkr_166a83cc3159a556 outcome=FAILED provenance=file:2@36315
+07:15:58.495  GITHUB_WORKER_EXITED source=LOCAL_PROCESS runner=rnr_e98964795cd1280e worker=wkr_166a83cc3159a556 process=8058@1462439

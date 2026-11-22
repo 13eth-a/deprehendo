@@ -1,0 +1,48 @@
+{
+  "name": "job-assignment-stall",
+  "notes": "Assignment logged while the listener stays alive and no worker ever spawns. The assignment must stay unbound and no failure may be invented.",
+  "install": [
+    {
+      "key": "a",
+      "name": "linux-prod-03",
+      "version": "2.320.0",
+      "runner_log": [
+        "2026-10-28 11:59:59.000 +00:00 [RUNNER 1] Listening for Jobs"
+      ]
+    }
+  ],
+  "snapshots": [
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}],
+      "runner_log": ["2026-10-28 12:00:00.200 +00:00 [RUNNER 1] Received job message"]
+    },
+    {
+      "at": "2026-10-28T12:00:10Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:20Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    },
+    {
+      "at": "2026-10-28T12:00:30Z",
+      "processes": [{"pid": 5218, "ppid": 1, "pgid": 5218, "start_ticks": 10, "name": "Runner.Listener", "state": "S"}],
+      "connections": [{"local_addr": "10.0.0.7", "local_port": 52000, "remote_addr": "140.82.121.3", "remote_port": 443, "state": "ESTABLISHED", "inode": 9001, "pid": 5218, "start_ticks": 10, "fd": 5}]
+    }
+  ],
+  "expected": {
+    "runners": 1,
+    "runner_version": "2.320.0",
+    "health": "AVAILABLE",
+    "events": ["GITHUB_RUNNER_STARTED", "GITHUB_JOB_ASSIGNED"],
+    "absent_events": ["GITHUB_WORKER_STARTED", "GITHUB_JOB_PROGRESS_STOPPED", "GITHUB_COMMUNICATION_STALLED", "GITHUB_RUNNER_STOPPED"],
+    "workers": 0,
+    "jobs": 0,
+    "socket_roles": ["CONTROL_CHANNEL"],
+    "absent_conflict_topics": ["JOB_STATE", "TERMINATION_INTENT"]
+  }
+}

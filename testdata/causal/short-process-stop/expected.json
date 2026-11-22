@@ -1,0 +1,34 @@
+{
+  "name": "short-process-stop",
+  "class": "HEALTHY",
+  "notes": [
+    "A worker stops for 10s and resumes inside the capture: the stop is an episode with an observed resolution.",
+    "The CPU-saturation rule needs sustained CPU and a stop; the process was cold, so no edge is claimed.",
+    "Recovery events are not root causes (4.26)."
+  ],
+  "events": [
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_RESUMED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_STOPPED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "CPU_SATURATION_STARTED",
+    "CPU_SATURATION_ENDED",
+    "PROCESS_EXITED"
+  ],
+  "edges": [],
+  "failures": [],
+  "graph_healthy": true
+}

@@ -1,0 +1,16 @@
+.git
+.github
+bin
+node_modules
+web
+trace-rs
+tests
+testdata
+docs
+scripts
+storage
+tmp-smoke-*
+.env
+.env.*
+*.runopsy
+token.txt

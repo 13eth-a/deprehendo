@@ -1,0 +1,54 @@
+{
+  "name": "a5-explain-contradiction-check",
+  "class": "GOLDEN",
+  "notes": [
+    "A5 (2.3 I2): every declared contradiction check is evaluated and reported with its status; the exit-to-reparent edge names CHILD_REPARENTED_BEFORE_EXIT and its ABSENT status.",
+    "The phrase 'none recorded' must not appear in the explanation when declared checks exist - the audited engine printed it in the alternatives filler while the check evaluation itself was already honest (8.2 I2).",
+    "No OOM_EVENT may appear: v1 carries no kernel record for a normal process exit.",
+    "Re-audit 2026-10-28 (principal, causal-semantics.md \u00a75.2 clarified): a failure is never its own candidate, and an escalation-only path is the anchor's own episode (known chain), not a contributing factor. Suspected-kill/write-failure alternatives explain exit failures only, never a condition anchor."
+  ],
+  "events": [
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_EXITED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_REPARENTED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "edges": [
+    {
+      "from_type": "PROCESS_EXITED",
+      "to_type": "PROCESS_REPARENTED",
+      "relation": "CAUSES",
+      "rule": "PROCESS_EXIT_CAUSES_REPARENT@2",
+      "confidence": "MEDIUM",
+      "explain_must_mention": [
+        "CHILD_REPARENTED_BEFORE_EXIT"
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "anchor_type": "PROCESS_EXITED",
+      "status": "UNKNOWN",
+      "candidates": [],
+      "chain_types": [
+        "PROCESS_EXITED",
+        "PROCESS_REPARENTED"
+      ],
+      "missing_evidence_includes": [
+        "exit status and signal lineage are not captured in v1 bundles"
+      ]
+    }
+  ],
+  "graph_healthy": false
+}

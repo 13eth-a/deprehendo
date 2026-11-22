@@ -1,0 +1,28 @@
+{
+  "name": "long-idle-socket",
+  "class": "HEALTHY",
+  "notes": [
+    "An established connection with no traffic for the whole capture is not evidence of a stall.",
+    "Progress telemetry is absent, so the idle period adds only the recorded open fact: silence is not a claim."
+  ],
+  "events": [
+    {
+      "type": "CONNECTION_OPENED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "NETWORK_PROGRESS_STOPPED",
+    "NETWORK_PROGRESS_RESUMED",
+    "CONNECTION_CLOSED"
+  ],
+  "edges": [],
+  "failures": [],
+  "graph_healthy": true
+}

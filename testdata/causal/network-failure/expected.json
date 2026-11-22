@@ -1,0 +1,34 @@
+{
+  "name": "network-failure",
+  "class": "GOLDEN",
+  "notes": [
+    "The connection opens at T+2s and closes at T+15s while the host stays healthy.",
+    "A close is a recorded fact, but v1 has no broker/progress telemetry to connect it to an application failure; no edge is claimed.",
+    "CONNECTION_CLOSED is reported as the observed failure with root cause UNKNOWN."
+  ],
+  "events": [
+    {
+      "type": "CONNECTION_CLOSED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "CONNECTION_OPENED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "forbidden_events": [
+    "NETWORK_PROGRESS_STOPPED",
+    "NETWORK_PROGRESS_RESUMED",
+    "OOM_EVENT"
+  ],
+  "edges": [],
+  "failures": [],
+  "graph_healthy": true
+}

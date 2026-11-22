@@ -1,0 +1,34 @@
+# Build output
+/bin/
+/dist/
+/trace-rs/target/
+
+# Test and profiling artifacts
+*.test
+coverage.txt
+coverage.html
+cpu.prof
+mem.prof
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Test scratch directories left behind by smoke runs
+tmp-smoke-*/
+
+# Local environment
+.env
+.env.local
+.neon
+node_modules/
+.env.railway
+
+# Next.js (web/ dashboard host)
+web/.next/
+web/next-env.d.ts
+web/*.tsbuildinfo
+
+# Private planning notes
+/docs/archive/

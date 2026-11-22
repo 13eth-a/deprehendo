@@ -1,0 +1,51 @@
+{
+  "name": "orphan-process",
+  "class": "GOLDEN",
+  "notes": [
+    "PID 800 exits at T+4s and its child PID 900 is observed with PPID 1 from T+6s.",
+    "The reparent edge requires the recorded PPID lineage, not mere adjacency and not the child's PID range.",
+    "The parent exit is the failure anchor; its own cause is UNKNOWN, and the known chain is exit -> reparent (MEDIUM edge). The incident trigger is not a cause.",
+    "Re-audit 2026-10-28 (principal, causal-semantics.md \u00a75.2 clarified): a failure is never its own candidate, and an escalation-only path is the anchor's own episode (known chain), not a contributing factor. Suspected-kill/write-failure alternatives explain exit failures only, never a condition anchor."
+  ],
+  "events": [
+    {
+      "type": "INCIDENT_TRIGGERED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_EXITED",
+      "count": 1,
+      "onset_unknown": false
+    },
+    {
+      "type": "PROCESS_REPARENTED",
+      "count": 1,
+      "onset_unknown": false
+    }
+  ],
+  "edges": [
+    {
+      "from_type": "PROCESS_EXITED",
+      "to_type": "PROCESS_REPARENTED",
+      "relation": "CAUSES",
+      "rule": "PROCESS_EXIT_CAUSES_REPARENT@2",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "failures": [
+    {
+      "anchor_type": "PROCESS_EXITED",
+      "status": "UNKNOWN",
+      "candidates": [],
+      "chain_types": [
+        "PROCESS_EXITED",
+        "PROCESS_REPARENTED"
+      ],
+      "missing_evidence_includes": [
+        "exit status and signal lineage are not captured in v1 bundles"
+      ]
+    }
+  ],
+  "graph_healthy": false
+}
