@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 // resolveExclusions must suppress the weaker side of an excluded pair only

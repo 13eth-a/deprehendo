@@ -23,7 +23,7 @@ package github
 import (
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 // logDisconnectGrace is how long a stated disconnect may stay unanswered by

@@ -4,7 +4,7 @@ Status: **design, November 5, 2026.** Covers checklist items 7.1, 7.2, 7.9,
 7.34 and 7.38, plus the constraints 7.7, 7.8, 7.30, 7.33, 7.36, 7.37 and 7.43
 inherit from them. Every claim about current code names the file it comes
 from; every number in §5 was measured on this tree (2-vCPU x86_64 sandbox,
-Go 1.24, `runopsy-agent` built from the November 4 tree).
+Go 1.24, `deprehendo-agent` built from the November 4 tree).
 
 Decisions marked **[user]** need the owner's answer before engineering builds the
 piece that depends on them. Everything else is decided here; changing it
@@ -20,7 +20,7 @@ needs a reason written into this file.
 |---|---|
 | accounts, sessions, personal API tokens | run or provision runners |
 | organizations and memberships (owner, member) | remote execution or remediation |
-| receive `.runopsy` uploads and keep the original bytes | fleet orchestration, CI compute |
+| receive `.deprehendo` uploads and keep the original bytes | fleet orchestration, CI compute |
 | run the **unmodified Go analyzer** on an upload and store its output | its own interpretation of a bundle in TypeScript |
 | list, filter and search incident metadata (Postgres) | billing, plans, RBAC beyond owner/member |
 | render the stored analysis | changing a stored diagnosis in the dashboard |
@@ -29,9 +29,9 @@ needs a reason written into this file.
 Local-first invariants. Each is a test, not a principle:
 
 - **L1.** The agent records, freezes, diagnoses and writes a bundle with the
-  network down. Nothing in `cmd/runopsy-agent` or `internal/agent` may import
+  network down. Nothing in `cmd/deprehendo-agent` or `internal/agent` may import
   cloud code on the capture path.
-- **L2.** `runopsy-agent analyze` on a laptop and the cloud produce the same
+- **L2.** `deprehendo-agent analyze` on a laptop and the cloud produce the same
   analysis document, byte for byte, for the same bundle and engine (§3.4).
 - **L3.** Upload is a separate step after the local write succeeded (7.46:
   "local persistence happens first"). An upload failure never deletes,
@@ -44,7 +44,7 @@ Local-first invariants. Each is a test, not a principle:
 ## 2. Architecture (7.2)
 
 ```text
- runopsy-agent (CLI)                       browser
+ deprehendo-agent (CLI)                       browser
    │ 1. POST /api/uploads  (token)            │
    │ ◄── upload id + presigned PUT URL         │
    │ 2. PUT bundle ──────────────┐             │
@@ -132,7 +132,7 @@ contract below holds for either; only §5.4's outer layer differs.
 
 ### 3.1 Decision
 
-TypeScript never opens a `.runopsy` archive and never decides what an event,
+TypeScript never opens a `.deprehendo` archive and never decides what an event,
 signature or edge means. The Go analyzer turns a verified bundle into an
 **analysis document**; web stores and renders that document. The dashboard
 may filter, sort, paginate and format; it may not derive a diagnosis,
@@ -140,7 +140,7 @@ confidence, causal link or evidence class.
 
 ### 3.2 What exists and what is missing
 
-`runopsy-agent analyze --json` (`cmd/runopsy-agent/analyze.go`) emits the
+`deprehendo-agent analyze --json` (`cmd/deprehendo-agent/analyze.go`) emits the
 diagnosis report, provider interpretations and `causal.FailureAnalysis` list.
 It does **not** emit what 7.13–7.24 render: the timeline, snapshots (resource
 series, process tree, connections), the causal graph's nodes and edges with
@@ -148,10 +148,10 @@ their checks, per-link evidence class (`newQualityResolver`), the privacy
 report, or the manifest.
 
 The orchestration that produces these lives in package `main`:
-`buildCausalGraph` and `diagnosisOptions` (`cmd/runopsy-agent/timeline.go`)
+`buildCausalGraph` and `diagnosisOptions` (`cmd/deprehendo-agent/timeline.go`)
 wire provider intent covers into both the causal graph and the diagnosis
 engine. A second caller that re-implemented that wiring would be the "two
-Runopsys" 7.9 forbids.
+Deprehendos" 7.9 forbids.
 
 ### 3.3 Required change (engineering, first)
 
@@ -159,9 +159,9 @@ Runopsys" 7.9 forbids.
    `analysis.Run(bundle *incident.Bundle, opts Options) (*Document, error)`.
    `analyze`, `timeline` and the worker all call it. The CLI keeps its text
    renderers; they read from the `Document`.
-2. `runopsy-agent analyze --document FILE` writes the document as JSON. The
+2. `deprehendo-agent analyze --document FILE` writes the document as JSON. The
    existing `--json` output stays as it is for compatibility.
-3. The document, `runopsy.analysis` v1:
+3. The document, `deprehendo.analysis` v1:
 
    | field | content |
    |---|---|
@@ -189,7 +189,7 @@ Runopsys" 7.9 forbids.
 ### 3.4 Local/cloud equality (feeds 7.43)
 
 The equality test is mechanical: for every fixture in `testdata/incidents/`,
-`runopsy-agent analyze --document` output must equal the document the worker
+`deprehendo-agent analyze --document` output must equal the document the worker
 stored, byte for byte, when both report the same engine identity. If they
 differ, the cloud is wrong by definition.
 
@@ -255,7 +255,7 @@ not add a second ZIP or JSON parser.
 ### 5.2 What it costs: measured
 
 Valid bundles built with `incident.Encode` (repeating snapshots of 50–100
-processes), then `runopsy-agent analyze --json`:
+processes), then `deprehendo-agent analyze --json`:
 
 | expanded payload | upload (compressed) | `validate` only | `analyze --json` | peak RSS |
 |---:|---:|---:|---:|---:|
@@ -303,7 +303,7 @@ organizations through a shared process. So:
    stdout, errors on stderr (truncated to 4 KiB, never containing bundle
    content).
 2. The child binary is built with **`CGO_ENABLED=0`**. The default build of
-   `runopsy-agent` links `runtime/cgo` through `net` (GitHub API code), which
+   `deprehendo-agent` links `runtime/cgo` through `net` (GitHub API code), which
    the analysis path does not need. Measured: the static build produces
    byte-identical output.
 3. Limits on the child: `RLIMIT_CPU` 70 s and `RLIMIT_NOFILE` 16 (both
@@ -340,14 +340,14 @@ failure; it does not produce a diagnosis document or bundle-derived metadata.
 
 ## 6. Storage, identity and duplicates (constraints for 7.7, 7.28–7.30)
 
-- Original key: `orgs/{organization_id}/bundles/{sha256}.runopsy`. Analysis
+- Original key: `orgs/{organization_id}/bundles/{sha256}.deprehendo`. Analysis
   document key: `orgs/{organization_id}/analyses/{analysis_id}.json`. Object
   ACLs private; content-type `application/octet-stream` and
   `Content-Disposition: attachment` on download; never served inline.
 - **Duplicate = same organization, same SHA-256 of the bytes.** `complete`
   returns the existing incident (7.30's preference). The same bytes in two
   organizations are two independent uploads.
-- **`incident_id` is not unique.** `runopsy-agent github locate` re-encodes
+- **`incident_id` is not unique.** `deprehendo-agent github locate` re-encodes
   an enriched bundle (`github_api_cli.go` calls `incident.Encode`), so one
   incident legitimately exists as two different byte sequences with the same
   `incident_id`. Store both; the list groups uploads by `incident_id` within
@@ -413,7 +413,7 @@ today.
    named earlier, has been maintained for security fixes only since September
    2025.) The dashboard sends Better Auth's session JWT (EdDSA) as a Bearer
    token. The API verifies it against the auth service's JWKS and maps `sub`
-   to `memberships`; `X-Runopsy-Organization` selects the organization.
+   to `memberships`; `X-Deprehendo-Organization` selects the organization.
    Personal API tokens for the CLI stay in our own table, stored as hashes.
    Design and build plan: `docs/cloud/browser-auth.md`.
 3. **Rate defaults** in §5.3. **Decided November 9, 2026:** keep the §5.3
@@ -440,8 +440,8 @@ engineering backend completion"): `internal/analysis` + document v1, engine iden
 with the golden fingerprint, the analyzer worker with its limits, the §7.1
 schema, and the upload flow with dedupe — implemented as the Go server
 `internal/cloudserver` (`POST /api/uploads`, `POST /storage`, `POST
-/api/uploads/{id}/complete`) behind `runopsy-cloud serve`, with migrations
-applied by `runopsy-cloud migrate` (real runner, tested twice against Postgres).
+/api/uploads/{id}/complete`) behind `deprehendo-cloud serve`, with migrations
+applied by `deprehendo-cloud migrate` (real runner, tested twice against Postgres).
 
 Also landed with it: the org-scoped read endpoints (7.35, `docs/cloud/read-api.md`),
 metadata search and filters (7.25/7.13), delete/download with digest

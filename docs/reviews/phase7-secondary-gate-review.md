@@ -9,7 +9,7 @@ items, plus adversarial's H1 follow-up.
 - Static review of `internal/cloudserver/storage.go`, `server.go`, `incidents.go`,
   `complete.go`, `reanalyze.go`, `usage.go`, `retention.go`,
   `internal/cloudclient/client.go`, `internal/cloudserver/browserauth.go`,
-  `cmd/runopsy-cloud/main.go`, and `Dockerfile`.
+  `cmd/deprehendo-cloud/main.go`, and `Dockerfile`.
 - Checked cited security-gate test names and read the deletion-failure test.
   No tests or deployment checks were run for this review.
 
@@ -34,7 +34,7 @@ guarantee erasure after a storage failure.
 | G4 analyzer concurrency | Confirmed | Both per-org and server-wide limits are checked; waiters observe request cancellation. |
 | G5 server timeouts | Confirmed | `ReadTimeout`, `WriteTimeout`, `IdleTimeout`, and `MaxHeaderBytes` are configured in `serve`. |
 | G6 client error sanitization | Not independently re-audited | The principal report cites existing client tests; this review did not rerun them. |
-| G7 non-root container | Confirmed in source | Final Docker stage uses `USER runopsy`; actual image execution was not checked. |
+| G7 non-root container | Confirmed in source | Final Docker stage uses `USER deprehendo`; actual image execution was not checked. |
 | Usage limits | Confirmed in source | Rolling 60-minute counter and daily parse-seconds check match the recorded decision. Fail-open database behavior and concurrent read/charge are documented residuals. |
 | Browser sessions | Still open for product review | API JWT verification and per-request membership lookup exist. Dashboard cookie flags, host headers, CSP, and deployed browser flow still need review when hosted. |
 | Dependency and deployment evidence | Not rerun | The principal report's November 11–12 owner runs remain the evidence; this review did not repeat scans, builds, or production checks. |
@@ -52,7 +52,7 @@ adversarial's H1 for the manual delete path.
 
 **Status: fixed November 16, 2026.** `PruneUploadsOlderThan` now deletes objects
 before the row, treats a missing object as deleted, and stops on the first other
-storage error with the row kept for a rerun; `runopsy-cloud prune` prints partial
+storage error with the row kept for a rerun; `deprehendo-cloud prune` prints partial
 progress and exits non-zero. `TestPhase7PruneKeepsRowWhenStorageFails` makes the
 bundle delete fail, checks the row and analysis survive, then reruns and checks
 nothing is left. `docs/cloud/operations.md` describes the new order. The finding

@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-// the parent/child scenarios spawn real children of ./cmd/runopsy-sim so the
+// the parent/child scenarios spawn real children of ./cmd/deprehendo-sim so the
 // process table shows a genuine parent/worker hierarchy. under `go test` the
 // running process is the test binary, which does not accept scenario
 // arguments, so TestMain builds the real sim binary once and every test that
@@ -16,7 +16,7 @@ import (
 var simBinaryPath string
 
 func TestMain(m *testing.M) {
-	dir, err := os.MkdirTemp("", "runopsy-sim-build")
+	dir, err := os.MkdirTemp("", "deprehendo-sim-build")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "test setup:", err)
 		os.Exit(1)
@@ -26,13 +26,13 @@ func TestMain(m *testing.M) {
 		fmt.Fprintln(os.Stderr, "test setup:", err)
 		os.Exit(1)
 	}
-	buildcmd := exec.Command("go", "build", "-o", filepath.Join(dir, "runopsy-sim"), "./cmd/runopsy-sim")
+	buildcmd := exec.Command("go", "build", "-o", filepath.Join(dir, "deprehendo-sim"), "./cmd/deprehendo-sim")
 	buildcmd.Dir = root
 	if out, err := buildcmd.CombinedOutput(); err != nil {
-		fmt.Fprintln(os.Stderr, "go build ./cmd/runopsy-sim:", err, string(out))
+		fmt.Fprintln(os.Stderr, "go build ./cmd/deprehendo-sim:", err, string(out))
 		os.Exit(1)
 	}
-	simBinaryPath = filepath.Join(dir, "runopsy-sim")
+	simBinaryPath = filepath.Join(dir, "deprehendo-sim")
 
 	code := m.Run()
 	if err := os.RemoveAll(dir); err != nil {
@@ -64,7 +64,7 @@ func moduleRoot() (string, error) {
 	}
 }
 
-// simBinary returns the path of the test-built runopsy-sim binary and points
+// simBinary returns the path of the test-built deprehendo-sim binary and points
 // SimBinary at it for the current test.
 func simBinary(t *testing.T) string {
 	t.Helper()

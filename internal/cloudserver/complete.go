@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"time"
 
-	"runopsy/internal/analyzer"
+	"deprehendo/internal/analyzer"
 )
 
 // loadOwnUpload fetches one upload row scoped to the caller's organization

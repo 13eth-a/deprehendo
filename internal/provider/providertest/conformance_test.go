@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/incident"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // exampleProvider is the smallest provider that satisfies the contract. it is

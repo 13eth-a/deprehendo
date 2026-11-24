@@ -20,7 +20,7 @@ type exitCodeError struct{ Code int }
 func (e exitCodeError) Error() string { return fmt.Sprintf("scenario exit code %d", e.Code) }
 
 // ExitScenario ends the process with a caller-chosen code. it exists so the
-// rest of runopsy (and the future phase 1 recorder) can rehearse arbitrary
+// rest of deprehendo (and the future phase 1 recorder) can rehearse arbitrary
 // termination outcomes, including the signal-shaped 128+N codes.
 type ExitScenario struct {
 	Code int

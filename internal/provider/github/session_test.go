@@ -17,11 +17,11 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
-	"runopsy/internal/provider/providertest"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
+	"deprehendo/internal/provider/providertest"
 )
 
 // TestMain registers the provider once so section validation can resolve
@@ -581,7 +581,7 @@ func TestJobNotesContainerLinkageUnavailable(t *testing.T) {
 // TestAuditG4StallWindowIsConfigurable pins the phase 5 gap G4 fix: the
 // C11 progress window is a configuration knob, not a fixed 2-minute constant
 // (a sleep-heavy step cannot be told apart from a stall at any one fixed
-// window). the session reads RUNOPSY_GITHUB_STALL_WINDOW, and an override
+// window). the session reads DEPREHENDO_GITHUB_STALL_WINDOW, and an override
 // that does not parse as a positive duration keeps the default: a
 // misconfigured environment can change the knob's value but must never
 // disable progress detection.

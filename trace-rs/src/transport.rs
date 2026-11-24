@@ -36,7 +36,7 @@ use crate::proc_connector::{monotonic_ns, wall_millis};
 use crate::schema::*;
 use crate::watch::WatchSet;
 
-pub const TRACER_VERSION: &str = concat!("runopsy-trace/", env!("CARGO_PKG_VERSION"));
+pub const TRACER_VERSION: &str = concat!("deprehendo-trace/", env!("CARGO_PKG_VERSION"));
 
 /// Bounded event queue between kernel thread and socket thread. Producers
 /// never block: a full queue is an explicit, sequence-visible loss (6.25).
@@ -104,11 +104,11 @@ impl Tracer {
                 Ok((stream, _)) => {
                     let _ = stream.set_read_timeout(Some(SOCKET_POLL));
                     if let Err(e) = self.session(stream) {
-                        eprintln!("runopsy-trace: session ended: {}", e);
+                        eprintln!("deprehendo-trace: session ended: {}", e);
                     }
                 }
                 Err(e) => {
-                    eprintln!("runopsy-trace: accept: {}", e);
+                    eprintln!("deprehendo-trace: accept: {}", e);
                     thread::sleep(Duration::from_millis(50));
                 }
             }

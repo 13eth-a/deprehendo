@@ -1,6 +1,6 @@
 # Timeline and causal reasoning
 
-Runopsy does not infer causation merely from temporal proximity. The Phase 4
+Deprehendo does not infer causation merely from temporal proximity. The Phase 4
 engine is deterministic, local, and rule-based: a bundle yields normalized
 events, then versioned rules propose edges which the graph validates.
 
@@ -62,13 +62,13 @@ back-fill normal precursors.
 ## Commands
 
 ```sh
-runopsy-agent timeline incident.runopsy
-runopsy-agent timeline incident.runopsy --causal
-runopsy-agent timeline incident.runopsy --json
-runopsy-agent timeline incident.runopsy --report
-runopsy-agent timeline incident.runopsy --report --json
-runopsy-agent timeline incident.runopsy --explain-edge 0
-runopsy-agent timeline incident.runopsy --explain-edge RULE_ID@1
+deprehendo-agent timeline incident.deprehendo
+deprehendo-agent timeline incident.deprehendo --causal
+deprehendo-agent timeline incident.deprehendo --json
+deprehendo-agent timeline incident.deprehendo --report
+deprehendo-agent timeline incident.deprehendo --report --json
+deprehendo-agent timeline incident.deprehendo --explain-edge 0
+deprehendo-agent timeline incident.deprehendo --explain-edge RULE_ID@1
 ```
 
 `--json` returns `events`, `edges`, `rejected_edges`, `root_candidates`,

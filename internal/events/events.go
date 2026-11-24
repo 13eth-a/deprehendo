@@ -1,5 +1,5 @@
 // package events implements the structured event stream shared by every
-// runopsy-sim scenario.
+// deprehendo-sim scenario.
 //
 // one call to [Emitter.Emit] produces one record. in text mode the record is
 // rendered as a compact human line; with --json it becomes one JSON object per

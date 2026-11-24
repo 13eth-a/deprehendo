@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 func TestArchitectureCollectorErrorsOverrideSuccessfulMetrics(t *testing.T) {

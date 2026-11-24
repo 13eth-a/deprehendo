@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/trace"
+	"deprehendo/internal/trace"
 )
 
 // phase 6 merger (6.29–6.32): merge the polling-derived event stream with

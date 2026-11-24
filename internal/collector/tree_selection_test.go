@@ -3,7 +3,7 @@ package collector
 import (
 	"testing"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 func proc(pid, ppid int, start int64, name string) ProcessSnapshot {

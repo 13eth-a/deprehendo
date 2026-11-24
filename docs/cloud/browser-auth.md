@@ -6,7 +6,7 @@ tokens. Headers and session cookies pass the 7.60 gate, and the dashboard half
 of 7.61 is verified. See "Deployed and verified" below.
 Decision: **Neon's managed Better Auth.** It was chosen over self-run Better
 Auth, Clerk and WorkOS because it is included in the Neon plan already in use,
-supports GitHub sign-in, stores users in Runopsy's own Neon database (schema
+supports GitHub sign-in, stores users in Deprehendo's own Neon database (schema
 `neon_auth`), and issues Ed25519 JWTs that Go verifies with the standard
 library. Self-run Better Auth is the same library, so switching later changes
 configuration, not code.
@@ -16,10 +16,10 @@ configuration, not code.
 ```
 browser ── session cookie ──▶ Next.js dashboard (Better Auth client, via Neon Auth)
                                    │  server-side fetch, Authorization: Bearer <session JWT>
-                                   │                     X-Runopsy-Organization: org_…
+                                   │                     X-Deprehendo-Organization: org_…
                                    ▼
-                              runopsy-cloud API ── verifies JWT against the auth URL's JWKS
-                                   │                  sub → memberships (Runopsy's tables)
+                              deprehendo-cloud API ── verifies JWT against the auth URL's JWKS
+                                   │                  sub → memberships (Deprehendo's tables)
                                    ▼
                               Neon Postgres  ·  Railway bucket
 ```
@@ -31,7 +31,7 @@ browser ── session cookie ──▶ Next.js dashboard (Better Auth client, v
 - **The CLI is unchanged.** Personal API tokens keep working exactly as
   before. A bearer token takes the JWT path only when it has the three-part JWT
   shape *and* browser auth is configured.
-- **Organizations and roles stay in Runopsy's tables.** The token's `sub` is
+- **Organizations and roles stay in Deprehendo's tables.** The token's `sub` is
   the user id stored in `memberships.user_id`. Better Auth's own
   active-organization claim (`o`) is ignored, so there is one source of truth.
   Removing a member takes effect on the next request, without waiting for the
@@ -42,10 +42,10 @@ browser ── session cookie ──▶ Next.js dashboard (Better Auth client, v
 | Piece | Where |
 |---|---|
 | JWT verification: EdDSA only, JWKS cached with a 10-minute refresh, early refetch at most every 30 s for unknown key ids (rotation), last good keys kept through an outage; `iss`/`aud` must match, `exp` required, 60 s leeway, `sub` must match `^[A-Za-z0-9_-]{1,128}$` | `internal/cloudserver/browserauth.go` |
-| `requireToken` accepts a session JWT beside personal tokens. The organization comes from `X-Runopsy-Organization`, which a user with one membership may omit. Responses: invalid token → 401, no membership → 403, ambiguous or malformed header → 400. Owner-only actions apply the same way. | `internal/cloudserver/server.go` |
+| `requireToken` accepts a session JWT beside personal tokens. The organization comes from `X-Deprehendo-Organization`, which a user with one membership may omit. Responses: invalid token → 401, no membership → 403, ambiguous or malformed header → 400. Owner-only actions apply the same way. | `internal/cloudserver/server.go` |
 | `GET /api/me` returns the caller and its organizations (`{"user_id","auth":"browser"\|"token","organizations":[{id,name,role}]}`), so the dashboard can pick the header | `internal/cloudserver/me.go` |
-| Configuration: `RUNOPSY_AUTH_URL` (the Neon Auth URL); optional `RUNOPSY_AUTH_JWKS_URL`, `RUNOPSY_AUTH_ISSUER`, `RUNOPSY_AUTH_AUDIENCE`. With none set, the API is token-only. | `cmd/runopsy-cloud/main.go` |
-| Granting access: `runopsy-cloud member -database DSN -user <user id> -org org_… [-role owner\|member] [-remove]` | `cmd/runopsy-cloud/main.go` |
+| Configuration: `DEPREHENDO_AUTH_URL` (the Neon Auth URL); optional `DEPREHENDO_AUTH_JWKS_URL`, `DEPREHENDO_AUTH_ISSUER`, `DEPREHENDO_AUTH_AUDIENCE`. With none set, the API is token-only. | `cmd/deprehendo-cloud/main.go` |
+| Granting access: `deprehendo-cloud member -database DSN -user <user id> -org org_… [-role owner\|member] [-remove]` | `cmd/deprehendo-cloud/main.go` |
 | Tests: `browserauth_test.go` (valid token, 16 refusal cases, rotation without hammering, outage, config, refusal before the database), plus the gated `TestPhase7BrowserSessionsUseMembershipsAndOrganizationHeader` | `internal/cloudserver/`, `tests/` |
 
 ## Email sign-up: verified November 13, 2026
@@ -54,7 +54,7 @@ browser ── session cookie ──▶ Next.js dashboard (Better Auth client, v
 `NEON_AUTH_BASE_URL` to `.env.local`. `web/scripts/auth-smoke.ts`
 (`npm run auth:smoke` in `web/`) uses Neon's Auth SDK (`@neon/auth`, plain
 client) against the real service. It signs up a new
-`runopsy-smoke-<time>@example.com` user with a random in-memory password,
+`deprehendo-smoke-<time>@example.com` user with a random in-memory password,
 then:
 
 1. reads the current user back from the session;
@@ -62,8 +62,8 @@ then:
 3. checks that a wrong password is refused with `401 invalid_credentials`;
 4. signs in again;
 5. takes the session JWT;
-6. with `RUNOPSY_API_URL` set, calls `GET /api/me` on a local
-   `runopsy-cloud serve` started with `RUNOPSY_AUTH_URL=$NEON_AUTH_BASE_URL`.
+6. with `DEPREHENDO_API_URL` set, calls `GET /api/me` on a local
+   `deprehendo-cloud serve` started with `DEPREHENDO_AUTH_URL=$NEON_AUTH_BASE_URL`.
 
 Result: **ALL PASS.** The API verified the 868-character EdDSA JWT against
 Neon's real JWKS and returned the same user id with `"auth":"browser"`.
@@ -75,8 +75,8 @@ after checking that the sessions and accounts of the deleted users are removed
 with them:
 
 ```sql
-SELECT id, email FROM neon_auth."user" WHERE email LIKE 'runopsy-smoke-%@example.com';
-DELETE FROM neon_auth."user" WHERE email LIKE 'runopsy-smoke-%@example.com';
+SELECT id, email FROM neon_auth."user" WHERE email LIKE 'deprehendo-smoke-%@example.com';
+DELETE FROM neon_auth."user" WHERE email LIKE 'deprehendo-smoke-%@example.com';
 ```
 
 Before production: Managed Auth sends verification and reset emails from
@@ -90,8 +90,8 @@ checklist).
 - `lib/auth/` uses Neon's SDK. `app/api/auth/[...path]` is the same-origin
   auth proxy, and `proxy.ts` protects every route except `/`, `/demo` and
   `/install`.
-- `lib/runopsy-api.ts` calls the API server-side only, with Bearer JWT and
-  `X-Runopsy-Organization`; an unreachable API shows a 503 page instead of
+- `lib/deprehendo-api.ts` calls the API server-side only, with Bearer JWT and
+  `X-Deprehendo-Organization`; an unreachable API shows a 503 page instead of
   a crash.
 - The pages are the landing page, install guide, public demo (from the
   checked-in `frozen-worker` fixture), email sign-in and sign-up (GitHub
@@ -101,18 +101,18 @@ checklist).
 - `npm test` (34) passes, as do `npm run typecheck` and `next build`.
 
 **Verified on November 14.** The dashboard ran locally (`npm start`) against
-the deployed Railway API (`RUNOPSY_AUTH_URL` set, commit `7d3917d`), and:
+the deployed Railway API (`DEPREHENDO_AUTH_URL` set, commit `7d3917d`), and:
 
 1. `/` and `/demo` load signed out;
 2. `/incidents` redirects to sign-in;
 3. sign-up lands on "No organization yet" with the user id;
-4. after `runopsy-cloud member … -role owner`, `/incidents` lists
+4. after `deprehendo-cloud member … -role owner`, `/incidents` lists
    `frozen-worker` and `disk-full`;
 5. `frozen-worker` opens its full analysis, read from the Railway bucket;
 6. after sign-out, `/incidents` redirects to sign-in again.
 
 One snag found on the way, now understood: a local API without
-`RUNOPSY_S3_BUCKET` reads documents from local disk, so incidents uploaded
+`DEPREHENDO_S3_BUCKET` reads documents from local disk, so incidents uploaded
 through Railway answer `404 analysis document is missing`. Point local
 dashboards at the Railway API, or give the local API the Railway bucket
 settings.
@@ -135,7 +135,7 @@ settings.
   `errorCallbackURL` (`/auth/sign-in`) values on the app's own origin.
 - **7.61, dashboard half (November 18), on the deployed site.**
   1. GitHub sign-in completed. It created a new user, which was granted owner
-     with `runopsy-cloud member`.
+     with `deprehendo-cloud member`.
   2. `/incidents` listed `frozen-worker` and `disk-full`.
   3. An analysis opened.
   4. After sign-out, `/incidents` redirected to sign-in.
@@ -145,14 +145,14 @@ settings.
 1. **Neon Auth is enabled** (email and password, November 13). Add **GitHub**
    as an OAuth provider next (a GitHub OAuth app; set its callback URL to the one
    Neon shows). Note the project's auth URL.
-2. **Set the API variable.** In Railway, set `RUNOPSY_AUTH_URL=<auth URL>` and
+2. **Set the API variable.** In Railway, set `DEPREHENDO_AUTH_URL=<auth URL>` and
    redeploy. The log should say `browser sign-in enabled`.
 3. **Wire up Next.js** following Neon's Next.js quick start for Neon Auth:
    - Sign-in with GitHub, sign-out, and a session check on every route under
      the app.
-   - A server-side route handler, `app/api/runopsy/[...path]`, that reads the
+   - A server-side route handler, `app/api/deprehendo/[...path]`, that reads the
      session, gets its JWT, and forwards the request to the API with
-     `Authorization: Bearer` and `X-Runopsy-Organization`. Forward only `GET`,
+     `Authorization: Bearer` and `X-Deprehendo-Organization`. Forward only `GET`,
      plus the owner actions the UI offers. Forward no other headers. Pass the
      API's status and body back unchanged.
    - An organization picker fed by `GET /api/me`, remembered per user.
@@ -172,7 +172,7 @@ settings.
    SELECT id, email FROM neon_auth."user" WHERE email = 'you@example.com';
    ```
    ```sh
-   bin/runopsy-cloud member -database "$DATABASE_URL_UNPOOLED" -user <id> -org org_bf4b855bef0d2125d27b797b550a9d78 -role owner
+   bin/deprehendo-cloud member -database "$DATABASE_URL_UNPOOLED" -user <id> -org org_bf4b855bef0d2125d27b797b550a9d78 -role owner
    ```
    Check the table name in your project's `neon_auth` schema; this is Better
    Auth's default.

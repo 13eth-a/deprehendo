@@ -12,9 +12,9 @@ import (
 	"runtime"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 // status summarizes the current foreground recorder process.

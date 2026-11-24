@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 func TestCPUTrackerFirstSampleIsZero(t *testing.T) {

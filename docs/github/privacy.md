@@ -17,12 +17,12 @@ UNKNOWN value that was never observed.
 
 ## Credentials
 
-The API credential source is `RUNOPSY_GITHUB_TOKEN` or a
-mode-0600 token file (`~/.runopsy/github-token`, configurable with
+The API credential source is `DEPREHENDO_GITHUB_TOKEN` or a
+mode-0600 token file (`~/.deprehendo/github-token`, configurable with
 `--token-file`). File credentials must be regular files owned by the current
 user. The credential is requested only by the explicit `github api-enrich`
 command; recording, doctor, watch and offline analysis do not read it. The
-secret is not copied into provider evidence, logs, or `.runopsy` fields. Authorization is
+secret is not copied into provider evidence, logs, or `.deprehendo` fields. Authorization is
 restricted to the API origin; cross-origin redirects are refused. API response
 bodies and errors are not surfaced as bundle content. Configure least-privilege
 read access sufficient for workflow and job metadata.

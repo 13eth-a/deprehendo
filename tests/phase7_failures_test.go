@@ -7,7 +7,7 @@
 // "database succeeds but storage fails", "storage succeeds but DB fails" and
 // "user changes organizations".
 //
-// gated on RUNOPSY_CLOUD_TEST_DSN like the rest of the server suite;
+// gated on DEPREHENDO_CLOUD_TEST_DSN like the rest of the server suite;
 // `make test-cloud` starts a throwaway postgres and sets it.
 package tests
 
@@ -28,10 +28,10 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/analyzer"
-	"runopsy/internal/cloudclient"
-	"runopsy/internal/clouddb"
-	"runopsy/internal/cloudserver"
+	"deprehendo/internal/analyzer"
+	"deprehendo/internal/cloudclient"
+	"deprehendo/internal/clouddb"
+	"deprehendo/internal/cloudserver"
 )
 
 // testStore is the harness Store. it keeps bytes in memory so a test can
@@ -291,7 +291,7 @@ func TestPhase7AnalyzerOutcomesKeepAQueryableRow(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 
 	cases := []struct {
 		name     string
@@ -358,13 +358,13 @@ func TestPhase7StorageFailuresLeaveNoPhantomAnalysis(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 
 	t.Run("bundle read fails, then a retry succeeds", func(t *testing.T) {
 		h := newCloudHarness(t, dsn, nil)
 		uploadID, incidentID := createAndStore(t, h, h.TokenA, bundlepath)
 		h.Store.setFailGet(func(key string) error {
-			if strings.HasSuffix(key, ".runopsy") {
+			if strings.HasSuffix(key, ".deprehendo") {
 				return fmt.Errorf("injected bundle read failure")
 			}
 			return nil
@@ -440,7 +440,7 @@ func TestPhase7CompleteRepairsAMissingIncidentRow(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	h := newCloudHarness(t, dsn, nil)
 	uploadID, incidentID := createAndStore(t, h, h.TokenA, bundlepath)
 
@@ -508,7 +508,7 @@ func TestPhase7SchemaRefusesReadyAnalysisWithoutDocument(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	h := newCloudHarness(t, dsn, nil)
 	uploadID, _ := createAndStore(t, h, h.TokenA, bundlepath)
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, uploadID, 90*time.Second); status != http.StatusOK {
@@ -540,7 +540,7 @@ func TestPhase7OrganizationChangeRevokesEveryPath(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	h := newCloudHarness(t, dsn, nil)
 	uploadID, incidentID := createAndStore(t, h, h.TokenA, bundlepath)
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, uploadID, 90*time.Second); status != http.StatusOK {

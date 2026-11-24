@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // liveEventLog is the race-safe sink for live tests.
@@ -75,11 +75,11 @@ type liveTracer struct {
 // do not assert that every host supports kernel tracing.
 func startLiveTracer(t *testing.T, sink Sink) *liveTracer {
 	t.Helper()
-	bin, why := ResolveBinary(os.Getenv("RUNOPSY_TRACE_BINARY"))
+	bin, why := ResolveBinary(os.Getenv("DEPREHENDO_TRACE_BINARY"))
 	if why != "" {
 		t.Skipf("live tracer test skipped: %s", why)
 	}
-	dir, err := os.MkdirTemp("", "runopsy-live")
+	dir, err := os.MkdirTemp("", "deprehendo-live")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,7 +1,7 @@
 # deprehendo web dashboard (Phase 7, adversarial scope)
 
 Status: **route-ready React view layer, not a hosted app.** This directory renders stored
-`runopsy.analysis` v1 documents. It does not diagnose: every diagnosis,
+`deprehendo.analysis` v1 documents. It does not diagnose: every diagnosis,
 confidence, causal link and evidence class comes from the Go analyzer
 (`internal/analysis.Run`), and the dashboard only reads and formats them
 (checklist 7.43).

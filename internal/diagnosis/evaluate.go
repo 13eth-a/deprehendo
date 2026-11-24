@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"runopsy/internal/incident"
+	"deprehendo/internal/incident"
 )
 
 // GroundTruth is test-corpus metadata. it is deliberately stored beside
@@ -40,7 +40,7 @@ type Evaluation struct {
 	Accuracy       float64                   `json:"accuracy"`
 }
 
-// EvaluateDirectory analyzes all top-level *.runopsy files in dir with a
+// EvaluateDirectory analyzes all top-level *.deprehendo files in dir with a
 // neighboring <bundle>.ground-truth.json file. Test-only metadata is out of
 // band; a missing or malformed label is an error. directory traversal is
 // non-recursive and sorted so output is reproducible.
@@ -51,13 +51,13 @@ func EvaluateDirectory(dir string, options Options) (*Evaluation, error) {
 	}
 	paths := make([]string, 0)
 	for _, entry := range entries {
-		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".runopsy") {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".deprehendo") {
 			paths = append(paths, filepath.Join(dir, entry.Name()))
 		}
 	}
 	sort.Strings(paths)
 	if len(paths) == 0 {
-		return nil, fmt.Errorf("diagnosis: no .runopsy fixtures in %q", dir)
+		return nil, fmt.Errorf("diagnosis: no .deprehendo fixtures in %q", dir)
 	}
 	result := &Evaluation{Confusion: map[string]map[string]int{}}
 	for _, path := range paths {

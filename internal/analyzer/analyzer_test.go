@@ -13,8 +13,8 @@ import (
 // workerBinary builds the child once per test run.
 func workerBinary(t *testing.T) string {
 	t.Helper()
-	path := filepath.Join(t.TempDir(), "runopsy-analyzer")
-	build := exec.Command("go", "build", "-o", path, "runopsy/cmd/runopsy-analyzer")
+	path := filepath.Join(t.TempDir(), "deprehendo-analyzer")
+	build := exec.Command("go", "build", "-o", path, "deprehendo/cmd/deprehendo-analyzer")
 	build.Dir = filepath.Join("..", "..")
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build child: %v\n%s", err, out)
@@ -36,7 +36,7 @@ func fixture(t *testing.T, name string) []byte {
 // stderr.
 func TestJobReady(t *testing.T) {
 	runner := NewRunner(workerBinary(t))
-	result, err := runner.Run(t.Context(), fixture(t, "frozen-worker.runopsy"))
+	result, err := runner.Run(t.Context(), fixture(t, "frozen-worker.deprehendo"))
 	if err != nil {
 		t.Fatalf("run: %v", err)
 	}
@@ -101,7 +101,7 @@ func TestJobOversized(t *testing.T) {
 func TestJobWallClockLimit(t *testing.T) {
 	runner := NewRunner(workerBinary(t))
 	runner.Timeout = time.Nanosecond
-	result, err := runner.Run(t.Context(), fixture(t, "frozen-worker.runopsy"))
+	result, err := runner.Run(t.Context(), fixture(t, "frozen-worker.deprehendo"))
 	if err != nil {
 		t.Fatalf("run: %v", err)
 	}

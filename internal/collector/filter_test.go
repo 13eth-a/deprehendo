@@ -3,7 +3,7 @@ package collector
 import (
 	"testing"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 func filterProcess(pid, ppid int, name string) ProcessSnapshot {
@@ -63,12 +63,12 @@ func TestFilterByNamePathBase(t *testing.T) {
 	// macOS `ps comm` reports an executable path; matching the base name
 	// keeps --watch-name usable there.
 	processes := []ProcessSnapshot{
-		filterProcess(300, 1, "/var/folders/xyz/runopsy-sim"),
-		filterProcess(301, 1, "runopsy-sim"),
+		filterProcess(300, 1, "/var/folders/xyz/deprehendo-sim"),
+		filterProcess(301, 1, "deprehendo-sim"),
 	}
-	got := Filter{Name: "runopsy-sim"}.Select(processes)
+	got := Filter{Name: "deprehendo-sim"}.Select(processes)
 	if len(got) != 2 {
-		t.Fatalf("path-base selection = %v, want both runopsy-sim processes", pidsOf(got))
+		t.Fatalf("path-base selection = %v, want both deprehendo-sim processes", pidsOf(got))
 	}
 }
 

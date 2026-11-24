@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 
-import { AppHeader } from "../../components/AppHeader.tsx";
+import { AppShell } from "../../components/AppShell.tsx";
 import { IncidentList } from "../../components/IncidentList.tsx";
+import { Empty } from "../../components/shadcn/Empty.tsx";
 import { bandOptions, diagnosisOptions, summaryFromApiRow, type ApiIncidentRow } from "../../lib/api-incidents.ts";
 import { filterIncidents, sortNewestFirst, type IncidentFilter } from "../../lib/incidents.ts";
-import { apiGet, chosenOrganization, requireUser } from "../../lib/runopsy-api.ts";
+import { apiGet, chosenOrganization, requireUser } from "../../lib/deprehendo-api.ts";
 
 export const dynamic = "force-dynamic";
 
@@ -22,31 +23,38 @@ export default async function Incidents({
 }) {
   const user = await requireUser();
   const res = await apiGet<ApiIncidentRow[]>("/api/incidents");
-  // several memberships and none chosen yet, or the chosen one was revoked.
+  // Several memberships and none chosen yet, or the chosen one was revoked.
   if (res.status === 400 || (res.status === 403 && (await chosenOrganization()))) redirect("/org");
   if (res.status === 403) {
     return (
-      <>
-        <AppHeader email={user.email} organization={null} />
-        <main>
-          <h1>No organization yet</h1>
-          <p>
-            You are signed in, but you are not a member of any organization. Ask an owner to add you with your user id{" "}
-            <code>{user.id}</code>.
-          </p>
-        </main>
-      </>
+      <AppShell email={user.email} organization={null} active="incidents">
+        <div className="page">
+          <Empty
+            titleId="no-org-title"
+            title="No organization yet"
+            description="You are signed in, but you are not a member of any organization."
+          >
+            <p>
+              Ask an owner to add you with your user id <code>{user.id}</code>.
+            </p>
+          </Empty>
+        </div>
+      </AppShell>
     );
   }
   if (res.status !== 200 || !res.body) {
     return (
-      <>
-        <AppHeader email={user.email} organization={await chosenOrganization()} />
-        <main role="status">
-          <h1>Incidents are unavailable</h1>
-          <p>The deprehendo API answered {res.status}{res.errorCode ? ` (${res.errorCode})` : ""}. Try again shortly.</p>
-        </main>
-      </>
+      <AppShell email={user.email} organization={await chosenOrganization()} active="incidents">
+        <div className="page" role="status">
+          <section className="failure panel" aria-labelledby="unavailable-title">
+            <span className="failure__mark" aria-hidden="true">!</span>
+            <div>
+              <h1 id="unavailable-title">Incidents are unavailable</h1>
+              <p>The deprehendo API answered {res.status}{res.errorCode ? ` (${res.errorCode})` : ""}. Try again shortly.</p>
+            </div>
+          </section>
+        </div>
+      </AppShell>
     );
   }
 
@@ -63,19 +71,17 @@ export default async function Incidents({
   const rows = sortNewestFirst(filterIncidents(all, filter));
 
   return (
-    <>
-      <AppHeader email={user.email} organization={await chosenOrganization()} />
-      <main>
-        <IncidentList
+    <AppShell email={user.email} organization={await chosenOrganization()} active="incidents">
+      <IncidentList
           rows={rows}
+          all={all}
           filter={filter}
           diagnoses={diagnosisOptions(all)}
           bands={bandOptions(all)}
-          uploadCommand="runopsy-agent upload incident.runopsy"
-          demoHref="/demo"
+          uploadCommand="deprehendo-agent upload incident.deprehendo"
+          installHref="/install"
           hrefFor={(id) => `/incidents/${encodeURIComponent(id)}`}
         />
-      </main>
-    </>
+    </AppShell>
   );
 }

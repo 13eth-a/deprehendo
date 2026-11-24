@@ -190,8 +190,8 @@ func TestCausalFixtures(t *testing.T) {
 		fixture := fixture
 		seen[fixture.Name] = true
 		t.Run(fixture.Name, func(t *testing.T) {
-			if fixture.Gate != "" && os.Getenv("RUNOPSY_REVIEW_AUDIT") == "" {
-				t.Skipf("gated fixture pending %s (set RUNOPSY_REVIEW_AUDIT=1 to run)", fixture.Gate)
+			if fixture.Gate != "" && os.Getenv("DEPREHENDO_REVIEW_AUDIT") == "" {
+				t.Skipf("gated fixture pending %s (set DEPREHENDO_REVIEW_AUDIT=1 to run)", fixture.Gate)
 			}
 			var timeline *Timeline
 			var graph *Graph
@@ -472,12 +472,12 @@ func compareCounts[K comparable](label string, actual, expected map[K]int) []str
 }
 
 // TestPrintCausalExpectations prints draft expectations for review. with
-// RUNOPSY_PRINT_CAUSAL_FIXTURES=write it also writes expected.json as an
+// DEPREHENDO_PRINT_CAUSAL_FIXTURES=write it also writes expected.json as an
 // unreviewed draft; drafts must be read and corrected before committing.
 func TestPrintCausalExpectations(t *testing.T) {
-	mode := os.Getenv("RUNOPSY_PRINT_CAUSAL_FIXTURES")
+	mode := os.Getenv("DEPREHENDO_PRINT_CAUSAL_FIXTURES")
 	if mode == "" {
-		t.Skip("set RUNOPSY_PRINT_CAUSAL_FIXTURES=1 (print) or write (draft) to inspect fixture expectations")
+		t.Skip("set DEPREHENDO_PRINT_CAUSAL_FIXTURES=1 (print) or write (draft) to inspect fixture expectations")
 	}
 	for _, fixture := range causalFixtures() {
 		inc := loadCausalFixture(t, fixture.Name)

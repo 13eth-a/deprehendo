@@ -1,4 +1,4 @@
-//! The wire contract between runopsy-trace (Rust) and the Go agent.
+//! The wire contract between deprehendo-trace (Rust) and the Go agent.
 //!
 //! This module mirrors `internal/trace/schema.go` exactly. The two files MUST
 //! be changed together: field names, tag casing, event-type numbers and

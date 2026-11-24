@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/diagnosis"
-	"runopsy/internal/incident"
+	"deprehendo/internal/diagnosis"
+	"deprehendo/internal/incident"
 )
 
 // fixtureBundle reads one repository fixture as a verified bundle.
@@ -91,7 +91,7 @@ func TestGoldenFingerprint(t *testing.T) {
 // runs (including under a different timezone) produce identical bytes.
 func TestDocumentDeterminism(t *testing.T) {
 	render := func() []byte {
-		doc := runDocument(t, "frozen-worker.runopsy")
+		doc := runDocument(t, "frozen-worker.deprehendo")
 		var out bytes.Buffer
 		if err := WriteJSON(&out, doc); err != nil {
 			t.Fatalf("WriteJSON: %v", err)
@@ -115,7 +115,7 @@ func TestDocumentDeterminism(t *testing.T) {
 // and a caller that smuggles a display string breaks that meaning for every
 // stored document.
 func TestRunRejectsDigestContract(t *testing.T) {
-	bundle, _ := fixtureBundle(t, "frozen-worker.runopsy")
+	bundle, _ := fixtureBundle(t, "frozen-worker.deprehendo")
 	for _, bad := range []string{"", "inc_01", strings.Repeat("Z", 64), strings.Repeat("a", 63) + "!"} {
 		if _, err := Run(bundle, bad, Options{}); err == nil {
 			t.Errorf("Run accepted digest %q", bad)
@@ -141,7 +141,7 @@ func TestRunNilBundle(t *testing.T) {
 // render (per-event evidence class, claim-level evidence, privacy report,
 // bundle identity) and options when they are not the defaults.
 func TestDocumentRecordsFeatures(t *testing.T) {
-	doc := runDocument(t, "frozen-worker.runopsy")
+	doc := runDocument(t, "frozen-worker.deprehendo")
 	if doc.DocumentVersion != DocumentVersion {
 		t.Fatalf("document version %d", doc.DocumentVersion)
 	}
@@ -170,7 +170,7 @@ func TestDocumentRecordsFeatures(t *testing.T) {
 		t.Fatalf("privacy policy %q", doc.Privacy.Policy)
 	}
 
-	nondefault := runDocumentOptions(t, "frozen-worker.runopsy", Options{MinConfidence: 0.8, Disabled: []diagnosis.SignatureID{diagnosis.SignatureCPUSpin}})
+	nondefault := runDocumentOptions(t, "frozen-worker.deprehendo", Options{MinConfidence: 0.8, Disabled: []diagnosis.SignatureID{diagnosis.SignatureCPUSpin}})
 	if nondefault.Options == nil {
 		t.Fatalf("non-default options must be documented")
 	}
@@ -194,8 +194,8 @@ func runDocumentOptions(t *testing.T, name string, opts Options) *Document {
 // carry. the reader already verified the payloads satisfy the policy; the
 // document must not re-derive anything beyond it.
 func TestPrivacyMetaRespectsRedaction(t *testing.T) {
-	doc := runDocument(t, "frozen-worker.runopsy")
-	bundle, _ := fixtureBundle(t, "frozen-worker.runopsy")
+	doc := runDocument(t, "frozen-worker.deprehendo")
+	bundle, _ := fixtureBundle(t, "frozen-worker.deprehendo")
 	if doc.Privacy != bundle.Incident.Privacy {
 		t.Fatal("document rewrote the bundle's privacy report")
 	}

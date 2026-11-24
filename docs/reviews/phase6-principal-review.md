@@ -97,7 +97,7 @@ processes, and the tracer catches each one by fork inheritance.
   non-root user with stock `net.core.rmem_max`, where overruns become visible
   gaps instead, is integration's (contract §14).
 
-The 6.19 demo, `runopsy-trace debug <shell-pid>`, with the shell running
+The 6.19 demo, `deprehendo-trace debug <shell-pid>`, with the shell running
 `/bin/echo hello` and then a child that kills itself with SIGTERM:
 
 ```text
@@ -131,8 +131,8 @@ Ctrl-C then ended it cleanly.
 - `go test ./...` passes with and without a tracer on `PATH`, and with
   `-race`. Only the two platform tests that need a real cgroup2 mount fail in
   the review sandbox, as before.
-- The gated suites (`RUNOPSY_E2E_GITHUB=1 RUNOPSY_E2E_CAUSAL=1
-  RUNOPSY_REVIEW_AUDIT=1`) and `GOOS=darwin go build ./...` both pass.
+- The gated suites (`DEPREHENDO_E2E_GITHUB=1 DEPREHENDO_E2E_CAUSAL=1
+  DEPREHENDO_REVIEW_AUDIT=1`) and `GOOS=darwin go build ./...` both pass.
 
 The Rust dependencies were built from their GitHub sources at the exact locked
 versions, because crates.io was unreachable from the review sandbox. Nothing

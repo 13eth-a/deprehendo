@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 // oomDirectFixture mirrors oomCounterFixture, but the cgroup counter never

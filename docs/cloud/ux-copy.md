@@ -6,12 +6,12 @@ Status: **copy and route-ready view components, November 5, 2026.** This defines
 
 **Headline:** Know why your self-hosted CI runner died.
 
-**Description:** Runopsy records a local incident bundle and explains the failure with a deterministic diagnosis, causal chain, timeline, and supporting evidence.
+**Description:** Deprehendo records a local incident bundle and explains the failure with a deterministic diagnosis, causal chain, timeline, and supporting evidence.
 
 **How it works:**
 
-1. Install Runopsy and run the agent beside your runner.
-2. Runopsy saves an incident bundle locally when it captures a failure.
+1. Install Deprehendo and run the agent beside your runner.
+2. Deprehendo saves an incident bundle locally when it captures a failure.
 3. Analyze it locally, or upload the bundle to your dashboard.
 
 **Primary action:** Installation guide  
@@ -22,20 +22,20 @@ Status: **copy and route-ready view components, November 5, 2026.** This defines
 
 Keep the flow to the commands that exist today:
 
-1. Install or build the Runopsy agent using the project installation guide.
-2. For GitHub Actions runners, start capture with `runopsy-agent github watch`. For another process, use `runopsy-agent start` with the appropriate watch selector.
-3. Confirm the resulting bundle is present in `~/.runopsy/incidents/` (or the configured `--incident-dir`). Bundles are written locally first.
-4. Configure the dashboard endpoint and token with `runopsy-agent login -endpoint https://cloud.example`.
-5. Upload a bundle with `runopsy-agent upload ~/.runopsy/incidents/<file>.runopsy`.
+1. Install or build the Deprehendo agent using the project installation guide.
+2. For GitHub Actions runners, start capture with `deprehendo-agent github watch`. For another process, use `deprehendo-agent start` with the appropriate watch selector.
+3. Confirm the resulting bundle is present in `~/.deprehendo/incidents/` (or the configured `--incident-dir`). Bundles are written locally first.
+4. Configure the dashboard endpoint and token with `deprehendo-agent login -endpoint https://cloud.example`.
+5. Upload a bundle with `deprehendo-agent upload ~/.deprehendo/incidents/<file>.deprehendo`.
 6. Open the dashboard URL printed by the CLI.
 
-Do not imply that the browser has GitHub live access, that upload is automatic without opt-in, or that Runopsy installs itself as a service. Those capabilities are outside this flow.
+Do not imply that the browser has GitHub live access, that upload is automatic without opt-in, or that Deprehendo installs itself as a service. Those capabilities are outside this flow.
 
 ## First-run empty state
 
 **Title:** No incidents yet  
-**Body:** Upload a Runopsy bundle to see its diagnosis, timeline, and evidence here.  
-**Command:** `runopsy-agent upload incident.runopsy`  
+**Body:** Upload a Deprehendo bundle to see its diagnosis, timeline, and evidence here.
+**Command:** `deprehendo-agent upload incident.deprehendo`
 **Secondary action:** View a sample incident
 
 When filters are active and yield no rows, use: **No incidents match these filters. Change or clear a filter to see more.** Do not show the upload prompt for an empty filtered result.

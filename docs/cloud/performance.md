@@ -13,7 +13,7 @@ go test -count=1 -run TestDocumentScalePayload -v ./internal/analysis
 
 # adds the 10,000-event row (~7 s of CPU; opt-in so it does not starve the
 # suite's wall-clock tests when packages run in parallel)
-RUNOPSY_SCALE_10K=1 go test -count=1 -run TestDocumentScalePayload -v ./internal/analysis
+DEPREHENDO_SCALE_10K=1 go test -count=1 -run TestDocumentScalePayload -v ./internal/analysis
 ```
 
 The dashboard fetches one document per incident (contract

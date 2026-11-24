@@ -12,19 +12,19 @@ window before public use** (see "Provider recommendation").
 Run with `bash scripts/neon-restore-drill.sh` against production. The script
 takes the target from the database clock, uploads a canary after it, asks for
 confirmation, restores, and then verifies through the deployed API
-(`https://runopsy.up.railway.app`).
+(the Railway deployment).
 
 | Step | Result |
 |---|---|
 | history window | Free plan, **6 hours** (plan maximum) |
 | target (database clock, UTC) | `2026-11-19T07:10:00Z` |
 | incidents before the target | 2 (`frozen-worker`, `disk-full`), analysis and bundle 200 |
-| canary after the target | `inc_00000000000000000000000000000003` (`cpu-spin.runopsy`), analysis ready |
+| canary after the target | `inc_00000000000000000000000000000003` (`cpu-spin.deprehendo`), analysis ready |
 | restore | `neon branches restore production ^self@2026-11-19T07:10:00Z --preserve-under-name production_pre_drill_20261119_0710` |
 | **RTO** (restore start to the restored state served by the API) | **5 s** |
 | incident list after restore | identical to before; canary `404` |
 | analysis and bundle after restore | `200`, byte-identical to the pre-drill copies |
-| `runopsy-cloud migrate` | `schema is current` |
+| `deprehendo-cloud migrate` | `schema is current` |
 | object store | The bucket is not part of a Neon restore. The canary's bundle and document were deleted, and the bucket listing then matched the pre-drill listing exactly. |
 | backup branch | `production_pre_drill_20261119_0710` (retention: see below) |
 
@@ -99,7 +99,7 @@ Measured run, November 6, 2026:
 | post-target incident | `inc_…006` uploaded two seconds later |
 | restore | recovered to the target and promoted |
 | restored database | **1** incident, id `inc_…002`; **0** rows from the post-target upload; `migrate` → `schema is current` |
-| restored pair (`/analysis`, `/bundle`) | **200 / 200**, analysis byte-identical to `runopsy-agent analyze --document`, bundle byte-identical to the original |
+| restored pair (`/analysis`, `/bundle`) | **200 / 200**, analysis byte-identical to `deprehendo-agent analyze --document`, bundle byte-identical to the original |
 | post-target incident on the restored pair | **404** |
 | result | `PITR-DRILL-OK` |
 
@@ -118,7 +118,7 @@ credentials for the object store.
 1. **Record the window.** Note the project's history window and set it to the
    longest the plan allows (Launch: 7 days) before first real upload. A window
    shorter than the incident's age means the drill is impossible, not slow.
-2. **Migrate.** `runopsy-cloud migrate -database "$DIRECT_DSN"` →
+2. **Migrate.** `deprehendo-cloud migrate -database "$DIRECT_DSN"` →
    `applied 0001_init`. Use the direct endpoint: migrations run multi-statement
    files through `pgx.Connect`, and the pooled (PgBouncer) endpoint is not the
    right place for that.
@@ -150,9 +150,9 @@ Results from the November 19 managed run:
 - [x] object store snapshot taken at the same logical time (bucket listing; the bucket is append-only)
 - [x] restore to the target completes
 - [x] the pre-target incidents are present; the post-target incident is absent
-- [x] `runopsy-cloud migrate` prints `schema is current`
+- [x] `deprehendo-cloud migrate` prints `schema is current`
 - [x] `/analysis` and `/bundle` return 200 and byte-identical content
-- [ ] `RUNOPSY_CLOUD_TEST_DSN=<restored> go test -run TestPhase7ServerPipeline ./tests` passes. Replaced on production by the deployed-API checks; see above.
+- [ ] `DEPREHENDO_CLOUD_TEST_DSN=<restored> go test -run TestPhase7ServerPipeline ./tests` passes. Replaced on production by the deployed-API checks; see above.
 - [x] RTO (5 s) and history window (Free, 6 h) recorded
 - [ ] backup branch retention decided (keep or delete, and who deletes): owner decision pending
 
@@ -171,7 +171,7 @@ Results from the November 19 managed run:
   fine; a staging branch cannot be point-in-time restored.
 - **Neon does not back up object storage.** The pair requirement is unchanged,
   and object-store versioning/object-lock is a separate setting.
-- **A restore interrupts connections.** `runopsy-agent upload` already fails
+- **A restore interrupts connections.** `deprehendo-agent upload` already fails
   cleanly on a lost connection (tested); queued uploads retry with a bounded
   backoff, so a short restore window is survivable.
 - **Free-plan history is 6 hours / 1 GB.** Do not launch publicly on it.

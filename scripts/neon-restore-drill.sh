@@ -24,18 +24,18 @@
 #
 # usage (from the repo root, after `make build`):
 #   bash scripts/neon-restore-drill.sh
-# overrides: NEON_PROJECT_ID, NEON_BRANCH, RUNOPSY_API, RUNOPSY_S3_BUCKET,
-# CANARY_BUNDLE, RUNOPSY_CONFIG, OUT.
+# overrides: NEON_PROJECT_ID, NEON_BRANCH, DEPREHENDO_API, DEPREHENDO_S3_BUCKET,
+# CANARY_BUNDLE, DEPREHENDO_CONFIG, OUT.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 PROJECT=${NEON_PROJECT_ID:-empty-truth-18465894}
 BRANCH=${NEON_BRANCH:-production}
-API=${RUNOPSY_API:-https://runopsy.up.railway.app}
-BUCKET=${RUNOPSY_S3_BUCKET:-runopsy-0uz5hzbri3moxaaaa}
-CANARY=${CANARY_BUNDLE:-testdata/incidents/cpu-spin.runopsy}
-CONFIG=${RUNOPSY_CONFIG:-"$HOME/Library/Application Support/runopsy/config.json"}
-OUT=${OUT:-"/tmp/runopsy-restore-drill-$(date -u +%Y%m%dT%H%M%SZ)"}
+API=${DEPREHENDO_API:?set DEPREHENDO_API to your deployed API URL}
+BUCKET=${DEPREHENDO_S3_BUCKET:-deprehendo-0uz5hzbri3moxaaaa}
+CANARY=${CANARY_BUNDLE:-testdata/incidents/cpu-spin.deprehendo}
+CONFIG=${DEPREHENDO_CONFIG:-"$HOME/Library/Application Support/deprehendo/config.json"}
+OUT=${OUT:-"/tmp/deprehendo-restore-drill-$(date -u +%Y%m%dT%H%M%SZ)"}
 
 mkdir -p "$OUT"
 chmod 700 "$OUT"
@@ -50,7 +50,7 @@ ok() { log "PASS: $*"; }
 for c in neon psql curl python3 shasum; do
   command -v "$c" >/dev/null 2>&1 || die "missing command: $c"
 done
-[ -x bin/runopsy-agent ] && [ -x bin/runopsy-cloud ] || die "run 'make build' first (bin/runopsy-agent, bin/runopsy-cloud)"
+[ -x bin/deprehendo-agent ] && [ -x bin/deprehendo-cloud ] || die "run 'make build' first (bin/deprehendo-agent, bin/deprehendo-cloud)"
 [ -f "$CANARY" ] || die "canary bundle not found: $CANARY"
 [ -f .env.local ] || die ".env.local not found in the repo root"
 set -a
@@ -58,7 +58,7 @@ set -a
 . ./.env.local
 set +a
 [ -n "${DATABASE_URL_UNPOOLED:-}" ] || die "DATABASE_URL_UNPOOLED is not set in .env.local"
-[ -f "$CONFIG" ] || die "agent config not found: $CONFIG (run bin/runopsy-agent login first)"
+[ -f "$CONFIG" ] || die "agent config not found: $CONFIG (run bin/deprehendo-agent login first)"
 
 umask 077
 python3 -I - "$CONFIG" "$HDR" <<'PY' || die "could not read the token from the agent config"
@@ -129,7 +129,7 @@ PRE_COUNT=$(wc -l < "$OUT/pre-ids.txt" | tr -d ' ')
 mkdir -p "$OUT/pre" "$OUT/post"
 while read -r id; do
   a=$(api "/api/incidents/$id/analysis" "$OUT/pre/$id.analysis.json")
-  b=$(api "/api/incidents/$id/bundle" "$OUT/pre/$id.runopsy")
+  b=$(api "/api/incidents/$id/bundle" "$OUT/pre/$id.deprehendo")
   [ "$a" = 200 ] && [ "$b" = 200 ] || die "pre-drill $id: analysis $a, bundle $b (expected 200/200)"
 done < "$OUT/pre-ids.txt"
 ok "recorded $PRE_COUNT incident(s): list, analysis and bundle, all 200"
@@ -147,7 +147,7 @@ sleep 5
 
 # ----------------------------------------------------------------- 4. canary
 log "uploading canary $CANARY (must not survive the restore)"
-bin/runopsy-agent upload -config "$CONFIG" "$CANARY" > "$OUT/canary-upload.txt" 2>&1 || {
+bin/deprehendo-agent upload -config "$CONFIG" "$CANARY" > "$OUT/canary-upload.txt" 2>&1 || {
   cat "$OUT/canary-upload.txt"
   die "canary upload failed"
 }
@@ -211,16 +211,16 @@ cmp -s "$OUT/pre-ids.txt" "$OUT/post-ids.txt" || {
 ok "incident list matches the pre-drill list exactly ($PRE_COUNT), canary absent"
 while read -r id; do
   a=$(api "/api/incidents/$id/analysis" "$OUT/post/$id.analysis.json")
-  b=$(api "/api/incidents/$id/bundle" "$OUT/post/$id.runopsy")
+  b=$(api "/api/incidents/$id/bundle" "$OUT/post/$id.deprehendo")
   [ "$a" = 200 ] && [ "$b" = 200 ] || die "post-restore $id: analysis $a, bundle $b"
   cmp -s "$OUT/pre/$id.analysis.json" "$OUT/post/$id.analysis.json" || die "$id analysis differs after restore"
-  cmp -s "$OUT/pre/$id.runopsy" "$OUT/post/$id.runopsy" || die "$id bundle differs after restore"
+  cmp -s "$OUT/pre/$id.deprehendo" "$OUT/post/$id.deprehendo" || die "$id bundle differs after restore"
 done < "$OUT/pre-ids.txt"
 ok "every analysis and bundle is 200 and byte-identical to the pre-drill copy"
-MIGRATE=$(bin/runopsy-cloud migrate -database "$DATABASE_URL_UNPOOLED" 2>&1) || die "migrate failed: $MIGRATE"
+MIGRATE=$(bin/deprehendo-cloud migrate -database "$DATABASE_URL_UNPOOLED" 2>&1) || die "migrate failed: $MIGRATE"
 echo "$MIGRATE" >> "$OUT/drill.log"
 echo "$MIGRATE" | grep -q "schema is current" || die "migrate did not report 'schema is current'"
-ok "runopsy-cloud migrate: schema is current"
+ok "deprehendo-cloud migrate: schema is current"
 REFS=$(q "SELECT count(*) FROM uploads WHERE id = '$CANARY_UPLOAD'")
 [ "$REFS" = 0 ] || die "the canary upload row still exists after the restore"
 ok "no canary row in the restored database"
@@ -230,12 +230,12 @@ ok "no canary row in the restored database"
 # named by no row; remove them. the bundle key is content-addressed, so it is
 # removed only if no pre-drill bundle has the same hash.
 SHARED=0
-for f in "$OUT"/pre/*.runopsy; do
+for f in "$OUT"/pre/*.deprehendo; do
   [ "$(shasum -a 256 "$f" | awk '{print $1}')" = "$CANARY_SHA" ] && SHARED=1
 done
 CANARY_KEYS="$OUT/canary-objects.txt"
 : > "$CANARY_KEYS"
-[ "$SHARED" = 0 ] && echo "orgs/$ORG/bundles/$CANARY_SHA.runopsy" >> "$CANARY_KEYS"
+[ "$SHARED" = 0 ] && echo "orgs/$ORG/bundles/$CANARY_SHA.deprehendo" >> "$CANARY_KEYS"
 if [ "$HAVE_AWS" = 1 ]; then
   s3 ls --recursive "s3://$BUCKET/orgs/$ORG/documents/$CANARY_UPLOAD" | awk '{print $4}' >> "$CANARY_KEYS" || true
   while read -r key; do
@@ -251,7 +251,7 @@ if [ "$HAVE_AWS" = 1 ]; then
   ok "bucket listing matches the pre-drill listing"
   OBJECTS_RESULT="bucket listing matches the pre-drill listing after removing the canary's objects"
 else
-  log "MANUAL CLEANUP: delete orgs/$ORG/bundles/$CANARY_SHA.runopsy (unless shared) and orgs/$ORG/documents/$CANARY_UPLOAD*.json"
+  log "MANUAL CLEANUP: delete orgs/$ORG/bundles/$CANARY_SHA.deprehendo (unless shared) and orgs/$ORG/documents/$CANARY_UPLOAD*.json"
   OBJECTS_RESULT="not checked (no aws CLI); canary objects listed for manual cleanup"
 fi
 
@@ -268,7 +268,7 @@ Managed restore drill, $(date -u +%Y-%m-%d), project \`$PROJECT\`, branch \`$BRA
 | RTO (restore start to restored state served by the API) | **${RTO}s** |
 | incident list after restore | identical to before; canary 404 |
 | analysis and bundle after restore | 200, byte-identical to the pre-drill copies |
-| \`runopsy-cloud migrate\` | schema is current |
+| \`deprehendo-cloud migrate\` | schema is current |
 | object store | $OBJECTS_RESULT |
 | backup branch | \`$BACKUP\` (decide: keep or delete) |
 EOF

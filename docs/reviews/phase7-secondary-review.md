@@ -1,7 +1,7 @@
 # Phase 7 — secondary review and CLI slice
 
 Status: **updated November 16, 2026.** Covers the contract §9 reviews assigned
-to secondary (the `runopsy.analysis` document schema, §7.1 SQL, and secondary cost
+to secondary (the `deprehendo.analysis` document schema, §7.1 SQL, and secondary cost
 review), the CLI items 7.11/7.12, equality/compatibility work for 7.43 and
 7.33, and the route-independent UI slice. The initial findings below remain
 the record of those earlier reviews; current status and follow-up work are in
@@ -18,8 +18,8 @@ the record of those earlier reviews; current status and follow-up work are in
   endpoint validation that refuses plain HTTP except on loopback. The token is
   attached to the two API calls only; the storage POST is already signed and
   gets no `Authorization` header (tested).
-- **`runopsy-agent login` / `runopsy-agent upload`** (7.11, 7.12) — the
-  credential file is `~/.config/runopsy/config.json`, written atomically at
+- **`deprehendo-agent login` / `deprehendo-agent upload`** (7.11, 7.12) — the
+  credential file is `~/.config/deprehendo/config.json`, written atomically at
   0600 in a 0700 directory; a file readable by group or others is refused with
   the fix. `upload` validates the bundle locally with `incident.Read`, hashes
   the **exact bytes sent**, and prints `Uploading incident … / Validated /
@@ -33,7 +33,7 @@ the record of those earlier reviews; current status and follow-up work are in
   `causal_rules`, `privacy_policy`, `bundle_formats`) and the bundle's
   `sha256`/`schema_version`/`format_version` are present by JSON name.
 
-## 2. Review: the `runopsy.analysis` document (§3.3)
+## 2. Review: the `deprehendo.analysis` document (§3.3)
 
 Verdict: **sound as a viewer format.** The original string-valued `options`
 deviation recorded below has since been corrected to a structured object. The
@@ -72,8 +72,8 @@ left.** Nothing has been applied to a database, so the edits are free.
 Fixed here:
 
 1. **Object keys could contain path escapes.** The check was
-   `LIKE 'orgs/%.runopsy'`, which admits `orgs/../../etc/x.runopsy` and any
-   suffix. Now a regex pins `orgs/{org}/bundles/{sha256}.runopsy` with
+   `LIKE 'orgs/%.deprehendo'`, which admits `orgs/../../etc/x.deprehendo` and any
+   suffix. Now a regex pins `orgs/{org}/bundles/{sha256}.deprehendo` with
    lowercase hex. Even though storage keys are opaque, a filesystem-backed
    store would honour `..`.
 2. **Token lookup had no usable index.** `UNIQUE (user_id, token_hash)` cannot

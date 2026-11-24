@@ -9,7 +9,7 @@ Run           UNKNOWN source=UNKNOWN
 Attempt       UNKNOWN source=UNKNOWN
 Job outcome   FAILED source=RUNNER_LOG
 ----------------------------------------------------------------
-RUNOPSY INCIDENT ANALYSIS
+DEPREHENDO INCIDENT ANALYSIS
 Incident: inc_742cd5839ae9712ae70fdb65361042ea    Analyzer: 0.4.0    Signature set: 2
 Trigger: process_exit at 07:15:56.508Z
 

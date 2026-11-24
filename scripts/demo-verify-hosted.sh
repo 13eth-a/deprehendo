@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # 7.62, hosted half: push real-runner bundles through the deployed product.
 #
-#   bash scripts/demo-verify-hosted.sh ~/demo-out/7.62-oom.runopsy ~/demo-out/7.62-stall.runopsy
+#   bash scripts/demo-verify-hosted.sh ~/demo-out/7.62-oom.deprehendo ~/demo-out/7.62-stall.deprehendo
 #
 # for each bundle: analyze it locally (`analyze --document`), upload it with
-# your normal login (`runopsy-agent upload`), wait for the hosted analysis,
+# your normal login (`deprehendo-agent upload`), wait for the hosted analysis,
 # and require the hosted /analysis to be byte-identical to the local document.
 # then it prints the dashboard link to open.
 #
@@ -15,18 +15,18 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-CONFIG=${RUNOPSY_CONFIG:-"$HOME/Library/Application Support/runopsy/config.json"}
-DASHBOARD=${RUNOPSY_DASHBOARD:-https://web-production-d673c0ef.up.railway.app}
+CONFIG=${DEPREHENDO_CONFIG:-"$HOME/Library/Application Support/deprehendo/config.json"}
+DASHBOARD=${DEPREHENDO_DASHBOARD:-https://web-production-d673c0ef.up.railway.app}
 die() { echo "FAIL: $*" >&2; exit 1; }
 # --replace deletes each bundle's incident first (owner token), so it is
 # analyzed again by the deployed analyzer instead of keeping its old analysis.
 REPLACE=0
 if [ "${1:-}" = --replace ]; then REPLACE=1; shift; fi
 [ $# -ge 1 ] || die "usage: bash scripts/demo-verify-hosted.sh [--replace] BUNDLE..."
-[ -x bin/runopsy-agent ] || die "run 'make build' first"
-[ -f "$CONFIG" ] || die "agent config not found: $CONFIG (run bin/runopsy-agent login first)"
+[ -x bin/deprehendo-agent ] || die "run 'make build' first"
+[ -f "$CONFIG" ] || die "agent config not found: $CONFIG (run bin/deprehendo-agent login first)"
 
-WORK=$(mktemp -d "${TMPDIR:-/tmp}/runopsy-demo-verify.XXXXXX")
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/deprehendo-demo-verify.XXXXXX")
 HDR="$WORK/.auth"
 trap 'rm -f "$HDR"' EXIT
 API=$( (umask 077; python3 -I - "$CONFIG" "$HDR" <<'PY'
@@ -40,9 +40,9 @@ PY
 failed=0
 for bundle in "$@"; do
   [ -f "$bundle" ] || die "no such bundle: $bundle"
-  name=$(basename "$bundle" .runopsy)
+  name=$(basename "$bundle" .deprehendo)
   echo "== $name"
-  bin/runopsy-agent analyze --document "$WORK/$name.local.json" "$bundle" >/dev/null || die "local analysis of $bundle failed"
+  bin/deprehendo-agent analyze --document "$WORK/$name.local.json" "$bundle" >/dev/null || die "local analysis of $bundle failed"
   if [ "$REPLACE" = 1 ]; then
     old=$(grep -oE 'inc_[0-9a-f]{32}' "$WORK/$name.local.json" | head -1 || true)
     if [ -n "$old" ]; then
@@ -54,7 +54,7 @@ for bundle in "$@"; do
       esac
     fi
   fi
-  out=$(bin/runopsy-agent upload -config "$CONFIG" "$bundle" 2>&1) || { echo "$out"; die "upload of $bundle failed"; }
+  out=$(bin/deprehendo-agent upload -config "$CONFIG" "$bundle" 2>&1) || { echo "$out"; die "upload of $bundle failed"; }
   echo "$out" | sed 's/^/  /'
   id=$(printf '%s\n' "$out" | grep -oE 'inc_[0-9a-f]{32}' | head -1 || true)
   [ -n "$id" ] || id=$(grep -oE 'inc_[0-9a-f]{32}' "$WORK/$name.local.json" | head -1 || true)

@@ -84,13 +84,13 @@ func BenchmarkLatencySummary(b *testing.B) {
 // an ordinary `go test ./...` stays fast; the stress sizes are opt-in.
 func churnCount(tb testing.TB) int {
 	tb.Helper()
-	raw := os.Getenv("RUNOPSY_TRACE_CHURN")
+	raw := os.Getenv("DEPREHENDO_TRACE_CHURN")
 	if raw == "" {
 		return 1000
 	}
 	n, err := strconv.Atoi(raw)
 	if err != nil || n < 1 || n > 500000 {
-		tb.Fatalf("RUNOPSY_TRACE_CHURN must be 1..500000, got %q", raw)
+		tb.Fatalf("DEPREHENDO_TRACE_CHURN must be 1..500000, got %q", raw)
 	}
 	return n
 }
@@ -104,7 +104,7 @@ func TestPipelineChurn(t *testing.T) {
 		t.Skip("unix sockets")
 	}
 	n := churnCount(t)
-	dir, err := os.MkdirTemp("", "runopsy-churn")
+	dir, err := os.MkdirTemp("", "deprehendo-churn")
 	if err != nil {
 		t.Fatal(err)
 	}

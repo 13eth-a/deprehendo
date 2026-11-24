@@ -17,7 +17,7 @@ TIMELINE (UTC; order only, no cross-provider causal edges)
 07:20:54.262  CONNECTION_OPENED subject=socket:port:[REDACTED]:48856:[REDACTED]:443
 07:21:07.259  CONNECTION_OPENED subject=socket:inode-50182
 07:21:10.325  INCIDENT_TRIGGERED subject=host:local
-RUNOPSY ANALYSIS
+DEPREHENDO ANALYSIS
 
 GitHub Actions
 Runner        WITHHELD source=UNKNOWN

@@ -28,10 +28,10 @@ import (
 	"sync"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider/evidence"
 )
 
 // HostView is the provider's read-only window onto the live host. the agent

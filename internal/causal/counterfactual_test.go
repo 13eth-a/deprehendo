@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 // 4.37 counterfactual corpus (docs/reviews/phase4-principal-audit.md, adversarial

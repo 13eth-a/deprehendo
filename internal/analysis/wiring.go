@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	"runopsy/internal/causal"
-	"runopsy/internal/diagnosis"
-	"runopsy/internal/incident"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/causal"
+	"deprehendo/internal/diagnosis"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // this file holds the orchestration that once lived in package main
 // (contract docs/cloud/contract.md §3.2): how provider intent covers feed the
 // causal graph and the diagnosis engine. it must exist exactly once, because
 // the CLI, the timeline renderer and the phase 7 analyzer worker all run it.
-// the "one runopsy" rule (7.9).
+// the "one deprehendo" rule (7.9).
 
 // jobSucceededLead is how far before a stated SUCCEEDED completion line the
 // cover starts. the runner writes that line only after the worker has exited,

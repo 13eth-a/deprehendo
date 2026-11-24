@@ -1,0 +1,5 @@
+{
+  "expected_signature": "OOM_KILL",
+  "fault": "real GitHub Actions job on a 4 GiB self-hosted runner allocates 4 GiB (deprehendo-b3 scenario memory); the kernel OOM-kills it (exit 137)",
+  "captured": "2026-11-21, 7.62, docs/github/real-runner-demo.md"
+}

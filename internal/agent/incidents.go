@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 // IncidentPipeline connects completed recorder samples to one capture and to

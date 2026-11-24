@@ -10,7 +10,7 @@ import (
 )
 
 func bundlePath(dir string, n int) string {
-	return filepath.Join(dir, fmt.Sprintf("inc_%032x.runopsy", n))
+	return filepath.Join(dir, fmt.Sprintf("inc_%032x.deprehendo", n))
 }
 
 func writeBundleFile(t *testing.T, path string, age time.Duration) {
@@ -60,7 +60,7 @@ func TestDefaultDirIsPerUser(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if dir != filepath.Join(home, ".runopsy", "incidents") {
+	if dir != filepath.Join(home, ".deprehendo", "incidents") {
 		t.Fatalf("DefaultDir = %q", dir)
 	}
 }
@@ -90,7 +90,7 @@ func TestPruneRetainsNewestCount(t *testing.T) {
 			t.Errorf("new bundle %d missing: %v", n, err)
 		}
 	}
-	if len(result.Removed) > 0 && !strings.HasSuffix(result.Removed[0].Path, fmt.Sprintf("inc_%032x.runopsy", 0)) {
+	if len(result.Removed) > 0 && !strings.HasSuffix(result.Removed[0].Path, fmt.Sprintf("inc_%032x.deprehendo", 0)) {
 		t.Fatalf("removal order oldest first: %+v", result.Removed)
 	}
 }
@@ -106,7 +106,7 @@ func TestPruneMaxAge(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(result.Removed) != 1 || !strings.HasSuffix(result.Removed[0].Path, fmt.Sprintf("inc_%032x.runopsy", 1)) {
+	if len(result.Removed) != 1 || !strings.HasSuffix(result.Removed[0].Path, fmt.Sprintf("inc_%032x.deprehendo", 1)) {
 		t.Fatalf("removed = %+v", result.Removed)
 	}
 	if _, err := os.Stat(bundlePath(dir, 2)); err != nil {
@@ -135,20 +135,20 @@ func TestPruneIgnoresUnrelatedFilesAndSymlinks(t *testing.T) {
 	writeBundleFile(t, bundlePath(dir, 2), time.Minute)
 	unrelated := []string{
 		filepath.Join(dir, "notes.txt"),
-		filepath.Join(dir, "inc_NOTHEX.runopsy"),
-		filepath.Join(dir, "inc_00000000000000000000000000000001.runopsy.tmp"),
-		filepath.Join(dir, ".runopsy-123.tmp"),
+		filepath.Join(dir, "inc_NOTHEX.deprehendo"),
+		filepath.Join(dir, "inc_00000000000000000000000000000001.deprehendo.tmp"),
+		filepath.Join(dir, ".deprehendo-123.tmp"),
 	}
 	for _, path := range unrelated {
 		writeBundleFile(t, path, 30*24*time.Hour)
 	}
-	if err := os.Mkdir(filepath.Join(dir, "inc_000000000000000000000000000000ff.runopsy"), 0700); err != nil {
+	if err := os.Mkdir(filepath.Join(dir, "inc_000000000000000000000000000000ff.deprehendo"), 0700); err != nil {
 		t.Fatal(err)
 	}
 	old := bundlePath(dir, 3)
 	writeBundleFile(t, old, 30*24*time.Hour)
 	target := filepath.Join(dir, "notes.txt")
-	link := filepath.Join(dir, fmt.Sprintf("inc_%032x.runopsy", 4))
+	link := filepath.Join(dir, fmt.Sprintf("inc_%032x.deprehendo", 4))
 	if err := os.Symlink(target, link); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}

@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { apiGet, isOrganizationId, ORG_COOKIE, type Me } from "../../lib/runopsy-api.ts";
+import { apiGet, isOrganizationId, ORG_COOKIE, type Me } from "../../lib/deprehendo-api.ts";
 
 /**
  * remembers the chosen organization. it is set only if the API lists the user

@@ -10,7 +10,7 @@ second implementation.
   request per container** (for example Cloud Run with `concurrency=1`, 2 GiB,
   120 s request timeout). Web stays on Vercel/Next.js; Postgres and object
   storage stay managed.
-- **What ships today:** `runopsy-cloud serve` runs the same job through the
+- **What ships today:** `deprehendo-cloud serve` runs the same job through the
   `JobRunner` seam in-process (one child process per bundle, private temp dir,
   `GOMEMLIMIT=1GiB`, 60 s wall clock). That is the controlled server-side
   process contract §3.1 allows, and the seam a separate worker service calls —
@@ -25,7 +25,7 @@ second implementation.
   (for example Auth.js or a hosted auth service). The cloud server keeps
   consuming **personal API tokens only** (`Authorization: Bearer`, hashes in
   `personal_tokens`, 7.12). No hand-rolled sessions, no SSO in Phase 7.
-- **What ships today:** `runopsy-cloud token` mints the CLI token; every data
+- **What ships today:** `deprehendo-cloud token` mints the CLI token; every data
   query starts from the token's `organization_id` (§2.3); another org's object
   is 404, never 403. Sign-up/session UI belongs to the provider choice, not to
   this repo.

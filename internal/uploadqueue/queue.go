@@ -1,6 +1,6 @@
 // package uploadqueue is the phase 7 local upload queue (7.47–7.49): a
 // completed incident is persisted on disk first, then queued here and sent to
-// runopsy cloud with bounded exponential backoff.
+// deprehendo cloud with bounded exponential backoff.
 //
 // the queue is a single small JSON file owned by one process at a time. it is
 // deliberately not a job system: three states, one retry policy, a hard

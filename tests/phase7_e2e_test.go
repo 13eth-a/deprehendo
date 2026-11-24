@@ -19,8 +19,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/analysis"
-	"runopsy/internal/incident"
+	"deprehendo/internal/analysis"
+	"deprehendo/internal/incident"
 )
 
 // phase 7's end-to-end half (checklist 7.61): the bundle a real agent froze
@@ -143,7 +143,7 @@ func (c *referenceCloud) create(w http.ResponseWriter, r *http.Request) {
 	}
 	object := &referenceObject{
 		id:         fmt.Sprintf("upl_%032x", len(c.order)+1),
-		objectKey:  fmt.Sprintf("orgs/org_reference/bundles/%s.runopsy", req.SHA256),
+		objectKey:  fmt.Sprintf("orgs/org_reference/bundles/%s.deprehendo", req.SHA256),
 		digest:     req.SHA256,
 		incidentID: req.IncidentID,
 	}
@@ -381,7 +381,7 @@ func TestPhase7BundleToDashboardExactBytes(t *testing.T) {
 		t.Fatalf("credential file is %04o, want 0600", perm)
 	}
 
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	localdocpath := filepath.Join(dir, "local.json")
 	out, code = runAgentCLI(t, "analyze", "--document", localdocpath, bundlepath)
 	if code != 0 {
@@ -458,7 +458,7 @@ func TestPhase7BundleToDashboardExactBytes(t *testing.T) {
 	// break combination: the network dies during the storage POST. the CLI
 	// fails, nothing is analyzed, and the local bundle is untouched (L3).
 	cloud.failNextStorage()
-	otherbundle := filepath.Join(root, "testdata", "incidents", "network-failure.runopsy")
+	otherbundle := filepath.Join(root, "testdata", "incidents", "network-failure.deprehendo")
 	before := digestOf(t, otherbundle)
 	out, code = runAgentCLI(t, "upload", "-config", configpath, otherbundle)
 	if code == 0 {
@@ -476,14 +476,14 @@ func TestPhase7BundleToDashboardExactBytes(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, entry := range entries {
-		if strings.HasPrefix(entry.Name(), ".runopsy-") || strings.HasSuffix(entry.Name(), ".queue") {
+		if strings.HasPrefix(entry.Name(), ".deprehendo-") || strings.HasSuffix(entry.Name(), ".queue") {
 			t.Errorf("failed upload left a temporary or queue artifact: %s", entry.Name())
 		}
 	}
 
 	// break combination: a corrupt archive is refused before any network call,
 	// so the server never sees it.
-	corrupt := filepath.Join(dir, "corrupt.runopsy")
+	corrupt := filepath.Join(dir, "corrupt.deprehendo")
 	if err := os.WriteFile(corrupt, raw[:100], 0o600); err != nil {
 		t.Fatal(err)
 	}

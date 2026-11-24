@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 func loopback(a, b, c, d byte) netip.Addr {

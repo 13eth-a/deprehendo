@@ -8,7 +8,7 @@ the code as it is in the repo today.
 
 - Read the code each fix names, not the summary of it: `internal/cloudserver/storage.go`,
   `incidents.go`, `reanalyze.go` (the owner check), `server.go` (`acquireJob`),
-  `usage.go`, `cmd/runopsy-cloud/main.go` (`serve` timeouts) and `Dockerfile`.
+  `usage.go`, `cmd/deprehendo-cloud/main.go` (`serve` timeouts) and `Dockerfile`.
 - Checked that each test the gate cites exists by name. I did not run the tests in
   this review; the principal run of November 11 is the evidence for that.
 
@@ -26,9 +26,9 @@ code. The browser-session row remains OPEN, as the principal doc says.
 | G2 owner-only delete and activate | **Confirmed** | `requireOwner` runs after the org lookup in `deleteIncident` and `activate`, so a foreign org gets 404 and a member gets 403. Reanalyze stays open to members, as the doc says. |
 | G3 delete order | **Confirmed** | `documentKeys` is read before `DELETE FROM uploads`, and a read failure stops the delete. |
 | G4 server-wide cap | **Confirmed** | `acquireJob` checks `running < MaxConcurrentTotal` and returns on `ctx.Done()`. |
-| G5 HTTP timeouts | **Confirmed** | Read 5 m, write 5 m, idle 2 m, header 64 KiB (`cmd/runopsy-cloud/main.go`). |
+| G5 HTTP timeouts | **Confirmed** | Read 5 m, write 5 m, idle 2 m, header 64 KiB (`cmd/deprehendo-cloud/main.go`). |
 | G6 sanitized reply body | Not re-read here | Covered by existing client tests per the doc. |
-| G7 non-root container | **Confirmed** | `USER runopsy` in the final stage. Needs a `docker build` to prove it runs. |
+| G7 non-root container | **Confirmed** | `USER deprehendo` in the final stage. Needs a `docker build` to prove it runs. |
 | Hourly limit (§5.3) | **Confirmed** | Rolling 60-minute sum over `upload_usage_minutes`; `Retry-After` is the time until the oldest minute ages out. Fails open on a database error, as recorded. |
 | Test names cited | **Confirmed** | All eight cited test functions exist in `internal/cloudserver/gate_test.go` and `tests/phase7_*_test.go`. |
 

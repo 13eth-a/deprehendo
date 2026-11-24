@@ -98,7 +98,7 @@ func Encode(w io.Writer, original *Incident, compressed bool) error {
 	}
 	payloads := [][]byte{metadata, snapshotdata, stream.Bytes(), privacydata}
 	total := 0
-	manifest := Manifest{Format: "runopsy", FormatVersion: FormatVersion, SchemaVersion: SchemaVersion, SnapshotEncoding: SnapshotEncoding, IncidentID: i.ID, CreatedAt: i.CreatedAt, AgentVersion: i.Metadata.AgentVersion, Platform: i.Metadata.Host.OS, Architecture: i.Metadata.Host.Architecture, Files: map[string]FileDigest{}}
+	manifest := Manifest{Format: "deprehendo", FormatVersion: FormatVersion, SchemaVersion: SchemaVersion, SnapshotEncoding: SnapshotEncoding, IncidentID: i.ID, CreatedAt: i.CreatedAt, AgentVersion: i.Metadata.AgentVersion, Platform: i.Metadata.Host.OS, Architecture: i.Metadata.Host.Architecture, Files: map[string]FileDigest{}}
 	for n, p := range payloads {
 		total += len(p)
 		manifest.Files[members[n]] = digest(p)
@@ -372,15 +372,16 @@ func Read(r io.ReaderAt, size int64) (*Bundle, error) {
 		return nil, fmt.Errorf("incident: manifest: %w", err)
 	}
 	if m.SchemaVersion != SchemaVersion {
-		return nil, fmt.Errorf("unsupported Runopsy bundle schema: %d", m.SchemaVersion)
+		return nil, fmt.Errorf("unsupported Deprehendo bundle schema: %d", m.SchemaVersion)
 	}
 	if m.FormatVersion != FormatVersion {
-		return nil, fmt.Errorf("unsupported Runopsy bundle format version: %d", m.FormatVersion)
+		return nil, fmt.Errorf("unsupported Deprehendo bundle format version: %d", m.FormatVersion)
 	}
 	if m.SnapshotEncoding != SnapshotEncoding {
-		return nil, fmt.Errorf("unsupported Runopsy snapshot encoding: %q", m.SnapshotEncoding)
+		return nil, fmt.Errorf("unsupported Deprehendo snapshot encoding: %q", m.SnapshotEncoding)
 	}
-	if m.Format != "runopsy" || len(m.Files) != len(members) {
+	// legacy v1 captures retain their original checksummed archive metadata.
+	if (m.Format != "deprehendo" && m.Format != "runopsy") || len(m.Files) != len(members) {
 		return nil, fmt.Errorf("incident: unsupported format or encoding")
 	}
 	payload := map[string][]byte{}

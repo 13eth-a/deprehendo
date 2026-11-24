@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/incident"
+	"deprehendo/internal/incident"
 )
 
 // documentBytes renders one fixture the way both the CLI (--document) and the
@@ -42,7 +42,7 @@ func TestFixturesProduceStableDocuments(t *testing.T) {
 	if testing.Short() {
 		t.Skip("corpus render is not a short-mode test")
 	}
-	paths, err := filepath.Glob(filepath.Join("..", "..", "testdata", "incidents", "*.runopsy"))
+	paths, err := filepath.Glob(filepath.Join("..", "..", "testdata", "incidents", "*.deprehendo"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -79,7 +79,7 @@ func TestFixturesProduceStableDocuments(t *testing.T) {
 // rule set. they are asserted by JSON name because the cloud reads JSON, not
 // this go struct.
 func TestDocumentRecordsCompatibilityIdentity(t *testing.T) {
-	path := filepath.Join("..", "..", "testdata", "incidents", "cpu-spin.runopsy")
+	path := filepath.Join("..", "..", "testdata", "incidents", "cpu-spin.deprehendo")
 	raw, _ := documentBytes(t, path)
 
 	type formatShape struct {

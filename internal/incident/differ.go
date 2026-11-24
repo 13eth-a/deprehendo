@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 type identity struct {

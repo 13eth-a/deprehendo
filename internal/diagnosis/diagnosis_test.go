@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 // fixture helpers. timestamps are relative to a fixed origin so every test

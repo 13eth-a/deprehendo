@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider/evidence"
 )
 
 // fakeProvider is a scriptable provider for supervisor and conformance tests.

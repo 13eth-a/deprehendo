@@ -11,7 +11,7 @@ import (
 	"time"
 	"unsafe"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 type processFunc func() ([]platform.Process, error)

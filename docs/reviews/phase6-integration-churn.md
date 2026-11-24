@@ -21,8 +21,8 @@ session. It is fixed, with a regression test.
 
 | | |
 |---|---|
-| Host | Lima VM `runopsy`, Ubuntu, kernel 7.0.0-34-generic, 4 vCPU, aarch64 |
-| Tracer | `runopsy-trace 0.1.0`, release build (`cargo build --release`, 20.5 s) |
+| Host | Lima VM `deprehendo`, Ubuntu, kernel 7.0.0-34-generic, 4 vCPU, aarch64 |
+| Tracer | `deprehendo-trace 0.1.0`, release build (`cargo build --release`, 20.5 s) |
 | Backend | `proc_connector`; eBPF attach refused with an explicit reason: no `CAP_BPF`/`CAP_PERFMON` |
 | User | uid 501 (`homeacc`), no capabilities, no sudo for the tracer |
 | `net.core.rmem_max` | 212992 for the acceptance run (stock), 4194304 for a second run |
@@ -36,7 +36,7 @@ recorded in `selection_reason` — the path an unprivileged deployment takes.
 ## 3. Method
 
 `TestLiveChurn` (new, `internal/trace/churn_linux_test.go`, opt-in through
-`RUNOPSY_LIVE_CHURN=N`; `make trace-churn-live` runs 100,000):
+`DEPREHENDO_LIVE_CHURN=N`; `make trace-churn-live` runs 100,000):
 
 1. Start the real tracer and connect the production `Session` over its
    Unix socket.

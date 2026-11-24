@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 // Real-runner scenario S10: an outbound block on 443 while the runner is up.

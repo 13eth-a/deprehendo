@@ -14,13 +14,13 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"runopsy/internal/incident"
+	"deprehendo/internal/incident"
 )
 
 // DefaultSocket is private to the current user. A stale socket is never
 // silently removed: the operator must choose a new path or remove it.
 func DefaultSocket() string {
-	return filepath.Join(os.TempDir(), fmt.Sprintf("runopsy-agent-%d.sock", os.Getuid()))
+	return filepath.Join(os.TempDir(), fmt.Sprintf("deprehendo-agent-%d.sock", os.Getuid()))
 }
 
 // TriggerResponse acknowledges an accepted manual trigger. state is sampled

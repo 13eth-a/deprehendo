@@ -18,8 +18,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/platform"
-	"runopsy/internal/simhelper"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/simhelper"
 )
 
 // TestGitHubHarnessPlans pins the choreography table. every advertised

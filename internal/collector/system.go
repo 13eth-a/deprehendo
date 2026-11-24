@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // HostSystemCollector samples host-level load, aggregate CPU utilisation,

@@ -1,4 +1,4 @@
-// package platform is runopsy's OS boundary: process identity snapshots,
+// package platform is deprehendo's OS boundary: process identity snapshots,
 // signals, process groups, TCP tables, PSI and cgroup reads. linux specifics
 // (/proc, /sys/fs/cgroup) only appear in the linux < collects funcs; portable
 // parsers live beside them so fixture-based tests run on any OS.

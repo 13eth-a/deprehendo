@@ -1,20 +1,23 @@
 import { evidenceDescription, evidenceLabel, isDirect } from "../lib/evidence.ts";
+import { Badge } from "./shadcn/Badge.tsx";
 
 /**
- * direct versus inferred badge (checklist 7.22). the class is the one the
- * document stored. direct and inferred look different, so the distinction is
- * not carried by colour alone (7.45).
+ * Direct versus inferred tag (checklist 7.22). The class is the one the
+ * document stored. Direct evidence is a filled square, inferred a hollow one,
+ * so the two differ in shape and words as well as color (7.45).
  */
-export function EvidenceBadge({ quality }: { quality: string }) {
+export function EvidenceBadge({ quality, compact = false }: { quality: string; compact?: boolean }) {
   const direct = isDirect(quality);
   return (
-    <span
-      className={direct ? "badge badge-direct" : "badge badge-inferred"}
+    <Badge
+      variant={direct ? "direct" : "outline"}
+      className={direct ? "badge-direct" : "badge-inferred"}
       title={evidenceDescription(quality)}
       data-evidence={quality}
+      data-compact={compact ? "true" : undefined}
     >
-      <span aria-hidden="true">{direct ? "● " : "○ "}</span>
+      <span className="q-mark" aria-hidden="true" data-direct={direct ? "true" : undefined} />
       {evidenceLabel(quality)}
-    </span>
+    </Badge>
   );
 }

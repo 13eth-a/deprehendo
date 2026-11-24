@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/analyzer"
+	"deprehendo/internal/analyzer"
 )
 
 // countingAnalyzer is a JobRunner that never runs: the counter tests charge

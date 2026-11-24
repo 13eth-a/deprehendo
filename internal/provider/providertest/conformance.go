@@ -10,9 +10,9 @@ import (
 	"reflect"
 	"testing"
 
-	"runopsy/internal/incident"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // fixture is one recorded provider section with the incident it belongs to.

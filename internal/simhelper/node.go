@@ -1,6 +1,6 @@
 // package simhelper implements the hidden helper processes that scenarios use
 // to build real process trees (orphan-process, process-tree). helpers are
-// named with a leading underscore so runopsy-sim --help never advertises them;
+// named with a leading underscore so deprehendo-sim --help never advertises them;
 // only scenarios and tests launch them.
 package simhelper
 
@@ -16,11 +16,11 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // usageText is written for bad invocations of hidden helpers.
-const usageText = "Usage:\n  runopsy-sim _node --spec <spec> --hold <dur>\n\nSpecs:\n  task            leaf process that stays alive for --hold, then exits 0\n  w(a,b,...)      node that spawns each child spec, waits, exits 0\n\nHelpers are internal: scenarios pid-listen rather than talk to them.\n"
+const usageText = "Usage:\n  deprehendo-sim _node --spec <spec> --hold <dur>\n\nSpecs:\n  task            leaf process that stays alive for --hold, then exits 0\n  w(a,b,...)      node that spawns each child spec, waits, exits 0\n\nHelpers are internal: scenarios pid-listen rather than talk to them.\n"
 
 // run dispatches one hidden helper invocation. args excludes the binary name.
 func Run(args []string, stderr io.Writer) int {

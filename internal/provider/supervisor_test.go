@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/provider/evidence"
 )
 
 func fastConfig() SupervisorConfig {

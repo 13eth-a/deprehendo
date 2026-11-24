@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/analysis"
-	"runopsy/internal/incident"
+	"deprehendo/internal/analysis"
+	"deprehendo/internal/incident"
 )
 
 // demoManifest is the dashboard fixture-mode corpus (7.41/7.42) at

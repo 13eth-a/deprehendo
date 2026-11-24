@@ -4,7 +4,7 @@
 // tested against a real postgres and a real store rather than trusted: a dry
 // run must delete nothing, a real run must remove rows and objects together,
 // a stale never-completed upload must go, and a newer upload (and the shared
-// per-org usage rows) must survive. gated on RUNOPSY_CLOUD_TEST_DSN like the
+// per-org usage rows) must survive. gated on DEPREHENDO_CLOUD_TEST_DSN like the
 // rest of the server suite; `make test-cloud` sets it.
 package tests
 
@@ -24,9 +24,9 @@ func TestPhase7PruneUploadsOlderThan(t *testing.T) {
 	h := newCloudHarness(t, dsn, nil)
 	ctx := context.Background()
 
-	oldpath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
-	newpath := filepath.Join(root, "testdata", "incidents", "oom.runopsy")
-	pendingpath := filepath.Join(root, "testdata", "incidents", "healthy-idle.runopsy")
+	oldpath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
+	newpath := filepath.Join(root, "testdata", "incidents", "oom.deprehendo")
+	pendingpath := filepath.Join(root, "testdata", "incidents", "healthy-idle.deprehendo")
 
 	oldupload, oldincident := createAndStore(t, h, h.TokenA, oldpath)
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, oldupload, 60*time.Second); status != 200 {

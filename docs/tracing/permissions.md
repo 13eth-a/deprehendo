@@ -23,14 +23,14 @@ translating PIDs by guesswork.
 
 ```sh
 # What the binary can actually do on this kernel.
-runopsy-trace capabilities
+deprehendo-trace capabilities
 
 # What the agent will do, given its configured mode, and where the binary is.
-runopsy-agent trace status                 # mode default: $RUNOPSY_TRACING, then auto
-runopsy-agent trace status --tracing proc
+deprehendo-agent trace status                 # mode default: $DEPREHENDO_TRACING, then auto
+deprehendo-agent trace status --tracing proc
 
 # Does the unprivileged case work here? Run as a normal user, not root.
-sudo -u nobody runopsy-trace debug         # then, in another shell: echo hello
+sudo -u nobody deprehendo-trace debug         # then, in another shell: echo hello
 ```
 
 Expected healthy output on a modern kernel:
@@ -72,9 +72,9 @@ Tracing unavailable: insufficient permission. Continuing in polling mode.
 Grant capabilities to the **tracer binary**, not the agent:
 
 ```sh
-sudo setcap cap_bpf,cap_perfmon+ep /usr/local/bin/runopsy-trace   # future eBPF backend
+sudo setcap cap_bpf,cap_perfmon+ep /usr/local/bin/deprehendo-trace   # future eBPF backend
 # or, for the proc connector on an older kernel:
-sudo setcap cap_net_admin+ep /usr/local/bin/runopsy-trace
+sudo setcap cap_net_admin+ep /usr/local/bin/deprehendo-trace
 ```
 
 Prefer file capabilities or a systemd unit with `AmbientCapabilities=` over

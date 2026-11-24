@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/incident"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/incident"
 )
 
 // waitForBundleOfProcess waits for a saved bundle that actually carries the
@@ -63,7 +63,7 @@ func TestPhase2AcceptanceMatrix(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			base, err := os.MkdirTemp("/tmp", "runopsy-matrix-")
+			base, err := os.MkdirTemp("/tmp", "deprehendo-matrix-")
 			if err != nil {
 				t.Fatal(err)
 			}

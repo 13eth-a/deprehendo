@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/events"
+	"deprehendo/internal/events"
 )
 
 func TestConnStateTransitions(t *testing.T) {

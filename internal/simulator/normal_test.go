@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/events"
+	"deprehendo/internal/events"
 )
 
 func newTestConfig(t *testing.T, duration time.Duration) (Config, *bytes.Buffer) {

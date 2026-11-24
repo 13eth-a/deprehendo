@@ -3,9 +3,9 @@
 //! dependency-free).
 //!
 //! What it decides, per contract §2.2:
-//!   - On Linux, compile the BPF C package (`src/ebpf/runopsy.bpf.c`) with
-//!     the system clang into `$OUT_DIR/runopsy.bpf.o` and record the path
-//!     in `RUNOPSY_BPF_O` for the loader. A host without clang, or a
+//!   - On Linux, compile the BPF C package (`src/ebpf/deprehendo.bpf.c`) with
+//!     the system clang into `$OUT_DIR/deprehendo.bpf.o` and record the path
+//!     in `DEPREHENDO_BPF_O` for the loader. A host without clang, or a
 //!     compile failure, does NOT break the build: it produces no path, so
 //!     the loader reports `unavailable` with the honest reason at runtime
 //!     (§2.4: degrade with a reason, never a fake).
@@ -25,9 +25,9 @@ fn main() {
 
     // compile the BPF C package if clang exists.
     let manifest = env::var("CARGO_MANIFEST_DIR").expect("cargo manifest dir");
-    let src = PathBuf::from(&manifest).join("src/ebpf/runopsy.bpf.c");
+    let src = PathBuf::from(&manifest).join("src/ebpf/deprehendo.bpf.c");
     let out_dir = PathBuf::from(env::var("OUT_DIR").expect("cargo out dir"));
-    let obj = out_dir.join("runopsy.bpf.o");
+    let obj = out_dir.join("deprehendo.bpf.o");
 
     // libbpf's bpf_tracing.h needs the target architecture; derive it from
     // the cargo target instead of assuming x86 (the lima VM is arm64).
@@ -70,14 +70,14 @@ fn main() {
             }
             _ => {
                 println!(
-                    "cargo:warning=runopsy-trace: clang failed on src/ebpf/runopsy.bpf.c; \
+                    "cargo:warning=deprehendo-trace: clang failed on src/ebpf/deprehendo.bpf.c; \
                      the binary will report the eBPF backend unavailable with a reason"
                 );
             }
         }
     } else {
         println!(
-            "cargo:warning=runopsy-trace: clang not found; the eBPF backend will be \
+            "cargo:warning=deprehendo-trace: clang not found; the eBPF backend will be \
              unavailable (build the tracer on a host with clang, as in CI)"
         );
     }
@@ -85,7 +85,7 @@ fn main() {
     if embedded {
         // the loader reads this env at runtime; the object travels with the
         // cargo build, no need to hunt for a manifest-relative path twice.
-        println!("cargo:rustc-env=RUNOPSY_BPF_O={}", obj.display());
+        println!("cargo:rustc-env=DEPREHENDO_BPF_O={}", obj.display());
     }
 
     // libbpf from libbpf-dev / libbpf1. declared unconditionally on linux:
@@ -99,7 +99,7 @@ fn main() {
     }
 
     // the vmlinux.h + headers leave in-tree; recompile when they change.
-    println!("cargo:rerun-if-changed=src/ebpf/runopsy.bpf.c");
+    println!("cargo:rerun-if-changed=src/ebpf/deprehendo.bpf.c");
     println!("cargo:rerun-if-changed=src/ebpf/tp_defs.h");
     println!("cargo:rerun-if-changed=src/ebpf/vmlinux.h");
 }

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 // Real-runner scenario S8 (docs/github/real-runner-verification.md): a step

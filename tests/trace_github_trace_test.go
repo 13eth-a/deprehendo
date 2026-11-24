@@ -27,10 +27,10 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
-	"runopsy/internal/simhelper"
-	"runopsy/internal/trace"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/simhelper"
+	"deprehendo/internal/trace"
 )
 
 func TestGitHubRunnerTraceCorrelation(t *testing.T) {

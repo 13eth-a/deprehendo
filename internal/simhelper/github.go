@@ -28,10 +28,10 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
-// GitHub scenario names accepted by `runopsy-sim github`.
+// GitHub scenario names accepted by `deprehendo-sim github`.
 const (
 	GitHubHealthyIdle        = "healthy-idle"
 	GitHubHealthyJob         = "healthy-job"

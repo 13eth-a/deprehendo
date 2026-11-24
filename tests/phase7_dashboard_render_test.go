@@ -48,7 +48,7 @@ func TestPhase7DashboardRendersTheCLIDocument(t *testing.T) {
 		t.Skip("web/node_modules is not installed (cd web && npm install): the dashboard leg needs it")
 	}
 
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	docpath := filepath.Join(t.TempDir(), "document.json")
 	out, code := runAgentCLI(t, "analyze", "--document", docpath, bundlepath)
 	if code != 0 {

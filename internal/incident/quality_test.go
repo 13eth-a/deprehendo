@@ -3,7 +3,7 @@ package incident
 import (
 	"testing"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 // TestQualityOfClassifiesProvenance pins the mapping from recorded provenance

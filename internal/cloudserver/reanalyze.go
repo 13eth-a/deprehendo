@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"time"
 
-	"runopsy/internal/analyzer"
+	"deprehendo/internal/analyzer"
 )
 
 // documentKeyForEngine names one engine's document for one upload. it is

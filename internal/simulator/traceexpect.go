@@ -18,7 +18,7 @@ import (
 	"sort"
 	"strings"
 
-	"runopsy/internal/trace"
+	"deprehendo/internal/trace"
 )
 
 // TraceExpectation is the trace-evidence contract for one scenario.

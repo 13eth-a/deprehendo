@@ -53,7 +53,7 @@ const ENOBUFS: i32 = 105;
 const RECEIVE_BUFFER_BYTES: i32 = 16 << 20;
 
 /// USER_HZ: the unit of /proc/<pid>/stat `starttime`. Fixed at 100 on every
-/// Linux architecture Runopsy targets (the kernel exports USER_HZ, not HZ).
+/// Linux architecture Deprehendo targets (the kernel exports USER_HZ, not HZ).
 const TICKS_PER_SEC: i64 = 100;
 const NS_PER_TICK: i64 = 1_000_000_000 / TICKS_PER_SEC;
 
@@ -132,7 +132,7 @@ impl TraceBackend for ProcConnectorBackend {
         let mut fd: Option<RawFd> = match subscribe() {
             Ok(fd) => Some(fd),
             Err(e) => {
-                eprintln!("runopsy-trace: proc connector subscribe failed: {}", e);
+                eprintln!("deprehendo-trace: proc connector subscribe failed: {}", e);
                 None
             }
         };
@@ -150,7 +150,7 @@ impl TraceBackend for ProcConnectorBackend {
                             Some(raw)
                         }
                         Err(e) => {
-                            eprintln!("runopsy-trace: resubscribe failed: {}", e);
+                            eprintln!("deprehendo-trace: resubscribe failed: {}", e);
                             backoff = (backoff * 2).min(std::time::Duration::from_secs(5));
                             None
                         }
@@ -171,7 +171,7 @@ impl TraceBackend for ProcConnectorBackend {
                     // listened group vanishes; close, back off with limited
                     // escalation, resubscribe (6.39). whatever happens until
                     // the new subscription is live is unobserved: a gap.
-                    eprintln!("runopsy-trace: connector reset ({}); resubscribing", e);
+                    eprintln!("deprehendo-trace: connector reset ({}); resubscribing", e);
                     crate::nix::close(raw);
                     fd = None;
                     dec.mark_gap(&loss, STAGE_RESUBSCRIBE, 1);
@@ -453,7 +453,7 @@ fn clock_ns(clock_id: i32) -> i64 {
         let mut ts = Timespec::default();
         // the single FFI call for time: ts is the caller-owned,
         // zero-initialized out-buffer; clock_gettime writes exactly its size
-        // under the platform ABI (64-bit time_t on every target runopsy
+        // under the platform ABI (64-bit time_t on every target deprehendo
         // builds for; see the compile-time check below).
         extern "C" {
             fn clock_gettime(clock_id: i32, tp: *mut Timespec) -> i32;
@@ -563,7 +563,7 @@ pub struct Timespec {
 #[cfg(target_os = "linux")]
 const _: () = assert!(
     std::mem::size_of::<usize>() == 8,
-    "runopsy-trace needs a 64-bit target"
+    "deprehendo-trace needs a 64-bit target"
 );
 
 #[cfg(test)]

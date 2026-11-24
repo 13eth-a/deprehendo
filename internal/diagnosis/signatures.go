@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // the bundled v1 rules. all weights are declared constants so a stored

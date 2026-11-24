@@ -12,7 +12,7 @@ import (
 	"sort"
 	"time"
 
-	"runopsy/internal/events"
+	"deprehendo/internal/events"
 )
 
 // DefaultDuration is the runtime used by scenarios when the caller does not

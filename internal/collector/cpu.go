@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // linuxUserHZ is the fixed userland ABI value of _SC_CLK_TCK on linux: the

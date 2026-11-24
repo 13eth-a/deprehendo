@@ -10,7 +10,7 @@ import (
 	"time"
 	"unsafe"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // OwnerIndexer produces the inode→owner table used to attribute TCP sockets

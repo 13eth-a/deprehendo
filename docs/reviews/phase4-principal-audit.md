@@ -3,13 +3,13 @@
 **Reviewer:** principal  
 **Date:** 2026-10-27  
 **Code reviewed:** the shared workspace as of the engineering, secondary and integration
-Phase 4 slices (`internal/causal`, `cmd/runopsy-agent/timeline.go`,
+Phase 4 slices (`internal/causal`, `cmd/deprehendo-agent/timeline.go`,
 `testdata/causal`, `tests/phase4_e2e_test.go`, `docs/causality.md`,
 `docs/event-model.md`, `docs/causal-rules/README.md`).  
 **Companion spec:** [`../causal-semantics.md`](../causal-semantics.md), the
 binding decisions for 4.6/4.7/4.9/4.10/4.11/4.15/4.25/4.43.  
 **Executable findings:** `internal/causal/principal_audit_test.go`. Run them with
-`RUNOPSY_REVIEW_AUDIT=1 go test ./internal/causal -run PrincipalAudit -v`. On the
+`DEPREHENDO_REVIEW_AUDIT=1 go test ./internal/causal -run PrincipalAudit -v`. On the
 reviewed code all 14 failed. Re-run after the adversarial pass: 9 pass and 5 still
 fail (A3, A5, A6, A8, A11). By default they skip, so the suite stays green.
 
@@ -20,7 +20,7 @@ fail (A3, A5, A6, A8, A11). By default they skip, so the suite stays green.
   -count=1 -timeout=5m ./...`, exits 0 with all 10 packages OK. CI now runs
   this test step as root, because `internal/platform` reads `/proc/1/fd`,
   which a normal user cannot open. The causal package also passes with
-  `RUNOPSY_REVIEW_AUDIT=1 -race`.
+  `DEPREHENDO_REVIEW_AUDIT=1 -race`.
   - Fixed a test bug in `tests/simulator_test.go`: the process-cleanup helper
     read the `tasks` count in the `started` event as a PID list. It recorded
     PID 2 (`kthreadd`), so `TestProcessScenariosRespectShortDurationAndCleanChildren`
@@ -34,15 +34,15 @@ fail (A3, A5, A6, A8, A11). By default they skip, so the suite stays green.
 - First **Linux** run of Phase 4 (linux/amd64 sandbox, Go 1.24.7 with a local
   `go` directive override; the repo pins 1.27.1, which this sandbox could not
   download; not committed): `go test -race -count=1` green for
-  `internal/causal`, `cmd/runopsy-agent` and `internal/diagnosis`. The full
+  `internal/causal`, `cmd/deprehendo-agent` and `internal/diagnosis`. The full
   suite fails only on sandbox limits (no cgroup2 mount, restricted
   `/proc/1/fd`, PID 1 reaping in `TestProcessScenariosRespectShortDuration…`).
   These are not Phase 4 code issues.
-- `RUNOPSY_E2E_CAUSAL=1 go test ./tests -run TestPhase4CausalEndToEnd`: PASS on
+- `DEPREHENDO_E2E_CAUSAL=1 go test ./tests -run TestPhase4CausalEndToEnd`: PASS on
   Linux. Memory: honest no-episode outcome. Socket: "no socket facts
   observed". The sandbox exposes `/proc/net/tcp` but the simulator's sockets
   did not surface, so this run is **inconclusive for socket facts**.
-- **Host run (Lima VM, aarch64, cgroup2fs), `RUNOPSY_E2E_CAUSAL=1 go test
+- **Host run (Lima VM, aarch64, cgroup2fs), `DEPREHENDO_E2E_CAUSAL=1 go test
   ./tests -run TestPhase4CausalEndToEnd`**: PASS. The socket-stall half now
   observes 7 socket facts from `/proc/net/tcp`, so the earlier inconclusive
   caveat is closed for Tier A facts. The flagship stall chain is still not
@@ -421,7 +421,7 @@ code. The implementation was right; the test could not have caught a regression.
 | R10 | S3 | **Performance regression (4.41).** Every source × target pair was evaluated, rejected pairs were appended, and each pair rescanned all events; end-to-end at 10k samples took 1.96 s and 303 MB | per-Apply index: same-episode targets by episode, binary-searched MaxGap window, precomputed recoveries/discontinuities. Now 92 ms and 34 MB on the same box, roughly linear again (fixtures pin identical edge sets) | benchmarks |
 | R4 | S3 | `MEMORY_AT_LIMIT` read the reading from the OOM target instead of the limit source (dormant) | read the source | — |
 | R14 | S3 | `alternatives` had `omitempty`, so the "checked, empty" list (I2) never reached JSON | always serialized | E2E |
-| R15 | process | **The gated Phase 4 E2E was broken by the remediation** (it read the retired `root_candidates`/`unknown_cause` fields) and stayed red because nobody set `RUNOPSY_E2E_CAUSAL` | ported to the `failures` contract; prints the 4.47 "flagship chain not exercised" summary every run | E2E |
+| R15 | process | **The gated Phase 4 E2E was broken by the remediation** (it read the retired `root_candidates`/`unknown_cause` fields) and stayed red because nobody set `DEPREHENDO_E2E_CAUSAL` | ported to the `failures` contract; prints the 4.47 "flagship chain not exercised" summary every run | E2E |
 
 Spec changes that come with these are recorded in `docs/causal-semantics.md`
 §11 (2026-10-28 rows).

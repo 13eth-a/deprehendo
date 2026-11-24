@@ -26,7 +26,7 @@ the code.
 
 ## 0. The one sentence
 
-> Runopsy may draw an arrow only when it can name the mechanism, show the
+> Deprehendo may draw an arrow only when it can name the mechanism, show the
 > observation that the mechanism actually operated, and say what it checked
 > that could have proven it wrong.
 
@@ -467,7 +467,7 @@ OOM_EVENT
 PROCESS_EXITED                     ← failure anchor
 ```
 
-Runopsy names the root as **the memory episode, anchored at its earliest
+Deprehendo names the root as **the memory episode, anchored at its earliest
 observed event**:
 
 - onset observed → `MEMORY_PRESSURE_STARTED`, "memory pressure began at

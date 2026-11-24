@@ -2,7 +2,7 @@
 //!
 //! Unlike `protocol_test.rs` (which checks the *schema mirror* in
 //! `tests/support.rs`), these tests drive the **production** decoder and
-//! server: `runopsy-trace replay` and `runopsy-trace --socket`. The bytes fed
+//! server: `deprehendo-trace replay` and `deprehendo-trace --socket`. The bytes fed
 //! in are exactly what the Go encoder in `internal/trace` produces, and the
 //! matching Go test (`internal/trace/compat_test.go`, TestGoGoldenWireBytes)
 //! asserts the Go encoder emits those same literals. Neither language can
@@ -58,7 +58,7 @@ fn frame(kind: u8, payload: &str) -> Vec<u8> {
 }
 
 fn bin() -> &'static str {
-    env!("CARGO_BIN_EXE_runopsy-trace")
+    env!("CARGO_BIN_EXE_deprehendo-trace")
 }
 
 fn go_socket_handshake() -> String {
@@ -73,7 +73,7 @@ fn go_socket_handshake() -> String {
     .to_string()
 }
 
-/// `runopsy-trace replay` must accept the Go encoder's bytes and print the
+/// `deprehendo-trace replay` must accept the Go encoder's bytes and print the
 /// same values back: this is the Rust-production half of "Rust encode → Go
 /// decode" and "Go encode → Rust decode" (6.56).
 #[test]
@@ -197,7 +197,7 @@ fn production_server_speaks_go_control_protocol() {
         hello["tracer_version"]
             .as_str()
             .unwrap_or_default()
-            .starts_with("runopsy-trace/"),
+            .starts_with("deprehendo-trace/"),
         "tracer_version: {hello:?}"
     );
     assert!(
@@ -360,7 +360,7 @@ fn spawn_server(socket: &Path) -> Server {
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
         .spawn()
-        .expect("spawn runopsy-trace server");
+        .expect("spawn deprehendo-trace server");
     let deadline = Instant::now() + Duration::from_secs(10);
     while Instant::now() < deadline {
         if socket.exists() {

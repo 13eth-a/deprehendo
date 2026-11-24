@@ -18,7 +18,7 @@ import (
 // configuration sources, in order of precedence:
 //
 //	CLI flag  --tracing VALUE
-//	env       RUNOPSY_TRACING=VALUE
+//	env       DEPREHENDO_TRACING=VALUE
 //	default   auto
 //
 // there is deliberately no YAML/TOML file: the go module is stdlib-only and a
@@ -46,7 +46,7 @@ const (
 )
 
 // EnvTracing is the environment variable read by ConfigFromEnv.
-const EnvTracing = "RUNOPSY_TRACING"
+const EnvTracing = "DEPREHENDO_TRACING"
 
 // ParseMode accepts the canonical values plus the spellings an operator is
 // likely to type. an empty string means "not configured" and selects auto.
@@ -156,7 +156,7 @@ func (m Mode) UnavailableReason(caps Capabilities) string {
 type Config struct {
 	// mode is the requested collection mode.
 	Mode Mode
-	// binary overrides runopsy-trace resolution.
+	// binary overrides deprehendo-trace resolution.
 	Binary string
 	// SocketPath overrides the private socket path (tests, debugging).
 	SocketPath string
@@ -180,7 +180,7 @@ func (c Config) Validate() error {
 	return nil
 }
 
-// describe is the human-readable summary printed by `runopsy-agent trace
+// describe is the human-readable summary printed by `deprehendo-agent trace
 // status` and the start banner.
 func (c Config) Describe() string {
 	parts := []string{c.Mode.Describe()}
@@ -194,7 +194,7 @@ func (c Config) Describe() string {
 }
 
 // ConfigFromEnv builds the configuration from an environment lookup
-// (os.Getenv in production, a map in tests). an invalid RUNOPSY_TRACING value
+// (os.Getenv in production, a map in tests). an invalid DEPREHENDO_TRACING value
 // is an error rather than a silent auto: a typo must not change which
 // evidence the agent will claim to have.
 func ConfigFromEnv(getenv func(string) string) (Config, error) {

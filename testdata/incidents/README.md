@@ -1,8 +1,8 @@
 # Diagnosis evaluation fixtures
 
-This directory contains `.runopsy` bundles and adjacent ground-truth sidecars
-used only by tests and `runopsy-agent evaluate`. A sidecar is named
-`<bundle>.runopsy.ground-truth.json`, for example:
+This directory contains `.deprehendo` bundles and adjacent ground-truth sidecars
+used only by tests and `deprehendo-agent evaluate`. A sidecar is named
+`<bundle>.deprehendo.ground-truth.json`, for example:
 
 ```json
 {
@@ -26,7 +26,7 @@ positive; a positive diagnosis is a false positive.
 Run the evaluator with:
 
 ```sh
-go run ./cmd/runopsy-agent evaluate ./testdata/incidents
+go run ./cmd/deprehendo-agent evaluate ./testdata/incidents
 ```
 
 Use `--json` for machine-readable cases and confusion matrix. The corpus has
@@ -38,7 +38,7 @@ negatives: v1 lacks the evidence needed to distinguish them from healthy work.
 Calibration must not improve reported accuracy by relabeling these faults. Regenerate all fixtures with:
 
 ```sh
-RUNOPSY_WRITE_FIXTURES=1 go test ./internal/diagnosis -run TestWriteIncidentCorpus
+DEPREHENDO_WRITE_FIXTURES=1 go test ./internal/diagnosis -run TestWriteIncidentCorpus
 ```
 
 The fixtures and their labels are written by the implementation team, so this

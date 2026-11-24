@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 // the synthetic phase 3 corpus (3.29/3.43). every case is built from the same
@@ -20,7 +20,7 @@ import (
 // runs and the evaluate command do not depend on generating them first; this
 // test file is the source of truth. regenerate with:
 //
-//	RUNOPSY_WRITE_FIXTURES=1 go test ./internal/diagnosis -run TestWriteIncidentCorpus
+//	DEPREHENDO_WRITE_FIXTURES=1 go test ./internal/diagnosis -run TestWriteIncidentCorpus
 //
 // the fixtures are deliberately synthetic. they exercise signature logic, not
 // the accuracy of live capture: for example socket RX progress and kernel OOM
@@ -322,8 +322,8 @@ func corpusCases(t *testing.T) []corpusCase {
 // TestWriteIncidentCorpus regenerates the checked-in fixtures. it is opt-in so
 // a normal test run cannot silently rewrite repository data.
 func TestWriteIncidentCorpus(t *testing.T) {
-	if os.Getenv("RUNOPSY_WRITE_FIXTURES") == "" {
-		t.Skip("set RUNOPSY_WRITE_FIXTURES=1 to regenerate the incident corpus")
+	if os.Getenv("DEPREHENDO_WRITE_FIXTURES") == "" {
+		t.Skip("set DEPREHENDO_WRITE_FIXTURES=1 to regenerate the incident corpus")
 	}
 	if err := os.MkdirAll(corpusDir, 0755); err != nil {
 		t.Fatal(err)
@@ -331,13 +331,13 @@ func TestWriteIncidentCorpus(t *testing.T) {
 	cases := corpusCases(t)
 	keep := map[string]bool{"README.md": true}
 	for _, c := range cases {
-		keep[c.Name+".runopsy"] = true
-		keep[c.Name+".runopsy.ground-truth.json"] = true
+		keep[c.Name+".deprehendo"] = true
+		keep[c.Name+".deprehendo.ground-truth.json"] = true
 		var encoded bytes.Buffer
 		if err := incident.Encode(&encoded, c.Incident, true); err != nil {
 			t.Fatalf("%s: encode: %v", c.Name, err)
 		}
-		path := filepath.Join(corpusDir, c.Name+".runopsy")
+		path := filepath.Join(corpusDir, c.Name+".deprehendo")
 		if err := os.WriteFile(path, encoded.Bytes(), 0644); err != nil {
 			t.Fatal(err)
 		}

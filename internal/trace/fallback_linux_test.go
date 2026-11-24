@@ -80,12 +80,12 @@ func installEPERMSandbox() error {
 // it is inert in an ordinary `go test` run; when the wrapper invokes it, it
 // installs the EPERM filter and execs the real tracer with the same argv.
 func TestSeccompExecHelper(t *testing.T) {
-	if os.Getenv("RUNOPSY_SECCOMP_HELPER") != "1" {
+	if os.Getenv("DEPREHENDO_SECCOMP_HELPER") != "1" {
 		return
 	}
-	tracer := os.Getenv("RUNOPSY_SECCOMP_TRACER")
+	tracer := os.Getenv("DEPREHENDO_SECCOMP_TRACER")
 	if tracer == "" {
-		t.Fatalf("RUNOPSY_SECCOMP_TRACER is not set")
+		t.Fatalf("DEPREHENDO_SECCOMP_TRACER is not set")
 	}
 	if err := installEPERMSandbox(); err != nil {
 		t.Fatalf("install the seccomp sandbox: %v", err)
@@ -112,7 +112,7 @@ func TestFallbackOnRealPermissionRefusal(t *testing.T) {
 	if sysBPF == ^uint32(0) {
 		t.Skip("no bpf(2) syscall number for this architecture")
 	}
-	bin, why := ResolveBinary(os.Getenv("RUNOPSY_TRACE_BINARY"))
+	bin, why := ResolveBinary(os.Getenv("DEPREHENDO_TRACE_BINARY"))
 	if bin == "" {
 		t.Skipf("tracer binary not available: %s", why)
 	}
@@ -120,9 +120,9 @@ func TestFallbackOnRealPermissionRefusal(t *testing.T) {
 	if err != nil {
 		t.Fatalf("locate the test binary: %v", err)
 	}
-	wrapper := filepath.Join(t.TempDir(), "runopsy-trace-eperm")
+	wrapper := filepath.Join(t.TempDir(), "deprehendo-trace-eperm")
 	script := fmt.Sprintf(
-		"#!/bin/sh\nRUNOPSY_SECCOMP_HELPER=1 RUNOPSY_SECCOMP_TRACER=%q exec %q -test.run=TestSeccompExecHelper -- \"$@\"\n",
+		"#!/bin/sh\nDEPREHENDO_SECCOMP_HELPER=1 DEPREHENDO_SECCOMP_TRACER=%q exec %q -test.run=TestSeccompExecHelper -- \"$@\"\n",
 		bin, testbin)
 	if err := os.WriteFile(wrapper, []byte(script), 0o755); err != nil {
 		t.Fatalf("write the wrapper: %v", err)

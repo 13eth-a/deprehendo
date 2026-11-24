@@ -1,4 +1,4 @@
-// package evidence is the provider section of a .runopsy bundle (phase 5,
+// package evidence is the provider section of a .deprehendo bundle (phase 5,
 // docs/providers/architecture.md §3). it is a leaf package: it imports only
 // the standard library, so internal/incident can embed it without depending
 // on any provider implementation.
@@ -173,7 +173,7 @@ func NewRef(kind string, salt []byte, parts ...string) (Ref, error) {
 func (r Ref) Valid() bool { return refPattern.MatchString(string(r)) }
 
 // ProcessRef is the PID + start-time identity used everywhere else in
-// Runopsy. PID alone is never an identity.
+// Deprehendo. PID alone is never an identity.
 type ProcessRef struct {
 	PID        int   `json:"pid"`
 	StartTicks int64 `json:"start_ticks"`

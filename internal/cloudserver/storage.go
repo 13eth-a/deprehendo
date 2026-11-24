@@ -33,7 +33,7 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/incident"
+	"deprehendo/internal/incident"
 )
 
 // store is the storage abstraction (7.7). the MVP is a local directory; an
@@ -190,7 +190,7 @@ type policyPayload struct {
 // policyRE is the §6 bundle-key shape, enforced end to end: the create
 // response and the storage handler must not disagree about what a key looks
 // like.
-var policyRE = regexp.MustCompile(`^orgs/[a-z0-9_-]+/bundles/[0-9a-f]{64}\.runopsy$`)
+var policyRE = regexp.MustCompile(`^orgs/[a-z0-9_-]+/bundles/[0-9a-f]{64}\.(deprehendo|runopsy)$`)
 
 // signField and the separator cannot appear inside base64 payload because its
 // alphabet excludes them.
@@ -236,7 +236,7 @@ func parsePolicy(payload, policyField, signature string, secret []byte) (*policy
 // mintUploadPolicy issues the one policy a create needs (7.10): the object
 // key derived from the org and digest, the §5.3 size bounds and a short lease.
 func mintUploadPolicy(org, sha256hex string, secret []byte) (key string, fields map[string]string) {
-	key = fmt.Sprintf("orgs/%s/bundles/%s.runopsy", org, sha256hex)
+	key = fmt.Sprintf("orgs/%s/bundles/%s.deprehendo", org, sha256hex)
 	payload := policyPayload{
 		Key: key, Org: org, SHA256: sha256hex,
 		MinBytes: 22, MaxBytes: incident.MaxArchiveSize,

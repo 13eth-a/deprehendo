@@ -10,13 +10,13 @@ real analyzer child → HTTP answer → what the dashboard can then read.
 Driver: `tests/phase7_upload_corpus_test.go` (plus
 `TestPhase7CompleteRecomputesTheDigestFromStoredBytes` for the integrity case).
 Run with `make test-cloud`; the suite skips without
-`RUNOPSY_CLOUD_TEST_DSN`.
+`DEPREHENDO_CLOUD_TEST_DSN`.
 
 ## Executed through the worker
 
 | # | §5.5 case | Bundle construction | Worker answer | Dashboard after |
 |---|---|---|---|---|
-| 1 | valid | checked-in `frozen-worker.runopsy` | 200, `READY` | one incident, signature present, bundle download byte-identical |
+| 1 | valid | checked-in `frozen-worker.deprehendo` | 200, `READY` | one incident, signature present, bundle download byte-identical |
 | 3 | truncated | first half of a valid archive | 422 `INVALID_BUNDLE` | one row, status `REJECTED`, no signature, `/analysis` 202 |
 | 5 | duplicate member | second `snapshots.json` entry | 422 `INVALID_BUNDLE` | as above |
 | 6 | sixth member | extra `notes.json` entry | 422 `INVALID_BUNDLE` | as above |
@@ -78,5 +78,5 @@ state.
 ```sh
 make test-cloud
 # one case, verbose:
-RUNOPSY_CLOUD_TEST_DSN=postgres://… go test -count=1 -run 'TestPhase7UploadCorpus' -v ./tests
+DEPREHENDO_CLOUD_TEST_DSN=postgres://… go test -count=1 -run 'TestPhase7UploadCorpus' -v ./tests
 ```

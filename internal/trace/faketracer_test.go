@@ -19,13 +19,13 @@ import (
 )
 
 const (
-	fakeTracerModeEnv     = "RUNOPSY_FAKE_TRACER_MODE"
-	fakeTracerSocketEnv   = "RUNOPSY_FAKE_TRACER_SOCKET"
-	fakeTracerEventsEnv   = "RUNOPSY_FAKE_TRACER_EVENTS"
-	fakeTracerBootEnv     = "RUNOPSY_FAKE_TRACER_BOOT_ID"
-	fakeTracerNSEnv       = "RUNOPSY_FAKE_TRACER_NS_INODE"
-	fakeTracerClockEnv    = "RUNOPSY_FAKE_TRACER_CLOCK"
-	fakeTracerCapStateEnv = "RUNOPSY_FAKE_TRACER_CAP_CONFLICT"
+	fakeTracerModeEnv     = "DEPREHENDO_FAKE_TRACER_MODE"
+	fakeTracerSocketEnv   = "DEPREHENDO_FAKE_TRACER_SOCKET"
+	fakeTracerEventsEnv   = "DEPREHENDO_FAKE_TRACER_EVENTS"
+	fakeTracerBootEnv     = "DEPREHENDO_FAKE_TRACER_BOOT_ID"
+	fakeTracerNSEnv       = "DEPREHENDO_FAKE_TRACER_NS_INODE"
+	fakeTracerClockEnv    = "DEPREHENDO_FAKE_TRACER_CLOCK"
+	fakeTracerCapStateEnv = "DEPREHENDO_FAKE_TRACER_CAP_CONFLICT"
 
 	// fake tracer behaviours. each one is a distinct production failure mode.
 	fakeModeStream          = "stream"      // handshake, stream events, then serve controls
@@ -202,7 +202,7 @@ func fakeTracerServe(conn net.Conn, mode string, events int) int {
 		_, _ = conn.Write(make([]byte, 24))
 		return 3
 	case fakeModePanic:
-		panic("runopsy-trace test: deliberate tracer panic")
+		panic("deprehendo-trace test: deliberate tracer panic")
 	case fakeModeKill9:
 		time.Sleep(60 * time.Second)
 		return 0

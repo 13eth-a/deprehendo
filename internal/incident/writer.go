@@ -87,7 +87,7 @@ func (w FileWriter) Write(ctx context.Context, i *Incident) (path string, err er
 	if err = w.step("create"); err != nil {
 		return "", err
 	}
-	f, err := os.CreateTemp(w.Directory, ".runopsy-*.tmp")
+	f, err := os.CreateTemp(w.Directory, ".deprehendo-*.tmp")
 	if err != nil {
 		return "", err
 	}
@@ -118,7 +118,7 @@ func (w FileWriter) Write(ctx context.Context, i *Incident) (path string, err er
 	if err = ctx.Err(); err != nil {
 		return "", err
 	}
-	target := filepath.Join(w.Directory, i.ID+".runopsy")
+	target := filepath.Join(w.Directory, i.ID+".deprehendo")
 	if err = os.Link(temp, target); err != nil {
 		return "", err
 	}
@@ -137,7 +137,7 @@ func (w FileWriter) Write(ctx context.Context, i *Incident) (path string, err er
 
 // CleanupStaleTemps removes only regular writer-owned-name temp files older
 // than cutoff. call exclusively before starting writers; it is not safe to
-// prune an active writer. it never removes .runopsy artifacts or symlinks.
+// prune an active writer. it never removes .deprehendo artifacts or symlinks.
 func CleanupStaleTemps(directory string, cutoff time.Time) (int, error) {
 	if err := privateDirectory(directory); err != nil {
 		return 0, err
@@ -148,7 +148,7 @@ func CleanupStaleTemps(directory string, cutoff time.Time) (int, error) {
 	}
 	removed := 0
 	for _, e := range entries {
-		if !strings.HasPrefix(e.Name(), ".runopsy-") || !strings.HasSuffix(e.Name(), ".tmp") {
+		if !strings.HasPrefix(e.Name(), ".deprehendo-") || !strings.HasSuffix(e.Name(), ".tmp") {
 			continue
 		}
 		info, err := e.Info()

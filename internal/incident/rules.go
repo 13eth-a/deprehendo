@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 // SnapshotRule evaluates one completed, ordered sample and returns a factual

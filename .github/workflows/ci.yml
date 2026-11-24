@@ -47,7 +47,7 @@ jobs:
     # hand-checked): migrations applied twice to prove idempotence, then the
     # gated server suite: the 7.36 organization matrix, dedupe (7.30),
     # hostile storage refusal (7.37/7.38) and the CLI upload path (7.11).
-    # The suite skips without RUNOPSY_CLOUD_TEST_DSN, so this job is what
+    # The suite skips without DEPREHENDO_CLOUD_TEST_DSN, so this job is what
     # actually runs it in CI.
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -55,12 +55,12 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_PASSWORD: runopsy
-          POSTGRES_DB: runopsy
+          POSTGRES_PASSWORD: deprehendo
+          POSTGRES_DB: deprehendo
         ports:
           - 55432:5432
         options: >-
-          --health-cmd "pg_isready -h 127.0.0.1 -U postgres -d runopsy"
+          --health-cmd "pg_isready -h 127.0.0.1 -U postgres -d deprehendo"
           --health-interval 2s --health-timeout 3s --health-retries 30
     steps:
       - uses: actions/checkout@v4
@@ -72,18 +72,18 @@ jobs:
 
       - name: migrations (applied twice)
         run: |
-          go build -o bin/runopsy-cloud ./cmd/runopsy-cloud
-          DSN='postgres://postgres:runopsy@127.0.0.1:55432/runopsy?sslmode=disable'
-          bin/runopsy-cloud migrate -database "$DSN"
-          bin/runopsy-cloud migrate -database "$DSN" | tee /tmp/second.txt
+          go build -o bin/deprehendo-cloud ./cmd/deprehendo-cloud
+          DSN='postgres://postgres:deprehendo@127.0.0.1:55432/deprehendo?sslmode=disable'
+          bin/deprehendo-cloud migrate -database "$DSN"
+          bin/deprehendo-cloud migrate -database "$DSN" | tee /tmp/second.txt
           grep -q 'schema is current' /tmp/second.txt
 
       - name: gated server suite
-        # The tests package builds runopsy-agent and runopsy-analyzer itself
+        # The tests package builds deprehendo-agent and deprehendo-analyzer itself
         # (TestMain), so only the database and the DSN are needed here.
         run: |
-          DSN='postgres://postgres:runopsy@127.0.0.1:55432/runopsy?sslmode=disable'
-          RUNOPSY_CLOUD_TEST_DSN="$DSN" go test -count=1 -timeout=5m -run 'TestPhase7Server' ./tests
+          DSN='postgres://postgres:deprehendo@127.0.0.1:55432/deprehendo?sslmode=disable'
+          DEPREHENDO_CLOUD_TEST_DSN="$DSN" go test -count=1 -timeout=5m -run 'TestPhase7Server' ./tests
 
   trace-rs:
     # Phase 6 (6.55): lint and test the Rust tracer on Linux, its only
@@ -91,7 +91,7 @@ jobs:
     # covered by the Go matrix above.
     #
     # The eBPF backend needs clang (CO-RE compile) and libbpf; build.rs
-    # compiles src/ebpf/runopsy.bpf.c at cargo build time, so a job that
+    # compiles src/ebpf/deprehendo.bpf.c at cargo build time, so a job that
     # skips these tools builds a binary that honestly reports eBPF
     # unavailable but does not cover the code paths this job claims to.
     runs-on: ubuntu-latest
@@ -127,7 +127,7 @@ jobs:
         # CO-RE object, not an honest-but-empty environment report.
         run: |
           cargo build --release
-          if ! strings target/release/runopsy-trace | grep -q sched_process_exec; then
+          if ! strings target/release/deprehendo-trace | grep -q sched_process_exec; then
             echo "release binary does not embed the BPF object"
             exit 1
           fi
@@ -161,13 +161,13 @@ jobs:
       - name: build tracer
         run: |
           cargo build --release --manifest-path trace-rs/Cargo.toml
-          sudo install -m 0755 trace-rs/target/release/runopsy-trace /usr/local/bin/runopsy-trace
+          sudo install -m 0755 trace-rs/target/release/deprehendo-trace /usr/local/bin/deprehendo-trace
 
       - name: live tracer measurements
         run: go test -count=1 -v -run 'TestLive' ./internal/trace
 
       - name: churn pipeline
-        run: RUNOPSY_TRACE_CHURN=10000 go test -count=1 -run 'TestPipelineChurn' -v ./internal/trace
+        run: DEPREHENDO_TRACE_CHURN=10000 go test -count=1 -run 'TestPipelineChurn' -v ./internal/trace
 
   trace-ebpf-live:
     # The eBPF backend against a real kernel (contract §2.4 acceptance):
@@ -199,7 +199,7 @@ jobs:
         run: cargo build --release --manifest-path trace-rs/Cargo.toml
 
       - name: capabilities attach as root
-        run: sudo trace-rs/target/release/runopsy-trace capabilities | tee /tmp/caps.txt
+        run: sudo trace-rs/target/release/deprehendo-trace capabilities | tee /tmp/caps.txt
 
       - name: live eBPF E2E
-        run: sudo bash scripts/ebpf-e2e.sh trace-rs/target/release/runopsy-trace
+        run: sudo bash scripts/ebpf-e2e.sh trace-rs/target/release/deprehendo-trace

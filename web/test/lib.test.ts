@@ -18,7 +18,9 @@ test("epochNanos keeps nanosecond precision that Date would drop", () => {
   const a = epochNanos("2026-11-05T12:00:00.000000001Z");
   const b = epochNanos("2026-11-05T12:00:00Z");
   assert.equal(a! - b!, 1n);
-  assert.equal(epochNanos("2026-11-05T12:00:00+01:00"), null, "offsets other than Z are refused");
+  assert.equal(epochNanos("2026-11-05T13:00:00+01:00"), b, "a numeric offset is the same instant as its UTC form");
+  assert.equal(formatClock("2026-11-21T01:15:56.295-06:00"), "07:15:56.295", "kernel-tracer local times display in UTC");
+  assert.equal(epochNanos("2026-11-05T12:00:00+0100"), null, "offsets must be RFC 3339 (with a colon)");
   assert.equal(epochNanos("not a time"), null);
 });
 

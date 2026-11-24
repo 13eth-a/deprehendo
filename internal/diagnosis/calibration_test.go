@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 func calibrationIncident(t *testing.T, count int, generate func(int) collector.Snapshot) *incident.Incident {

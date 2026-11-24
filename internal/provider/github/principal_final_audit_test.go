@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/platform"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider/evidence"
 )
 
 // F2 (G2, S2): cgroup identity is visible and a docker container step runs,

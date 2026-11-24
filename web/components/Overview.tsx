@@ -1,30 +1,43 @@
 import type { AnalysisDocument } from "../types/analysis.ts";
-import { formatClock } from "../lib/format.ts";
+import { ClaimBadge, ConfidenceBadge, SeverityBadge } from "./Status.tsx";
+import { Clock } from "./Clock.tsx";
 
 /**
- * incident overview header (checklist 7.14): the first thing a reader sees.
- * every value is copied from the document. the signature name is shown as
- * stored, never rewritten.
+ * Incident overview header (checklist 7.14): the first thing a reader sees,
+ * answering "what failed?". The headline is the match's own stored summary;
+ * the signature underneath is shown exactly as stored, never rewritten.
+ * When nothing matched, it says so instead of inventing a cause.
  */
 export function Overview({ doc }: { doc: AnalysisDocument }) {
   const report = doc.diagnosis;
   const top = report?.matches[0];
   const headline = top ? top.signature : "NO KNOWN SIGNATURE";
+  const claim = doc.causal.failures[0]?.claim;
   return (
-    <section aria-labelledby="overview-title" className="overview">
-      <p className="eyebrow">Incident</p>
-      <h1 id="overview-title">{headline}</h1>
-      <dl className="facts">
-        <div>
-          <dt>Confidence</dt>
-          <dd>
-            {top ? `${top.confidence_band} (${top.confidence.toFixed(2)})` : "No diagnosis above the threshold"}
-          </dd>
-        </div>
+    <section aria-labelledby="overview-title" className="report-head" data-diagnosed={top ? "true" : undefined}>
+      <p className="report-head__kind">{top ? "Primary diagnosis" : "No diagnosis"}</p>
+      <h1 id="overview-title" className="report-head__title">
+        {top ? sentence(top.summary) : "No known signature matched"}
+      </h1>
+      <p className="report-head__signature">
+        <code>{headline}</code>
+      </p>
+      <div className="tags">
+        {top && <SeverityBadge severity={top.severity} />}
+        {top && <ConfidenceBadge band={top.confidence_band} score={top.confidence} />}
+        {claim && <ClaimBadge claim={claim} />}
+      </div>
+      <dl className="meta-grid">
         <div>
           <dt>Trigger</dt>
           <dd>
-            {report ? `${report.trigger} at ${formatClock(report.triggered_at)} UTC` : "Not recorded"}
+            {report ? (
+              <>
+                <code>{report.trigger}</code> at <Clock iso={report.triggered_at} zone />
+              </>
+            ) : (
+              "Not recorded"
+            )}
           </dd>
         </div>
         <div>
@@ -50,4 +63,9 @@ export function Overview({ doc }: { doc: AnalysisDocument }) {
       </dl>
     </section>
   );
+}
+
+/** Display only: the stored summary starts lowercase; the headline starts with a capital. */
+function sentence(text: string): string {
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
 }

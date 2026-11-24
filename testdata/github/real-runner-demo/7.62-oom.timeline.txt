@@ -51,7 +51,7 @@ TIMELINE (UTC; order only, no cross-provider causal edges)
 07:15:58.745  CONNECTION_CLOSED subject=socket:port:[REDACTED]:55558:[REDACTED]:443
 07:15:58.745  CONNECTION_CLOSED subject=socket:port:[REDACTED]:57876:[REDACTED]:443
 07:15:58.745  CONNECTION_OPENED subject=socket:inode-48907
-RUNOPSY ANALYSIS
+DEPREHENDO ANALYSIS
 
 GitHub Actions
 Runner        WITHHELD source=UNKNOWN

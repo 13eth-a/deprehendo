@@ -1,4 +1,4 @@
-//! Test-support crate: exposes runopsy-trace internals for integration tests
+//! Test-support crate: exposes deprehendo-trace internals for integration tests
 //! without making the binary itself a library for consumers.
 
 use serde::{Deserialize, Serialize};

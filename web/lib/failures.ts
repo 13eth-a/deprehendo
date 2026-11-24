@@ -22,8 +22,8 @@ export interface FailureCopy {
 export const FAILURE_COPY: Record<FailureKind, FailureCopy> = {
   unsupported_bundle: {
     title: "This bundle format is not supported",
-    body: "The bundle was written in a format this version of Runopsy Cloud cannot read. Nothing was changed, and the original file is still available for download.",
-    action: "Download the original bundle, or open it with a matching runopsy-agent release.",
+    body: "The bundle was written in a format this version of Deprehendo Cloud cannot read. Nothing was changed, and the original file is still available for download.",
+    action: "Download the original bundle, or open it with a matching deprehendo-agent release.",
   },
   corrupt_bundle: {
     title: "This bundle is damaged",
@@ -55,7 +55,7 @@ export const FAILURE_COPY: Record<FailureKind, FailureCopy> = {
   },
   unknown_diagnosis: {
     title: "No known signature matched",
-    body: "Runopsy did not find a known failure pattern. The timeline and evidence below are still complete.",
+    body: "Deprehendo did not find a known failure pattern. The timeline and evidence below are still complete.",
   },
 };
 

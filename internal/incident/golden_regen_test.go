@@ -8,8 +8,8 @@ import (
 
 func bytesReader(b []byte) *bytes.Reader { return bytes.NewReader(b) }
 
-// TestRegenerateV1Golden rebuilds testdata/v1-minimal.runopsy from its own
-// decoded content. it runs only when RUNOPSY_REGEN_GOLDEN=1, because the
+// TestRegenerateV1Golden rebuilds testdata/v1-minimal.deprehendo from its own
+// decoded content. it runs only when DEPREHENDO_REGEN_GOLDEN=1, because the
 // golden artifact exists to detect unannounced interpretation changes of the
 // v1 format: regenerate deliberately, review the diff, and never silently.
 // AgentVersion is stamped by encode, so bumping the constant requires one
@@ -19,10 +19,10 @@ func bytesReader(b []byte) *bytes.Reader { return bytes.NewReader(b) }
 // from the stamped version; this test refuses to write anything when the
 // fixture no longer round-trips or grew extra records.
 func TestRegenerateV1Golden(t *testing.T) {
-	if os.Getenv("RUNOPSY_REGEN_GOLDEN") != "1" {
-		t.Skip("set RUNOPSY_REGEN_GOLDEN=1 to regenerate testdata/v1-minimal.runopsy")
+	if os.Getenv("DEPREHENDO_REGEN_GOLDEN") != "1" {
+		t.Skip("set DEPREHENDO_REGEN_GOLDEN=1 to regenerate testdata/v1-minimal.deprehendo")
 	}
-	const path = "testdata/v1-minimal.runopsy"
+	const path = "testdata/v1-minimal.deprehendo"
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)

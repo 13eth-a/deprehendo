@@ -25,7 +25,7 @@ const spinChunk = 20000
 const spinTick = 250 * time.Millisecond
 
 // CPUSpin pegs CPU with plain arithmetic. it is the "process is burning a
-// core while the logical story looks fine" failure runopsy will have to
+// core while the logical story looks fine" failure deprehendo will have to
 // separate from restful-but-stuck processes.
 type CPUSpin struct {
 	Workers int

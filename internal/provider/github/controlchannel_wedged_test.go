@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/provider"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/provider"
 )
 
 // wedgedConn is the S10 socket: ESTABLISHED to 443 with its byte counters

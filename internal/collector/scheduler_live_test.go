@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // liveSources adapt the same platform collectors the agent binary uses.

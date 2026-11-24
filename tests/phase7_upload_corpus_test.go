@@ -35,8 +35,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/cloudclient"
-	"runopsy/internal/incident"
+	"deprehendo/internal/cloudclient"
+	"deprehendo/internal/incident"
 )
 
 // bundleMembers are the five fixed member names of a v1 archive (the manifest
@@ -184,7 +184,7 @@ func TestPhase7UploadCorpus(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	basepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	basepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	baseraw, err := os.ReadFile(basepath)
 	if err != nil {
 		t.Fatal(err)
@@ -329,8 +329,8 @@ func TestPhase7CompleteRecomputesTheDigestFromStoredBytes(t *testing.T) {
 		t.Fatal(err)
 	}
 	h := newCloudHarness(t, dsn, nil)
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
-	otherpath := filepath.Join(root, "testdata", "incidents", "disk-full.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
+	otherpath := filepath.Join(root, "testdata", "incidents", "disk-full.deprehendo")
 
 	raw, err := os.ReadFile(bundlepath)
 	if err != nil {

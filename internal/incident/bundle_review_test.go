@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 func TestBundleRejectsCaseAliasPrivacyBypass(t *testing.T) {
@@ -84,7 +84,7 @@ func TestPublishCancellationDoesNotExposeArtifact(t *testing.T) {
 func TestListBindsFilenameToIncidentIdentity(t *testing.T) {
 	dir := privateDir(t)
 	data := encoded(t, fixture(), true)
-	if err := os.WriteFile(filepath.Join(dir, "inc_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.runopsy"), data, 0600); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "inc_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.deprehendo"), data, 0600); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := List(dir); err == nil {
@@ -104,7 +104,7 @@ func TestNoteNormalizesUnicodeTerminalControls(t *testing.T) {
 }
 
 func TestReadVersionOneGoldenCompatibility(t *testing.T) {
-	bundle, err := ReadFile("testdata/v1-minimal.runopsy")
+	bundle, err := ReadFile("testdata/v1-minimal.deprehendo")
 	if err != nil {
 		t.Fatal(err)
 	}

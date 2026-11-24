@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/events"
-	"runopsy/internal/platform"
+	"deprehendo/internal/events"
+	"deprehendo/internal/platform"
 )
 
 func TestProcessRunnerHardKillCleansChildren(t *testing.T) {

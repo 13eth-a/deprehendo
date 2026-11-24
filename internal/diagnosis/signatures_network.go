@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // ---------------------------------------------------------------------------

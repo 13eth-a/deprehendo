@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 // OOM_KILL@3: the kernel's memory.events oom_kill counter of the victim's own

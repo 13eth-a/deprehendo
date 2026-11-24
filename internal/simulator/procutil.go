@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // child is one process a scenario spawned, remembered so cleanup can be
@@ -51,7 +51,7 @@ func spawn(bin string, args []string, spec string, group bool) (Child, error) {
 }
 
 // simBinaryOverride points scenarios at a specific sim binary instead of the
-// running process. Non-empty only in tests, which build ./cmd/runopsy-sim and
+// running process. Non-empty only in tests, which build ./cmd/deprehendo-sim and
 // route spawn() through it.
 var simBinaryOverride string
 

@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 func incidentDir(t *testing.T) string {
@@ -25,7 +25,7 @@ func incidentDir(t *testing.T) string {
 // controlSocket keeps the unix socket path short enough for macOS sockaddr_un.
 func controlSocket(t *testing.T) string {
 	t.Helper()
-	dir, err := os.MkdirTemp("/tmp", "runopsy-agent-")
+	dir, err := os.MkdirTemp("/tmp", "deprehendo-agent-")
 	if err != nil {
 		t.Fatal(err)
 	}

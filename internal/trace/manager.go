@@ -1,4 +1,4 @@
-// manager (6.7/6.39/6.40): supervises the runopsy-trace child process.
+// manager (6.7/6.39/6.40): supervises the deprehendo-trace child process.
 //
 // invariants, in priority order:
 //   - a tracer failure (missing binary, crash, protocol error) never takes
@@ -101,7 +101,7 @@ type Health struct {
 	lastHandshake time.Time
 }
 
-// manager spawns and supervises runopsy-trace. run blocks until the context
+// manager spawns and supervises deprehendo-trace. run blocks until the context
 // is cancelled, the tracer is given up on, or stop is called; it returns nil
 // in every degradation case (errors are reported through Health/LastError,
 // never by aborting the recording agent).
@@ -131,7 +131,7 @@ func (m *Manager) Watches() *WatchTracker { return m.tracker }
 
 // ManagerConfig bounds supervision; zero fields take the defaults below.
 type ManagerConfig struct {
-	// binary is the runopsy-trace executable. empty resolves a sibling of
+	// binary is the deprehendo-trace executable. empty resolves a sibling of
 	// the current executable, then PATH.
 	Binary string
 	// SocketPath for the unix listener. empty creates a private temp dir
@@ -213,20 +213,20 @@ func ResolveBinary(override string) (string, string) {
 			}
 		}
 		if st, err := os.Stat(path); err != nil || st.IsDir() || st.Mode()&0111 == 0 {
-			return "", fmt.Sprintf("runopsy-trace binary not found at %s", override)
+			return "", fmt.Sprintf("deprehendo-trace binary not found at %s", override)
 		}
 		return path, ""
 	}
 	if self, err := os.Executable(); err == nil {
-		sibling := filepath.Join(filepath.Dir(self), "runopsy-trace")
+		sibling := filepath.Join(filepath.Dir(self), "deprehendo-trace")
 		if st, err := os.Stat(sibling); err == nil && !st.IsDir() && st.Mode()&0111 != 0 {
 			return sibling, ""
 		}
 	}
-	if p, err := exec.LookPath("runopsy-trace"); err == nil {
+	if p, err := exec.LookPath("deprehendo-trace"); err == nil {
 		return p, ""
 	}
-	return "", "runopsy-trace binary not found (build trace-rs/ and install it on PATH)"
+	return "", "deprehendo-trace binary not found (build trace-rs/ and install it on PATH)"
 }
 
 func socketPath(preferred string) (string, func(), error) {
@@ -234,7 +234,7 @@ func socketPath(preferred string) (string, func(), error) {
 		return preferred, func() {}, nil
 	}
 	// short path: macOS sun_path is 104 bytes and t.TempDir chains are deep.
-	dir, err := os.MkdirTemp("", "runopsy-trace")
+	dir, err := os.MkdirTemp("", "deprehendo-trace")
 	if err != nil {
 		return "", nil, err
 	}

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/events"
-	"runopsy/internal/platform"
+	"deprehendo/internal/events"
+	"deprehendo/internal/platform"
 )
 
 // workerPID pulls the worker's pid out of the event stream.

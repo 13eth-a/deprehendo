@@ -12,7 +12,7 @@ import { NetworkTable } from "../components/NetworkTable.tsx";
 import { PrivacyPanel } from "../components/PrivacyPanel.tsx";
 
 /**
- * renders one stored `runopsy.analysis` v1 document through the dashboard
+ * renders one stored `deprehendo.analysis` v1 document through the dashboard
  * components and prints what the incident page shows, as one JSON line.
  *
  * this is the dashboard leg of checklist 7.61: tests/phase7_dashboard_render_test.go

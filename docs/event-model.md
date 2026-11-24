@@ -1,6 +1,6 @@
 # Event model
 
-Phase 4 turns verified `.runopsy` bundles into a deterministic, normalized event
+Phase 4 turns verified `.deprehendo` bundles into a deterministic, normalized event
 stream. The implementation lives in `internal/causal`; it is offline and does
 not use an LLM to infer causes.
 

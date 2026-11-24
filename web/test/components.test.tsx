@@ -125,7 +125,7 @@ test("IncidentList renders newest-first rows and the filter form", () => {
   // mistaken for an empty organization.
   const firstRun = renderToStaticMarkup(<IncidentList rows={[]} filter={{}} diagnoses={[]} bands={[]} />);
   assert.ok(firstRun.includes("No incidents yet"));
-  assert.ok(firstRun.includes("runopsy-agent upload incident.runopsy"));
+  assert.ok(firstRun.includes("deprehendo-agent upload incident.deprehendo"));
   const filtered = renderToStaticMarkup(
     <IncidentList rows={[]} filter={{ diagnosis: "DISK_EXHAUSTION" }} diagnoses={[]} bands={[]} />,
   );

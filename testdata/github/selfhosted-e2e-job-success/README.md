@@ -1,8 +1,8 @@
 # Real self-hosted runner: successful job (2026-11-04)
 
-Captured by `runopsy-agent github watch --tracing proc` on the Lima aarch64 VM
+Captured by `deprehendo-agent github watch --tracing proc` on the Lima aarch64 VM
 (kernel 7.0.0-34, unprivileged uid 501) while the `selfhosted-e2e` workflow ran
-on the registered `runopsy-linux` self-hosted runner.
+on the registered `deprehendo-linux` self-hosted runner.
 
 - GitHub run `41950041166` (`selfhosted-e2e`, conclusion `success`).
 - Tracer state in the bundle: `active` (`proc_connector`), 280 `TRACE_PROCESS_EXIT`

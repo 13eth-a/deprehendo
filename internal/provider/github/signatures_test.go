@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 var sigT0 = time.Date(2026, 10, 28, 12, 0, 0, 0, time.UTC)

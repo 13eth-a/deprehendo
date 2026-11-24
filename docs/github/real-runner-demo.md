@@ -22,9 +22,9 @@ restores it, including on Ctrl-C.
 
 ## 1. Throwaway repository
 
-Reuse the disposable repository from 5.42, `13eth-a/runopsy-runner-e2e`.
-Its `runopsy-b3` workflow ([real-runner-verification.md](real-runner-verification.md),
-step 2) has the `memory` scenario and runs on `[self-hosted, runopsy-b3]`.
+Reuse the disposable repository from 5.42, `13eth-a/deprehendo-runner-e2e`.
+Its `deprehendo-b3` workflow ([real-runner-verification.md](real-runner-verification.md),
+step 2) has the `memory` scenario and runs on `[self-hosted, deprehendo-b3]`.
 Its old runner was deregistered after Phase 5, so step 4 registers a new one
 with the same label. `memory` allocates 4 GiB, more than the VM below has, so
 the kernel OOM-kills it.
@@ -33,13 +33,13 @@ the kernel OOM-kills it.
 
 ```sh
 brew install lima
-limactl start --name runopsy-demo --cpus 2 --memory 4 --disk 30 template:ubuntu-24.04
-limactl shell runopsy-demo
+limactl start --name deprehendo-demo --cpus 2 --memory 4 --disk 30 template:ubuntu-24.04
+limactl shell deprehendo-demo
 ```
 
 On older Lima versions, use `template://ubuntu-24.04`. Lima mounts your home
 folder read-only inside the VM at the same path, so the repository is at
-`/Users/<you>/Documents/runopsy`. The build writes into the VM's own home
+`/Users/<you>/Documents/deprehendo`. The build writes into the VM's own home
 folder.
 
 ## 3. Build the agent and the tracer (in the VM)
@@ -51,42 +51,42 @@ curl -LO https://go.dev/dl/go1.27.4.linux-arm64.tar.gz
 sudo tar -C /usr/local -xzf go1.27.4.linux-arm64.tar.gz && export PATH=/usr/local/go/bin:$PATH
 curl -sSf https://sh.rustup.rs | sh -s -- -y && . "$HOME/.cargo/env"
 
-cd /Users/$USER/Documents/runopsy   # Lima keeps your Mac user name; adjust if not
-mkdir -p ~/runopsy-bin
-GOFLAGS=-buildvcs=false go build -o ~/runopsy-bin/runopsy-agent ./cmd/runopsy-agent
-GOFLAGS=-buildvcs=false go build -o ~/runopsy-bin/runopsy-analyzer ./cmd/runopsy-analyzer
+cd /Users/$USER/Documents/deprehendo   # Lima keeps your Mac user name; adjust if not
+mkdir -p ~/deprehendo-bin
+GOFLAGS=-buildvcs=false go build -o ~/deprehendo-bin/deprehendo-agent ./cmd/deprehendo-agent
+GOFLAGS=-buildvcs=false go build -o ~/deprehendo-bin/deprehendo-analyzer ./cmd/deprehendo-analyzer
 cargo build --release --locked --manifest-path trace-rs/Cargo.toml --target-dir ~/trace-target
-install -m 0755 ~/trace-target/release/runopsy-trace ~/runopsy-bin/
+install -m 0755 ~/trace-target/release/deprehendo-trace ~/deprehendo-bin/
 ```
 
 `-buildvcs=false` is needed because the repository is on a read-only mount
-owned by your Mac user. `runopsy-agent` finds `runopsy-trace` next to itself.
+owned by your Mac user. `deprehendo-agent` finds `deprehendo-trace` next to itself.
 
 ## 4. Register the runner (in the VM, as your normal user, not root)
 
-On GitHub, open `13eth-a/runopsy-runner-e2e` and go to **Settings → Actions →
+On GitHub, open `13eth-a/deprehendo-runner-e2e` and go to **Settings → Actions →
 Runners → New self-hosted runner**, and choose **Linux** and **ARM64**. Run the
 download commands it shows in `~/actions-runner`, then configure the runner
 with the label the workflow uses:
 
 ```sh
-./config.sh --url https://github.com/13eth-a/runopsy-runner-e2e --token <REGISTRATION_TOKEN> --labels runopsy-b3 --name runopsy-demo-vm
+./config.sh --url https://github.com/13eth-a/deprehendo-runner-e2e --token <REGISTRATION_TOKEN> --labels deprehendo-b3 --name deprehendo-demo-vm
 ./run.sh
 ```
 
 Leave `./run.sh` running in this shell. Open a second shell for the captures
-(`limactl shell runopsy-demo`).
+(`limactl shell deprehendo-demo`).
 
 ## 5. Capture the two demos (in the VM, second shell)
 
 ```sh
-cd /Users/$USER/Documents/runopsy
+cd /Users/$USER/Documents/deprehendo
 sudo bash scripts/demo-capture.sh oom
 ```
 
-When the script says so, dispatch **runopsy-b3** with scenario **memory** on
+When the script says so, dispatch **deprehendo-b3** with scenario **memory** on
 the repository's Actions tab, or from the Mac with
-`gh workflow run runopsy-b3 -R 13eth-a/runopsy-runner-e2e -f scenario=memory`. The script ignores captures of healthy exits and
+`gh workflow run deprehendo-b3 -R 13eth-a/deprehendo-runner-e2e -f scenario=memory`. The script ignores captures of healthy exits and
 stops at the first capture whose diagnosis is `OOM_KILL`. It ends with `PASS`.
 
 Then, with no job running:
@@ -109,7 +109,7 @@ output, and its analysis document.
 On the Mac:
 
 ```sh
-limactl shell runopsy-demo -- sh -c 'tar -C "$HOME" -cf - demo-out' | tar -C ~ -xf -
+limactl shell deprehendo-demo -- sh -c 'tar -C "$HOME" -cf - demo-out' | tar -C ~ -xf -
 ls ~/demo-out
 ```
 
@@ -118,8 +118,8 @@ ls ~/demo-out
 Build from the commit Railway is running, so both engines are the same:
 
 ```sh
-cd ~/Documents/runopsy && git pull && make build
-bash scripts/demo-verify-hosted.sh ~/demo-out/7.62-oom.runopsy ~/demo-out/7.62-stall.runopsy
+cd ~/Documents/deprehendo && git pull && make build
+bash scripts/demo-verify-hosted.sh ~/demo-out/7.62-oom.deprehendo ~/demo-out/7.62-stall.deprehendo
 ```
 
 The script uploads each bundle with your normal login and requires the hosted
@@ -139,24 +139,24 @@ then go into `testdata/github/real-runner-demo/`, and the demo manifest
 ## 9. Clean up (after the bundles are committed)
 
 In the VM, remove the runner with `./config.sh remove --token <REMOVAL_TOKEN>`
-(the token is on the same settings page). Then `limactl delete -f runopsy-demo`
-on the Mac. Delete `13eth-a/runopsy-runner-e2e` once nothing else needs it;
+(the token is on the same settings page). Then `limactl delete -f deprehendo-demo`
+on the Mac. Delete `13eth-a/deprehendo-runner-e2e` once nothing else needs it;
 deleting it with `gh` needs the `delete_repo` scope
 (`gh auth refresh -h github.com -s delete_repo`).
 
 ## Results
 
 Captured November 21, 2026 on a Lima Ubuntu 24.04 VM (2 CPUs, 4 GiB), runner
-label `runopsy-b3`, repository `13eth-a/runopsy-runner-e2e`.
+label `deprehendo-b3`, repository `13eth-a/deprehendo-runner-e2e`.
 
 | Demo | Local verdict | Hosted check | Dashboard |
 |---|---|---|---|
-| OOM kill (`7.62-oom.runopsy`) | `OOM_KILL` HIGH 0.80. Evidence: the job cgroup's `oom_kill` counter rose by 1, host memory peaked at 96.8%, and the killed process held 83% of resident memory. The job failed with exit 137. | PASS, byte-identical | Shows `OOM_KILL` with the causal chain and memory chart |
-| Communication stall (`7.62-stall.runopsy`) | `UNKNOWN` (every generic signature rejected, `BROKER_SOCKET_STALL` by design). The GitHub provider reports `GITHUB_RUNNER_COMMUNICATION_STALL` MEDIUM, onset 07:19:19Z. | PASS, byte-identical | Shows the honest abstention |
+| OOM kill (`7.62-oom.deprehendo`) | `OOM_KILL` HIGH 0.80. Evidence: the job cgroup's `oom_kill` counter rose by 1, host memory peaked at 96.8%, and the killed process held 83% of resident memory. The job failed with exit 137. | PASS, byte-identical | Shows `OOM_KILL` with the causal chain and memory chart |
+| Communication stall (`7.62-stall.deprehendo`) | `UNKNOWN` (every generic signature rejected, `BROKER_SOCKET_STALL` by design). The GitHub provider reports `GITHUB_RUNNER_COMMUNICATION_STALL` MEDIUM, onset 07:19:19Z. | PASS, byte-identical | Shows the honest abstention |
 
 Found and fixed on the way:
 
-- The hosted analyzer (`cmd/runopsy-analyzer`) never registered the GitHub
+- The hosted analyzer (`cmd/deprehendo-analyzer`) never registered the GitHub
   provider, so the hosted document had an empty provider section and differed
   from local. It now registers it like the agent does. Test:
   `TestPhase7HostedAnalyzerInterpretsGitHub`. Incidents uploaded before the fix

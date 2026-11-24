@@ -31,7 +31,7 @@ func (f *fakeUploader) Upload(context.Context, string) (string, error) {
 // after drain attempts.
 func writeBundle(t *testing.T) (string, []byte) {
 	t.Helper()
-	path := filepath.Join(t.TempDir(), "incident.runopsy")
+	path := filepath.Join(t.TempDir(), "incident.deprehendo")
 	content := []byte("bundle-bytes-that-must-not-change")
 	if err := os.WriteFile(path, content, 0o600); err != nil {
 		t.Fatal(err)
@@ -297,7 +297,7 @@ func TestQueueRefusesToGrowPastItsBound(t *testing.T) {
 
 func TestEnqueueRejectsUnreadablePath(t *testing.T) {
 	q, _ := testQueue(t, DefaultPolicy())
-	if _, _, err := q.Enqueue(filepath.Join(t.TempDir(), "absent.runopsy")); err == nil {
+	if _, _, err := q.Enqueue(filepath.Join(t.TempDir(), "absent.deprehendo")); err == nil {
 		t.Fatal("an absent bundle was queued")
 	}
 	if _, _, err := q.Enqueue(t.TempDir()); err == nil {

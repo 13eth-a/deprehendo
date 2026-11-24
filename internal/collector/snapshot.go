@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // snapshot is one sample of the machine at Timestamp. every section is

@@ -33,8 +33,8 @@ import (
 	"time"
 	"unicode"
 
-	"runopsy/internal/analysis"
-	"runopsy/internal/analyzer"
+	"deprehendo/internal/analysis"
+	"deprehendo/internal/analyzer"
 )
 
 // JobRunner is what complete uses to analyze one bundle. production passes
@@ -211,7 +211,7 @@ type identity struct {
 
 // organizationHeader selects which of a browser user's organizations a request
 // acts on. personal tokens are bound to one organization and ignore it.
-const organizationHeader = "X-Runopsy-Organization"
+const organizationHeader = "X-Deprehendo-Organization"
 
 var organizationIDRE = regexp.MustCompile(`^org_[a-z0-9]{1,64}$`)
 

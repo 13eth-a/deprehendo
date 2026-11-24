@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 const (

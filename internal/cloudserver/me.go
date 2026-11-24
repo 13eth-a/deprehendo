@@ -24,7 +24,7 @@ const maxMeOrganizations = 100
 
 // me answers GET /api/me: who the caller is and which organizations it may
 // act on. the dashboard calls it after sign-in to choose the
-// X-Runopsy-Organization header for later requests, so for a browser session
+// X-Deprehendo-Organization header for later requests, so for a browser session
 // it does not require one. A personal token sees only its own organization.
 func (s *Server) me(w http.ResponseWriter, r *http.Request) {
 	raw, ok := bearer(r)

@@ -3,7 +3,7 @@
 // object store and the real analyzer child binary (one child process per
 // bundle).
 //
-// gated on RUNOPSY_CLOUD_TEST_DSN: `make test-cloud` starts one postgres and
+// gated on DEPREHENDO_CLOUD_TEST_DSN: `make test-cloud` starts one postgres and
 // sets it. without the variable the suite skips, so the default go test
 // sweep never touches a database.
 package tests
@@ -20,17 +20,17 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/analyzer"
-	"runopsy/internal/cloudclient"
-	"runopsy/internal/clouddb"
-	"runopsy/internal/cloudserver"
+	"deprehendo/internal/analyzer"
+	"deprehendo/internal/cloudclient"
+	"deprehendo/internal/clouddb"
+	"deprehendo/internal/cloudserver"
 )
 
 func cloudTestDSN(t *testing.T) string {
 	t.Helper()
-	dsn := os.Getenv("RUNOPSY_CLOUD_TEST_DSN")
+	dsn := os.Getenv("DEPREHENDO_CLOUD_TEST_DSN")
 	if dsn == "" {
-		t.Skip("RUNOPSY_CLOUD_TEST_DSN is not set (make test-cloud starts one)")
+		t.Skip("DEPREHENDO_CLOUD_TEST_DSN is not set (make test-cloud starts one)")
 	}
 	return dsn
 }
@@ -171,7 +171,7 @@ func TestPhase7ServerPipeline(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 
 	uploadID, incidentID := uploadBundle(t, endpoint, tokenA, bundlepath)
 	if !strings.HasPrefix(uploadID, "upl_") || !strings.HasPrefix(incidentID, "inc_") {
@@ -179,7 +179,7 @@ func TestPhase7ServerPipeline(t *testing.T) {
 	}
 
 	// 7.11/7.12 through the real CLI: login stores the credential, upload
-	// drives the same §1..§3 flow through the runopsy-agent binary, and the
+	// drives the same §1..§3 flow through the deprehendo-agent binary, and the
 	// second run hits the dedupe answer ("already uploaded").
 	dir := t.TempDir()
 	configpath := filepath.Join(dir, "config.json")
@@ -321,9 +321,9 @@ func TestPhase7ServerRefusesHostileStorage(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	bundlepath := filepath.Join(root, "testdata", "incidents", "oom-kill.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "oom-kill.deprehendo")
 	if _, err := os.Stat(bundlepath); err != nil {
-		bundlepath = filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+		bundlepath = filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	}
 
 	client, err := cloudclient.New(endpoint, tokenA)
@@ -369,7 +369,7 @@ func TestPhase7ServerRefusesHostileStorage(t *testing.T) {
 
 	// A forged policy (client-side signature over different fields) fails.
 	forged := map[string]string{
-		"key":             "orgs/org_evil/bundles/" + strings.Repeat("f", 64) + ".runopsy",
+		"key":             "orgs/org_evil/bundles/" + strings.Repeat("f", 64) + ".deprehendo",
 		"policy":          "forged",
 		"x-amz-signature": "forged",
 	}

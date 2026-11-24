@@ -10,7 +10,7 @@ import (
 //
 // the recorder writes the very frames the socket carries, so a recording is
 // replayed by the same decoder the agent uses on live data (`trace.Replay`,
-// `runopsy-agent trace replay`). it is bounded on purpose: a debug recording
+// `deprehendo-agent trace replay`). it is bounded on purpose: a debug recording
 // on a busy CI host can otherwise grow without limit. when a bound is reached
 // the recorder stops cleanly at a frame boundary and reports why; it never
 // writes a partial record, and it never fails the caller. losing a debug

@@ -1,6 +1,6 @@
 # GitHub runner discovery
 
-`runopsy-agent github discover` reads the local process table and inspects
+`deprehendo-agent github discover` reads the local process table and inspects
 candidate `Runner.Listener` processes using PID plus process start-time identity.
 On every platform, a candidate is accepted only when its resolved executable is
 `Runner.Listener` and its installation contains the expected `bin/Runner.Listener`,

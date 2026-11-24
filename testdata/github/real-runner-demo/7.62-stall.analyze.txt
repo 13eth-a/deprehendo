@@ -3,7 +3,7 @@ GitHub Actions
 Runner        WITHHELD source=UNKNOWN
 Version       24.04.5 source=RUNNER_LOG
 ----------------------------------------------------------------
-RUNOPSY INCIDENT ANALYSIS
+DEPREHENDO INCIDENT ANALYSIS
 Incident: inc_e85ce6f4df31da1ed746898e7cbcd276    Analyzer: 0.4.0    Signature set: 2
 Trigger: manual at 07:21:10.325Z
 

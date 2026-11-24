@@ -59,7 +59,7 @@ type Runner struct {
 
 // NewRunner points the runner at a child binary. A relative path is resolved
 // here: run starts the child in a private working directory, so "bin/x" would
-// otherwise mean "/tmp/runopsy-analyzer-*/bin/x" and every job would fail with
+// otherwise mean "/tmp/deprehendo-analyzer-*/bin/x" and every job would fail with
 // "no such file or directory" after a successful startup stat.
 func NewRunner(childPath string) *Runner {
 	if childPath != "" && !filepath.IsAbs(childPath) {
@@ -84,7 +84,7 @@ func (r *Runner) Run(ctx context.Context, bundle []byte) (Result, error) {
 	jobctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	private, err := os.MkdirTemp("", "runopsy-analyzer-*")
+	private, err := os.MkdirTemp("", "deprehendo-analyzer-*")
 	if err != nil {
 		return Result{}, fmt.Errorf("analyzer: private dir: %w", err)
 	}

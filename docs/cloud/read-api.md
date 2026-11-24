@@ -93,9 +93,9 @@ One incident's metadata, including the fields the list omits:
 
 ## `GET /api/incidents/{id}/analysis`
 
-The stored `runopsy.analysis` document, served **byte for byte** as the engine
+The stored `deprehendo.analysis` document, served **byte for byte** as the engine
 wrote it (7.43). The server never re-renders or re-derives it; the dashboard
-reads the same bytes `runopsy-agent analyze --document` produces locally.
+reads the same bytes `deprehendo-agent analyze --document` produces locally.
 
 - `200` with `Content-Type: application/json` and the document body.
 - `202 PROCESSING` with the status as the message when the analysis is not
@@ -105,13 +105,13 @@ reads the same bytes `runopsy-agent analyze --document` produces locally.
 
 ## `GET /api/incidents/{id}/bundle`
 
-The original `.runopsy` file (7.29).
+The original `.deprehendo` file (7.29).
 
 Before serving, the server re-hashes the stored object and compares it with the
 digest recorded at upload. A mismatch is **500 `UNAVAILABLE`**: unreproducible
 evidence is refused rather than served. A successful response is
 `application/octet-stream` with
-`Content-Disposition: attachment; filename="<incident id>.runopsy"` and
+`Content-Disposition: attachment; filename="<incident id>.deprehendo"` and
 `X-Content-Type-Options: nosniff`.
 
 ## `DELETE /api/incidents/{id}`
@@ -158,4 +158,4 @@ a re-analysis appends an `analyses` row and moves `active_analysis_id`, while
   `docs/cloud/owner-decisions.md`), not part of this API.
 - Events and timeline endpoints are served by the analysis document itself;
   a separate `GET /api/incidents/{id}/events` is deliberately not built while
-  the document is the canonical result (7.9's "one Runopsy").
+  the document is the canonical result (7.9's "one Deprehendo").

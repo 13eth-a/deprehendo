@@ -15,9 +15,9 @@ import (
 	"strconv"
 	"strings"
 
-	"runopsy/internal/platform"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // Well-known GitHub actions runner facts (§9.1). only the allowlisted

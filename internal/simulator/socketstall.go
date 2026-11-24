@@ -22,7 +22,7 @@ const (
 	defaultPostRecoveryPongs = 2
 )
 
-// SocketStall simulates the nastiest network failure runopsy will have to name:
+// SocketStall simulates the nastiest network failure deprehendo will have to name:
 // a TCP connection that stays open while application-level progress stops. the
 // peer keeps reading (so the socket never fills and never closes), it just never
 // answers.

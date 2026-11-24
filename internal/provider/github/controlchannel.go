@@ -14,8 +14,8 @@ import (
 	"sort"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/provider/evidence"
 )
 
 // reestablishWindow is the long-poll cycle bound (C12.3).

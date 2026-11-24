@@ -11,11 +11,11 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // default frozen-worker phase timings. the whole cycle is short so a bare
-// `runopsy-sim frozen-worker` terminates quickly while still containing a real
+// `deprehendo-sim frozen-worker` terminates quickly while still containing a real
 // freeze -> observe window.
 const (
 	defaultFreezeAfter = 1500 * time.Millisecond

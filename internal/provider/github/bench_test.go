@@ -19,9 +19,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
-	"runopsy/internal/provider/github/fixtures"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
+	"deprehendo/internal/provider/github/fixtures"
 )
 
 // sampleInterval is the fastest interval the recorder documents; overhead per

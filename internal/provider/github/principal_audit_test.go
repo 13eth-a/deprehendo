@@ -15,9 +15,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // realDiag lines are copied verbatim (message text) from public runner
@@ -493,7 +493,7 @@ func TestAuditCanaryNeverLeavesTheHost(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("RUNOPSY_GITHUB_TOKEN", canary)
+	t.Setenv("DEPREHENDO_GITHUB_TOKEN", canary)
 	for _, level := range []evidence.PrivacyLevel{evidence.PrivacyIdentifiers, evidence.PrivacyConservative} {
 		s, err := GitHubProvider{}.Attach(context.Background(), host, provider.AttachOptions{Privacy: level})
 		if err != nil {

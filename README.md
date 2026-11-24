@@ -2,6 +2,20 @@
 
 **Release scope:** phases 1–7.
 
+### Upgrading an existing installation
+
+Switch service commands to the `deprehendo-*` binaries and set deployment
+variables with the `DEPREHENDO_` prefix. Keep their site-specific values,
+including existing database, storage, and API endpoints. Set
+`DEPREHENDO_API_URL` for the dashboard. Sign in again with
+`deprehendo-agent login` to create the renamed local client configuration.
+
+New captures use the `.deprehendo` extension. The reader also accepts existing
+v1 archives. To inspect an existing capture directory, pass its path explicitly
+with `deprehendo-agent incidents list --incident-dir DIR`. Apply the bundled
+database migrations when upgrading the cloud service so existing stored
+object keys and new uploads can coexist.
+
 deprehendo exists to answer a narrow question: when an autonomous agent or a long
 job dies, *what actually happened?* "Exit code 1" is not an answer. A frozen
 child process, an orphaned grandchild, a full heap, or a TCP connection that is
@@ -15,7 +29,7 @@ and they need different fixes.
 > a bounded rolling buffer, with process filtering and partial-failure
 > snapshots. A private Unix socket exposes live status, the latest snapshot,
 > retained history, and manual incident triggering. A trigger freezes a
-> configurable pre/post window into a checksummed, redacted `.runopsy` bundle
+> configurable pre/post window into a checksummed, redacted `.deprehendo` bundle
 > that can be inspected offline. Configuration uses CLI flags; no config file
 > is needed.
 
@@ -23,8 +37,8 @@ and they need different fixes.
 
 | Area | Status |
 |---|---|
-| Phase 0 simulator | `runopsy-sim` scenarios create process, memory, CPU, signal, and socket conditions |
-| Agent binary | `runopsy-agent start`, `status`, and `version`; foreground-only |
+| Phase 0 simulator | `deprehendo-sim` scenarios create process, memory, CPU, signal, and socket conditions |
+| Agent binary | `deprehendo-agent start`, `status`, and `version`; foreground-only |
 | Snapshot model | `collector.Snapshot` with optional System/Pressure/Cgroup sections, `ProcessSnapshot`, `ConnectionSnapshot`, per-cycle collector timings, and an `Errors` list |
 | Host system collector | load average, aggregate CPU utilisation (Linux), memory (Linux), disk capacity for `--watch-fs`; independent sensors, partial failures reported per cycle |
 | Process filtering | `--watch-pid`, `--watch-name`, `--watch-tree` select watched processes while still sampling the full table for tree expansion |
@@ -51,7 +65,7 @@ and they need different fixes.
 | Phase 4 event timeline | offline `timeline` text/JSON, rule-backed causal graph, stable edge explanation, Phase 3 links and explicit unknown-cause reports |
 
 The existing simulator scenarios and usage are described below. The command
-`runopsy-sim --help` lists all registered scenarios.
+`deprehendo-sim --help` lists all registered scenarios.
 
 ## Requirements
 
@@ -62,7 +76,7 @@ The existing simulator scenarios and usage are described below. The command
 ## Build and checks
 
 ```bash
-make build          # bin/runopsy-agent, bin/runopsy-sim
+make build          # bin/deprehendo-agent, bin/deprehendo-sim
 make test           # unit + scenario tests
 make race           # tests under the race detector
 make lint           # gofmt check + go vet + race tests
@@ -96,32 +110,32 @@ Linux kernel (/proc, /sys/fs/cgroup)        macOS (ps identity/RSS only)
 Build with:
 
 ```bash
-go build -o ./bin/runopsy-agent ./cmd/runopsy-agent
+go build -o ./bin/deprehendo-agent ./cmd/deprehendo-agent
 ```
 
 Commands:
 
 ```bash
-./bin/runopsy-agent start [--interval 1s] [--window 120s] [--log-level info] [--watch-fs /]
-./bin/runopsy-agent start --watch-name runopsy-sim --watch-tree --window 120s
-./bin/runopsy-agent start --watch-pid 5842 --watch-tree
-./bin/runopsy-agent status
-./bin/runopsy-agent status --json
-./bin/runopsy-agent version
-./bin/runopsy-agent dump          # latest retained snapshot from running agent
-./bin/runopsy-agent dump --history # retained rolling timeline as JSON
-./bin/runopsy-agent dump --once    # standalone sample (no process CPU baseline)
-./bin/runopsy-agent trigger --note "runner stopped accepting jobs"
-./bin/runopsy-agent inspect FILE --timeline --privacy  # offline summary/events/privacy
-./bin/runopsy-agent inspect FILE --at -10s             # nearest snapshot to trigger-10s
-./bin/runopsy-agent inspect FILE --snapshot 47         # zero-based snapshot index
-./bin/runopsy-agent validate FILE
-./bin/runopsy-agent extract FILE --output incident/
-./bin/runopsy-agent timeline FILE --causal
-./bin/runopsy-agent timeline FILE --json --report
-./bin/runopsy-agent timeline FILE --explain-edge ED_...
-./bin/runopsy-agent incidents list
-./bin/runopsy-agent start --collect-network=false --collect-cgroups=false
+./bin/deprehendo-agent start [--interval 1s] [--window 120s] [--log-level info] [--watch-fs /]
+./bin/deprehendo-agent start --watch-name deprehendo-sim --watch-tree --window 120s
+./bin/deprehendo-agent start --watch-pid 5842 --watch-tree
+./bin/deprehendo-agent status
+./bin/deprehendo-agent status --json
+./bin/deprehendo-agent version
+./bin/deprehendo-agent dump          # latest retained snapshot from running agent
+./bin/deprehendo-agent dump --history # retained rolling timeline as JSON
+./bin/deprehendo-agent dump --once    # standalone sample (no process CPU baseline)
+./bin/deprehendo-agent trigger --note "runner stopped accepting jobs"
+./bin/deprehendo-agent inspect FILE --timeline --privacy  # offline summary/events/privacy
+./bin/deprehendo-agent inspect FILE --at -10s             # nearest snapshot to trigger-10s
+./bin/deprehendo-agent inspect FILE --snapshot 47         # zero-based snapshot index
+./bin/deprehendo-agent validate FILE
+./bin/deprehendo-agent extract FILE --output incident/
+./bin/deprehendo-agent timeline FILE --causal
+./bin/deprehendo-agent timeline FILE --json --report
+./bin/deprehendo-agent timeline FILE --explain-edge ED_...
+./bin/deprehendo-agent incidents list
+./bin/deprehendo-agent start --collect-network=false --collect-cgroups=false
 ```
 
 `start` runs in the foreground, prints configuration and platform, and records
@@ -193,7 +207,7 @@ to collect.
 
 ## Phase 2 incident capture
 
-Phase 2 preserves the useful part of the recording as a portable `.runopsy`
+Phase 2 preserves the useful part of the recording as a portable `.deprehendo`
 artifact. It answers "what evidence existed around this failure?" and deliberately
 adds no root-cause diagnosis.
 
@@ -204,19 +218,19 @@ continuous recording
         ↓
      immutable incident
         ↓
- incident.runopsy (versioned ZIP + JSON components)
+ incident.deprehendo (versioned ZIP + JSON components)
         ↓
  inspect --timeline (offline, checksum-verified)
 ```
 
 ```bash
-./bin/runopsy-agent start --watch-name runopsy-sim --trigger-on-stop
-./bin/runopsy-sim frozen-worker
+./bin/deprehendo-agent start --watch-name deprehendo-sim --trigger-on-stop
+./bin/deprehendo-sim frozen-worker
 
-./bin/runopsy-agent start --trigger-memory-percent 95 \
+./bin/deprehendo-agent start --trigger-memory-percent 95 \
     --trigger-disk-free-percent 2 --trigger-duration 5s
-./bin/runopsy-agent trigger
-./bin/runopsy-agent inspect ~/.runopsy/incidents/inc_....runopsy --timeline
+./bin/deprehendo-agent trigger
+./bin/deprehendo-agent inspect ~/.deprehendo/incidents/inc_....deprehendo --timeline
 ```
 
 Start flags for capture and storage:
@@ -224,7 +238,7 @@ Start flags for capture and storage:
 - `--capture-pre`, `--capture-post` — evidence window (default `90s` / `30s`).
   The capture keeps its own bounded prehistory, so it can retain more than the
   recorder's `--window` once the recorder has been running that long.
-- `--incident-dir` — bundle directory (default `~/.runopsy/incidents`, created
+- `--incident-dir` — bundle directory (default `~/.deprehendo/incidents`, created
   with mode 0700; override for `/var/lib/...` deployments).
 - `--max-incidents` — retained bundles (default 50; `0` disables the count
   limit), `--max-incident-age` — optional age limit (default off).
@@ -272,7 +286,7 @@ machine, format contract, limits, crash/disk-full semantics and APIs.
 
 ### Measured bundle sizes
 
-Live Linux (Go 1.27.1 container, `RUNOPSY_INCIDENT_SIZES=1`, 50ms interval, one
+Live Linux (Go 1.27.1 container, `DEPREHENDO_INCIDENT_SIZES=1`, 50ms interval, one
 watched process tree, ~124 retained snapshots):
 
 | Scenario | Snapshots | Events | Stored (deflate) | Uncompressed |
@@ -297,7 +311,7 @@ incidents stay in the tens-of-KB range, comfortably below the "hundreds of KB
 to a few MB" target. Reproduce with:
 
 ```bash
-RUNOPSY_INCIDENT_SIZES=1 go test -run TestPhase2BundleSizes -v ./tests
+DEPREHENDO_INCIDENT_SIZES=1 go test -run TestPhase2BundleSizes -v ./tests
 go test -run '^$' -bench 'BenchmarkBundle(EncodeRich|DecodeRich)' -benchmem ./internal/incident
 ```
 
@@ -323,7 +337,7 @@ classify a watched process's disappearance as normal or unexpected.
 ## Phase 0 simulator
 
 ```text
-runopsy-sim <scenario> [flags]
+deprehendo-sim <scenario> [flags]
 
   --duration DUR   overall runtime; 0 means the scenario's default
   --verbose        include extra detail
@@ -351,7 +365,7 @@ failure, `2` usage error. `exit --code N` deliberately exits `N`; fatal
 ### `normal` — healthy baseline
 
 ```bash
-./bin/runopsy-sim normal --duration 10s
+./bin/deprehendo-sim normal --duration 10s
 ```
 
 Runs for the requested duration, does a small amount of CPU work every 500 ms,
@@ -360,8 +374,8 @@ sleeps in between, and exits 0. `SIGINT`/`SIGTERM` stop it cleanly.
 ### `socket-stall` — open socket, zero progress
 
 ```bash
-./bin/runopsy-sim socket-stall
-./bin/runopsy-sim socket-stall --ping-interval 100ms --stall-threshold 500ms \
+./bin/deprehendo-sim socket-stall
+./bin/deprehendo-sim socket-stall --ping-interval 100ms --stall-threshold 500ms \
                               --stall-duration 5s --stall-after 3
 ```
 
@@ -373,8 +387,8 @@ the Phase 1 Linux recorder independently verifies kernel TCP state and ownership
 ### `cpu-spin` and `memory-pressure`
 
 ```bash
-./bin/runopsy-sim cpu-spin --workers 4 --duration 10s
-./bin/runopsy-sim memory-pressure --rate 50MB --interval 1s --limit 1GB
+./bin/deprehendo-sim cpu-spin --workers 4 --duration 10s
+./bin/deprehendo-sim memory-pressure --rate 50MB --interval 1s --limit 1GB
 ```
 
 CPU workers do bounded chunks of arithmetic. Memory pressure retains allocations
@@ -384,9 +398,9 @@ it does not invoke kernel OOM.
 ### `frozen-worker`, `orphan-process`, and `process-tree`
 
 ```bash
-./bin/runopsy-sim frozen-worker
-./bin/runopsy-sim orphan-process --tasks 2 --grace 1s
-./bin/runopsy-sim process-tree --settle 1.2s --between 600ms
+./bin/deprehendo-sim frozen-worker
+./bin/deprehendo-sim orphan-process --tasks 2 --grace 1s
+./bin/deprehendo-sim process-tree --settle 1.2s --between 600ms
 ```
 
 These scenarios use real helper processes. They verify stopped-worker state,
@@ -396,8 +410,8 @@ PID, then clean up their child trees.
 ### `exit` and `signal`
 
 ```bash
-./bin/runopsy-sim exit --code 137
-./bin/runopsy-sim signal --signal TERM
+./bin/deprehendo-sim exit --code 137
+./bin/deprehendo-sim signal --signal TERM
 ```
 
 `exit` ends with a chosen code. `signal` raises supported signals on itself;
@@ -413,8 +427,8 @@ narration and events; JSON mode suppresses narration.
 ## Layout
 
 ```text
-cmd/runopsy-agent/       # foreground agent entry point
-cmd/runopsy-sim/         # Phase 0 fault-injection CLI
+cmd/deprehendo-agent/       # foreground agent entry point
+cmd/deprehendo-sim/         # Phase 0 fault-injection CLI
 internal/agent/          # runtime wiring, status, JSON dump adapters
 internal/collector/      # snapshot model, scheduler, ring buffer, tree, CPU tracker
 internal/platform/       # /proc and ps adapters: processes, TCP, PSI, cgroups
@@ -438,7 +452,7 @@ age expiry, payload limits and detached concurrent reads.
 Reproduce resource measurements on Linux (not under `-race`):
 
 ```bash
-RUNOPSY_MEASURE=1 go test -v -count=3 ./internal/agent -run TestRecorderResourceMeasurement
+DEPREHENDO_MEASURE=1 go test -v -count=3 ./internal/agent -run TestRecorderResourceMeasurement
 go test -run '^$' -bench . -benchmem ./internal/platform ./internal/collector ./internal/agent
 ```
 
@@ -483,7 +497,7 @@ init/subreaper behavior. Adopted zombies are the adopter's reaping responsibilit
 
 ## Phase 3 diagnosis engine
 
-`runopsy-agent analyze FILE [--json] [--explain] [--report] [--min-confidence F]`
+`deprehendo-agent analyze FILE [--json] [--explain] [--report] [--min-confidence F]`
 produces a deterministic offline report from a verified bundle. Analyzer 0.3.1,
 signature set 2, implements nine stable hypotheses with structured supporting
 and contradicting evidence, missing-data explanations, and explicit ambiguity.
@@ -499,7 +513,7 @@ shows ambiguous rival explanations and rejects nonfinite thresholds.
 
 ## Phase 4 timeline and causal graph
 
-`runopsy-agent timeline FILE` renders deterministic normalized events from a
+`deprehendo-agent timeline FILE` renders deterministic normalized events from a
 verified bundle. Add `--causal` for versioned-rule edges and root candidates,
 `--json` for the graph/report JSON shape, `--report` for combined signature
 and causal output, and `--explain-edge EDGE` for a rule/evidence explanation.
@@ -531,7 +545,7 @@ Other rules describe recorded stopped state, disk pressure, reparenting,
 coordinated disappearance, network symptoms and resource pressure; they do not
 establish intent or a proven root cause. See the reference for each boundary.
 
-`runopsy-agent evaluate testdata/incidents` compares predictions against the
+`deprehendo-agent evaluate testdata/incidents` compares predictions against the
 original nine injected fault labels and ten healthy labels. The reviewed
 baseline is **16/19 correct top diagnoses, 0 healthy false positives, 13 UNKNOWN**:
 ten healthy cases and three faults that v1 cannot distinguish. The three misses
@@ -540,7 +554,7 @@ to inflate accuracy. Synthetic fixtures are a regression corpus, not an estimate
 of production accuracy. Graded calibration tests compare stronger/weaker
 support, contradictions, missing evidence and required-evidence gates.
 
-`RUNOPSY_E2E_DIAGNOSIS=1 go test ./tests -run '^TestPhase3DiagnosisEndToEnd$'`
+`DEPREHENDO_E2E_DIAGNOSIS=1 go test ./tests -run '^TestPhase3DiagnosisEndToEnd$'`
 exercises live frozen-worker and watched-exit captures, plus Linux sustained CPU.
 The CPU case now requires an explained rejected hypothesis; the recorder has no
 application progress sensor. Benchmarks cover small, medium and large captures.
@@ -553,43 +567,43 @@ review also remain.
 
 ## Phase 7 hosted viewer (MVP) — backend
 
-Phase 7 is designed in `docs/cloud/contract.md`: `runopsy-cloud` is an
+Phase 7 is designed in `docs/cloud/contract.md`: `deprehendo-cloud` is an
 optional viewer and storage layer; diagnosis never moves into it. The service
 runs the same `internal/analysis` code the CLI runs, so an uploaded incident
-shows exactly the diagnosis `runopsy-agent analyze` produces. The landed
+shows exactly the diagnosis `deprehendo-agent analyze` produces. The landed
 backend:
 
 ```bash
 # One analysis document, byte-stable across every caller:
-./bin/runopsy-agent analyze incident.runopsy --document doc.json
+./bin/deprehendo-agent analyze incident.deprehendo --document doc.json
 
 # The isolated analyzer worker (contract §5.4), invoked by the cloud:
-go build -o bin/runopsy-analyzer ./cmd/runopsy-analyzer
-bin/runopsy-analyzer -parent -bundle incident.runopsy   # one job, one child
+go build -o bin/deprehendo-analyzer ./cmd/deprehendo-analyzer
+bin/deprehendo-analyzer -parent -bundle incident.deprehendo   # one job, one child
 
 # The server: migrate, mint a token, serve the upload and read API:
-./bin/runopsy-cloud migrate -database "$DSN"
-./bin/runopsy-cloud token -database "$DSN" -user u_1 -org org_1 -org-name "Acme"
-./bin/runopsy-cloud serve -database "$DSN" -storage-root ./storage
+./bin/deprehendo-cloud migrate -database "$DSN"
+./bin/deprehendo-cloud token -database "$DSN" -user u_1 -org org_1 -org-name "Acme"
+./bin/deprehendo-cloud serve -database "$DSN" -storage-root ./storage
 
 # The whole backend against a throwaway Postgres (docker):
 make test-cloud
 ```
 
-- `internal/analysis` + `analyze --document` produce the `runopsy.analysis`
+- `internal/analysis` + `analyze --document` produce the `deprehendo.analysis`
   v1 document (engine identity, causal graph with per-event evidence class,
   timeline, resource series), a pure function of the bundle bytes — the
   "local/cloud results identical" invariant is byte equality on this file.
-- `cmd/runopsy-analyzer` is the hostile-input worker: bundle on stdin, one
+- `cmd/deprehendo-analyzer` is the hostile-input worker: bundle on stdin, one
   child per job, `RLIMIT_CPU`/`RLIMIT_NOFILE` limits, `REJECTED`/
   `FAILED_LIMIT`/`FAILED_CRASH` statuses, nothing logged from bundle content.
-- The CLI: `runopsy-agent login -endpoint URL` stores a personal token at
-  `~/.config/runopsy/config.json` (0600), and `runopsy-agent upload
-  incident.runopsy` validates the bundle locally, uploads the exact bytes, and
+- The CLI: `deprehendo-agent login -endpoint URL` stores a personal token at
+  `~/.config/deprehendo/config.json` (0600), and `deprehendo-agent upload
+  incident.deprehendo` validates the bundle locally, uploads the exact bytes, and
   prints the dashboard URL. `login -auto-upload` opts into the local queue
-  (`runopsy-agent queue [--retry]`), which retries with bounded backoff and
+  (`deprehendo-agent queue [--retry]`), which retries with bounded backoff and
   never risks the local bundle. Wire shapes: `docs/cloud/upload-api.md`.
-- The server: `internal/cloudserver` behind `runopsy-cloud serve`, with
+- The server: `internal/cloudserver` behind `deprehendo-cloud serve`, with
   Postgres migrations (`db/migrations/`, applied and tested by the real
   runner), an immutable local object store, digest verification on completion
   and on download, per-organization abuse limits, org-scoped read endpoints

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 func TestDefaultRegistryStableOrderingAndIDs(t *testing.T) {

@@ -6,7 +6,7 @@ package tests
 // every causal claim must be rule-backed and evidence-bounded, and events v1
 // cannot observe must never be invented.
 //
-// gated behind RUNOPSY_E2E_CAUSAL because both cases run live recorders and
+// gated behind DEPREHENDO_E2E_CAUSAL because both cases run live recorders and
 // simulators (roughly 20 seconds).
 
 import (
@@ -19,7 +19,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/diagnosis"
+	"deprehendo/internal/diagnosis"
 )
 
 type causalEvent struct {
@@ -81,8 +81,8 @@ type causalTimelineOutput struct {
 }
 
 func TestPhase4CausalEndToEnd(t *testing.T) {
-	if os.Getenv("RUNOPSY_E2E_CAUSAL") == "" {
-		t.Skip("set RUNOPSY_E2E_CAUSAL=1 to run simulator -> recorder -> causal timeline end-to-end")
+	if os.Getenv("DEPREHENDO_E2E_CAUSAL") == "" {
+		t.Skip("set DEPREHENDO_E2E_CAUSAL=1 to run simulator -> recorder -> causal timeline end-to-end")
 	}
 	if testing.Short() {
 		t.Skip("live simulator/recorder causal analysis")

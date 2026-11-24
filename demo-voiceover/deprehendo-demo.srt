@@ -1,0 +1,47 @@
+1
+00:00:00,900 --> 00:00:03,700
+Meet deprehendo.
+
+2
+00:00:04,400 --> 00:00:10,700
+When a self-hosted GitHub Actions runner dies in the
+middle of a job, deprehendo tells you why.
+
+3
+00:00:11,400 --> 00:00:16,700
+Getting started takes three commands: build the
+agent, log in, and upload.
+
+4
+00:00:17,400 --> 00:00:23,200
+Every incident your organization uploads lands here,
+newest first.
+
+5
+00:00:23,900 --> 00:00:31,200
+Open one, and the diagnosis is right at the top.
+Here, an out-of-memory kill, with high confidence.
+
+6
+00:00:31,900 --> 00:00:39,200
+Click any piece of evidence to see its source, its
+timing, and the raw value, exactly as recorded.
+
+7
+00:00:39,900 --> 00:00:47,200
+The causal chain and timeline show what was observed
+directly, and what was inferred.
+
+8
+00:00:47,900 --> 00:00:55,200
+And when nothing matches, it says so, and shows what
+GitHub itself reported.
+
+9
+00:00:55,900 --> 00:01:02,200
+Light or dark. Compact or comfortable. In your own
+time zone.
+
+10
+00:01:03,400 --> 00:01:07,200
+deprehendo. Every conclusion, inspectable.

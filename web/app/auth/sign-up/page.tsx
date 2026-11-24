@@ -1,5 +1,18 @@
-import { SignUpForm } from "../../../components/AuthForms.tsx";
+import { redirect } from "next/navigation";
 
-export default function SignUp() {
-  return <SignUpForm />;
+import { SignUpForm } from "../../../components/AuthForms.tsx";
+import { PublicHeader } from "../../../components/PublicHeader.tsx";
+import { currentUser } from "../../../lib/deprehendo-api.ts";
+
+export const dynamic = "force-dynamic";
+
+/** Already signed in: there is nothing to do here, so go to the dashboard. */
+export default async function SignUp() {
+  if (await currentUser()) redirect("/incidents");
+  return (
+    <>
+      <PublicHeader current="auth" />
+      <SignUpForm />
+    </>
+  );
 }

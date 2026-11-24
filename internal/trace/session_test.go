@@ -23,7 +23,7 @@ type fakeTracer struct {
 func startFakeTracer(t *testing.T, caps Capabilities) *fakeTracer {
 	t.Helper()
 	// macOS sun_path is 104 bytes; the default t.TempDir is too deep.
-	dir, err := os.MkdirTemp("", "runopsy-trace-test")
+	dir, err := os.MkdirTemp("", "deprehendo-trace-test")
 	if err != nil {
 		t.Fatalf("tempdir: %v", err)
 	}

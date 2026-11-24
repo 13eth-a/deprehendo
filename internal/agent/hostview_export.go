@@ -4,15 +4,15 @@ import (
 	"os"
 	"path/filepath"
 
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // DefaultStateDir is where `start` and `github discover` keep installation
-// state (the provider salt file). ~/.runopsy is the documented location.
+// state (the provider salt file). ~/.deprehendo is the documented location.
 func DefaultStateDir() string {
 	if home, err := os.UserHomeDir(); err == nil && home != "" {
-		return filepath.Join(home, ".runopsy")
+		return filepath.Join(home, ".deprehendo")
 	}
 	return ""
 }

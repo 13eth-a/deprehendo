@@ -10,9 +10,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/provider/evidence"
-	"runopsy/internal/trace"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/provider/evidence"
+	"deprehendo/internal/trace"
 )
 
 type CaptureState string

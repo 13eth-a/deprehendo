@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 const (

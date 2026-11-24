@@ -1,0 +1,113 @@
+/*
+ * Components ported from the libraries the dashboard draws on. Each block
+ * names its source and license. Every one has its tokens overridden to
+ * deprehendo's (see dashboard.css): the untouched library default is not used
+ * anywhere. Nothing loads from a CDN; the CSP allows only 'self'.
+ */
+
+/* Magic UI: Grid Pattern (MIT). Used once, as chart paper behind the real
+   excerpt on the landing page. */
+.grid-pattern { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; pointer-events: none; z-index: -1; }
+
+/* shadcn/ui via 21st.dev: Badge (MIT). Square-cornered tags, like equipment
+   labels, instead of the default pill. */
+.badge { display: inline-flex; align-items: center; gap: 0.3rem; width: fit-content; padding: 0.1rem 0.45rem; border: 1px solid transparent; border-radius: 2px; font: 500 0.78rem/1.45 var(--sans); white-space: nowrap; }
+.badge[data-variant="default"] { background: var(--ink); color: var(--on-ink); }
+.badge[data-variant="secondary"] { background: var(--sunk); border-color: var(--rule); color: var(--ink-2); }
+.badge[data-variant="outline"] { border-color: var(--rule-strong); color: var(--ink-2); background: var(--sheet); }
+.badge[data-variant="brand"] { background: var(--accent-wash); border-color: var(--accent-line); color: var(--accent-ink); }
+.badge[data-variant="critical"] { background: var(--critical-wash); border-color: var(--critical-line); color: var(--critical); }
+.badge[data-variant="warning"] { background: var(--warning-wash); border-color: var(--warning-line); color: var(--warning); }
+.badge[data-variant="info"], .badge[data-variant="direct"] { background: var(--direct-wash); border-color: var(--direct-line); color: var(--direct); }
+.badge[data-variant="success"] { background: var(--ok-wash); border-color: var(--ok-line); color: var(--ok); }
+.badge .q-mark { margin-right: 0.1rem; }
+
+/* shadcn/ui via 21st.dev: Kbd (MIT). */
+.kbd { display: inline-flex; align-items: center; min-height: 1.3rem; padding: 0 0.35rem; border: 1px solid var(--rule-strong); border-bottom-width: 2px; border-radius: 3px; background: var(--sheet); color: var(--ink-2); font: 0.78rem var(--mono); }
+
+/* shadcn/ui via 21st.dev: Empty (MIT). Left-aligned, inside a plain rule,
+   rather than the centered default. */
+.empty { display: grid; gap: 1rem; justify-items: start; padding: 1.75rem 0 2rem; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.empty__header { display: grid; gap: 0.4rem; max-width: 36rem; }
+.empty__title { font-size: 1.35rem; }
+.empty__description { color: var(--ink-2); }
+.empty__content { display: grid; gap: 0.85rem; justify-items: start; width: 100%; max-width: 36rem; }
+.empty__content .command { width: 100%; }
+
+/* shadcn/ui via 21st.dev: Table (MIT). Square, ruled, no zebra. */
+.data-table { width: 100%; border-collapse: collapse; background: var(--sheet); font-size: 0.875rem; }
+.data-table caption { caption-side: bottom; padding: 0.7rem 0 0; color: var(--ink-3); font-size: 0.8rem; text-align: left; }
+.data-table th { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--ink); color: var(--ink-2); font: 600 0.8rem/1.3 var(--sans); text-align: left; white-space: nowrap; }
+.data-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.data-table tbody tr:hover { background: var(--sunk); }
+/* links in tables open something (an incident, the evidence drawer), so they
+   look like links at rest, not only on hover */
+.data-table a { text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 0.25em; }
+.data-table a:hover { text-decoration-color: var(--accent); }
+.data-table td.q-direct, .data-table td.q-inferred { font-size: 0.8rem; white-space: nowrap; }
+
+/* shadcn/ui via 21st.dev: Sidebar (MIT), static structure. */
+.sidebar-wrapper { display: grid; grid-template-columns: 14.5rem minmax(0, 1fr); min-height: 100vh; }
+.sidebar { position: sticky; top: 0; display: flex; flex-direction: column; height: 100vh; border-right: 1px solid var(--rule); background: var(--page); }
+.sidebar__header { padding: 1.1rem 1.1rem 0.9rem; }
+.sidebar__content { flex: 1; overflow-y: auto; padding: 0.25rem 0.6rem; }
+.sidebar__group { padding: 0.6rem 0; }
+.sidebar__group + .sidebar__group { border-top: 1px solid var(--rule); }
+.sidebar__group-label { padding: 0 0.5rem 0.35rem; color: var(--ink-3); font-size: 0.78rem; }
+.sidebar__menu { display: grid; gap: 1px; margin: 0; padding: 0; list-style: none; }
+.sidebar__menu-button { display: flex; align-items: center; min-height: 2rem; padding: 0 0.5rem; border-radius: 3px; color: var(--ink-2); font-size: 0.9rem; text-decoration: none; }
+.sidebar__menu-button:hover { background: var(--hover); color: var(--ink); }
+.sidebar__menu-button[data-active] { background: var(--sheet); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--rule); }
+.sidebar__menu-button[data-active]::before { content: ""; width: 0.4rem; height: 0.4rem; margin-right: 0.5rem; background: var(--accent); }
+.sidebar__footer { display: grid; gap: 0.6rem; padding: 0.9rem 1.1rem 1.1rem; border-top: 1px solid var(--rule); }
+.sidebar-inset { min-width: 0; }
+@media (max-width: 56rem) {
+  .sidebar-wrapper { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { position: static; flex-direction: row; flex-wrap: wrap; align-items: center; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .sidebar__header { flex: 1 1 auto; padding: 0.8rem 1rem; }
+  .sidebar__content { display: flex; flex: 1 1 100%; order: 3; min-width: 0; overflow-x: auto; padding: 0 0.5rem; border-top: 1px solid var(--rule); }
+  .sidebar__group, .sidebar__group + .sidebar__group { display: flex; padding: 0.35rem 0; border: 0; }
+  .sidebar__group-label { display: none; }
+  .sidebar__menu { display: flex; }
+  .sidebar__menu-button { white-space: nowrap; }
+  .sidebar__footer { display: flex; align-items: center; padding: 0.6rem 1rem; border-top: 0; }
+  .sidebar__footer .org-switch, .sidebar__footer .sidebar__user { display: none; }
+}
+
+/* Uiverse.io (MIT): buttons. "wet-ape-7" by danilppzz for the default button;
+   "hard-panther-41" by VassoD for the filled primary, recolored to ink. */
+.uv-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-height: 2.4rem; padding: 0.45rem 0.95rem; border: 1px solid var(--rule-strong); border-radius: 3px; background: var(--sheet); color: var(--ink); font: 500 0.92rem/1.2 var(--sans); text-decoration: none; cursor: pointer; transition: border-color 0.12s, background-color 0.12s; }
+.uv-button:hover { border-color: var(--ink); }
+.uv-button:disabled { cursor: progress; opacity: 0.7; }
+.uv-button--primary { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
+.uv-button--primary:hover { background: var(--ink-hover); border-color: var(--ink-hover); }
+.uv-button--ghost { border-color: transparent; background: transparent; color: var(--ink-2); }
+.uv-button--ghost:hover { border-color: var(--rule); color: var(--ink); }
+.uv-button--sm { min-height: 2rem; padding: 0.25rem 0.65rem; font-size: 0.85rem; }
+
+/* Uiverse.io (MIT): "tiny-robin-35" by danilppzz, text inputs and selects. */
+.uv-input { min-height: 2.5rem; padding: 0.5rem 0.7rem; border: 1px solid var(--rule-strong); border-radius: 3px; background: var(--sheet); color: var(--ink); font: 0.92rem/1.3 var(--sans); }
+.uv-input:hover { border-color: var(--ink-3); }
+.uv-input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+select.uv-input { padding-right: 2rem; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-2) 50%), linear-gradient(135deg, var(--ink-2) 50%, transparent 50%); background-position: calc(100% - 1rem) 55%, calc(100% - 0.7rem) 55%; background-size: 0.3rem 0.3rem; background-repeat: no-repeat; }
+
+/* Uiverse.io (MIT): "polite-dingo-63" by saidbl1, a label set into the
+   field's top border. */
+.uv-field { position: relative; display: grid; }
+.uv-field .uv-input { width: 100%; padding-top: 0.75rem; }
+/* password show / hide: a text button inside the field's right edge */
+.uv-field--password .uv-input { padding-right: 4.25rem; }
+.uv-field__toggle { position: absolute; top: 50%; right: 0.35rem; transform: translateY(-50%); min-height: 1.9rem; padding: 0 0.55rem; border: 1px solid transparent; border-radius: 3px; background: transparent; color: var(--ink-2); font: 500 0.82rem/1 var(--sans); cursor: pointer; }
+.uv-field__toggle:hover { border-color: var(--rule); color: var(--ink); }
+.uv-field__toggle[aria-pressed="true"] { color: var(--accent-ink); }
+.uv-otp { letter-spacing: 0.4em; font-family: var(--mono); font-size: 1.15rem; }
+.uv-field > span, .uv-field > .uv-field__label { position: absolute; left: 0.5rem; top: -0.55rem; padding: 0 0.3rem; background: linear-gradient(var(--field-outer, var(--sheet)) 50%, var(--sheet) 50%); color: var(--ink-2); font-size: 0.75rem; line-height: 1.4; }
+
+/* Uiverse.io (MIT): "yellow-panther-46" by gagan-gv, progress bar. */
+.uv-progress { width: 12rem; max-width: 100%; height: 0.3rem; background: var(--accent-wash); overflow: hidden; }
+.uv-progress div { width: 100%; height: 100%; background: var(--accent); transform-origin: left; animation: uv-progress 5s linear infinite; }
+@keyframes uv-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Uiverse.io (MIT): "massive-newt-28" by mrhyddenn, spinner. */
+.uv-spinner { display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 2px solid color-mix(in srgb, currentColor 30%, transparent); border-top-color: currentColor; animation: uv-spin 1s linear infinite; }
+@keyframes uv-spin { to { transform: rotate(360deg); } }

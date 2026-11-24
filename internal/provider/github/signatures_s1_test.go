@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 // principal B1 review (§10A.2 S1): one stall label per episode, chosen by the

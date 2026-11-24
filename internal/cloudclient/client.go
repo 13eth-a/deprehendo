@@ -28,7 +28,7 @@ import (
 // broken endpoint cannot stream unbounded data into the CLI.
 const maxReplyBytes = 1 << 20
 
-// client talks to one runopsy cloud endpoint with one personal token.
+// client talks to one deprehendo cloud endpoint with one personal token.
 type Client struct {
 	Endpoint string
 	Token    string
@@ -325,7 +325,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out any) error
 	}
 	req.Header.Set("Authorization", "Bearer "+c.Token)
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "runopsy-agent")
+	req.Header.Set("User-Agent", "deprehendo-agent")
 	if in != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}

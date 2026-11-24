@@ -35,7 +35,7 @@ silently diverges), **S3** latent or fidelity.
 | L2 | S1 | `trace-rs/tests/support.rs`, `protocol_test.rs` | The "cross-language" Rust suite re-implemented the schema, framing and decoders instead of calling the production modules, and the crate is a binary so nothing else could reach them. The Go↔Rust contract was therefore never exercised against the tracer that ships — which is exactly how L1 survived the earlier review rounds. | `trace-rs/tests/wire_compat_test.rs` drives the **production binary**: `replay` over Go-encoded frames and a `--socket` session speaking Go's handshake and controls. Go pins the same golden literals and header (`TestGoGoldenWireBytes`, `TestFrameHeaderGolden`), so a drift on either side fails both suites. | 5 Rust tests × 12 Go compat tests |
 | L3 | S2 | `trace-rs/src/main.rs` `replay_mode` | Rust replay aborted on the first undecodable event payload; the Go decoder counts it and keeps going, deliberately, so one corrupt record cannot hide the rest of a recording. Same file, two different verdicts across languages. | Rust replay counts bad samples, prints each and continues; a broken **frame** (truncated/oversized/unknown kind) still aborts, because the boundaries are gone. | `production_replay_counts_a_bad_sample_and_keeps_going`, `production_replay_rejects_a_broken_frame` |
 | L4 | S3 residual | `internal/trace/session.go` handshake | The agent's `monotonic_ns` handshake field is filled from `time.Now().UnixNano()` — a wall-clock reading under a monotonic name. Causal ordering is safe (events carry the tracer's `CLOCK_MONOTONIC`, and `Merge` orders on that), but the 6.49–6.51 latency budget anchors on the wall clock, so a clock step between handshake and receipt corrupts p50/p95/p99 instead of being detected. Fix: sample the agent's monotonic clock for the handshake field (Go's monotonic reading via `time.Since(start)` needs no syscall) and compare receipt on the same base. Not changed here: the measurement API is 6.49–6.51's, and the defect only manifests across a wall step. | `TestLatencyRefusesAnUnusableAnchor` covers the adjacent, reachable failure: no reading or an out-of-tolerance anchor is refused, never averaged in as `0` |
-| L5 | S3 gap | `cmd/runopsy-agent/inspect.go` (`status`) | 6.38 asks for tracer health in `runopsy-agent status`. The command still reports only the recorder's state, so backend, drops and queue health are not visible from it. `runopsy-agent trace status` covers mode + binary resolution, and bundles carry the reliability section, but the 6.38 row is not met. Left for 6.38's owner (engineering); it needs the runtime's manager handle in the status path. | — | — |
+| L5 | S3 gap | `cmd/deprehendo-agent/inspect.go` (`status`) | 6.38 asks for tracer health in `deprehendo-agent status`. The command still reports only the recorder's state, so backend, drops and queue health are not visible from it. `deprehendo-agent trace status` covers mode + binary resolution, and bundles carry the reliability section, but the 6.38 row is not met. Left for 6.38's owner (engineering); it needs the runtime's manager handle in the status path. | — | — |
 
 ## 2. Reviewed with no finding
 
@@ -77,9 +77,9 @@ silently diverges), **S3** latent or fidelity.
 |---|---|
 | 6.21 tracing-mode configuration (`auto`/`ebpf`/`proc`/`disabled`, env + flag, validation) | done |
 | 6.44 trace fixtures (production-encoder fixtures + Go decode check) | done |
-| 6.46 `--trace-debug-output` recording (bounded, replayable, reported) | done, and wired: `runopsy-agent start --tracing MODE --trace-debug-output FILE` now supervises the tracer, records the decoded stream, stamps the bundle's `tracing` section from the supervisor's health, and logs a final `tracer state= events= events_lost= recorded_events=` line. Events are counted, not merged into the timeline/bundle event stream yet (6.29/6.47, engineering); start says so at launch rather than implying otherwise. |
+| 6.46 `--trace-debug-output` recording (bounded, replayable, reported) | done, and wired: `deprehendo-agent start --tracing MODE --trace-debug-output FILE` now supervises the tracer, records the decoded stream, stamps the bundle's `tracing` section from the supervisor's health, and logs a final `tracer state= events= events_lost= recorded_events=` line. Events are counted, not merged into the timeline/bundle event stream yet (6.29/6.47, engineering); start says so at launch rather than implying otherwise. |
 | 6.55 Rust CI (fmt, clippy `-D warnings`, all targets, live job) | done |
-| 6.58 `runopsy-agent trace status\|capabilities\|replay` | done |
+| 6.58 `deprehendo-agent trace status\|capabilities\|replay` | done |
 | 6.62 direct-vs-inferred causal report | done |
 | 6.63 docs: this audit, `ebpf.md`, `permissions.md`; existing `architecture.md`, `protocol.md`, `fallback.md`, `contract.md`, `benchmarks.md` | done |
 | Review share (6.3, 6.17, 6.26, 6.30, 6.32, 6.38, 6.47, 6.56, 6.61) | done, with L1–L5 above |
@@ -95,7 +95,7 @@ cd trace-rs && cargo fmt --all -- --check \
 
 All green: 18 Go packages, 5 wire-compat tests, 8 protocol tests, 7 backend
 unit tests. The live kernel measurements (`make trace-live`,
-`RUNOPSY_TRACE_CHURN=10000`) are Linux-only and were not run on this macOS
+`DEPREHENDO_TRACE_CHURN=10000`) are Linux-only and were not run on this macOS
 host; they run in the `trace-live` CI job.
 
 Start was also exercised against the built binary (macOS, 3 s run):

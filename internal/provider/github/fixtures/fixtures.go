@@ -25,10 +25,10 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // fixture is one committed scenario.

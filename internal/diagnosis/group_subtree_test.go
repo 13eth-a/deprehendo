@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 // Real-runner S2 (2026-11-02, bundle inc_ace0ee27 on the disposable linux VM):

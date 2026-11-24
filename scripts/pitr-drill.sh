@@ -16,8 +16,8 @@
 # container's postgres with the provider's console/CLI in the managed version;
 # see docs/cloud/pitr-drill.md.
 #
-# requires: docker, and bin/runopsy-cloud, bin/runopsy-agent,
-# bin/runopsy-analyzer (`make build`). KEEP=1 keeps the container and volume.
+# requires: docker, and bin/deprehendo-cloud, bin/deprehendo-agent,
+# bin/deprehendo-analyzer (`make build`). KEEP=1 keeps the container and volume.
 #
 # usage: scripts/pitr-drill.sh
 set -euo pipefail
@@ -25,8 +25,8 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$ROOT"
 
-CT=${PITR_CONTAINER:-runopsy-pitr}
-VOL=${PITR_VOLUME:-runopsy-pitr-work}
+CT=${PITR_CONTAINER:-deprehendo-pitr}
+VOL=${PITR_VOLUME:-deprehendo-pitr-work}
 PORT_PRIMARY=55440
 PORT_RESTORED=55441
 ADDR_LIVE=127.0.0.1:56210
@@ -34,12 +34,12 @@ ADDR_RESTORED=127.0.0.1:56211
 KEEP=${KEEP:-0}
 
 fail() { echo "PITR-DRILL-FAIL: $*" >&2; exit 1; }
-for bin in runopsy-cloud runopsy-agent runopsy-analyzer; do
+for bin in deprehendo-cloud deprehendo-agent deprehendo-analyzer; do
   [ -x "bin/$bin" ] || fail "missing bin/$bin; run make build first"
 done
 command -v docker >/dev/null 2>&1 || fail "docker is required"
 
-WORK=$(mktemp -d "${TMPDIR:-/tmp}/runopsy-pitr.XXXXXX")
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/deprehendo-pitr.XXXXXX")
 LIVE_STORE=$WORK/storage-live
 SNAP_STORE=$WORK/storage-snapshot
 mkdir -p "$LIVE_STORE" "$SNAP_STORE"
@@ -58,8 +58,8 @@ cleanup() {
 }
 trap cleanup EXIT
 
-DSN="postgres://postgres@127.0.0.1:$PORT_PRIMARY/runopsy?sslmode=disable"
-RDSN="postgres://postgres@127.0.0.1:$PORT_RESTORED/runopsy?sslmode=disable"
+DSN="postgres://postgres@127.0.0.1:$PORT_PRIMARY/deprehendo?sslmode=disable"
+RDSN="postgres://postgres@127.0.0.1:$PORT_RESTORED/deprehendo?sslmode=disable"
 
 docker rm -f "$CT" >/dev/null 2>&1 || true
 docker volume rm "$VOL" >/dev/null 2>&1 || true
@@ -97,13 +97,13 @@ port = 5432
 unix_socket_directories = '/tmp'
 CONF
   pg_ctl -D "$DATA" -l /work/primary.log -w start >/dev/null
-  createdb -h 127.0.0.1 -U postgres runopsy
+  createdb -h 127.0.0.1 -U postgres deprehendo
   pg_basebackup -h 127.0.0.1 -U postgres -D "$BASE" -c fast -X stream >/work/basebackup.log 2>&1
   echo "base backup taken"
   ;;
 checkpoint)
-  psql -h 127.0.0.1 -U postgres -d runopsy -Atc "CHECKPOINT" >/dev/null
-  psql -h 127.0.0.1 -U postgres -d runopsy -Atc "SELECT pg_switch_wal()" >/dev/null
+  psql -h 127.0.0.1 -U postgres -d deprehendo -Atc "CHECKPOINT" >/dev/null
+  psql -h 127.0.0.1 -U postgres -d deprehendo -Atc "SELECT pg_switch_wal()" >/dev/null
   echo "wal segments archived: $(find "$WAL" -type f | wc -l | tr -d ' ')"
   ;;
 stop)
@@ -132,7 +132,7 @@ CONF
   }
   state=t
   for _ in $(seq 1 120); do
-    state=$(psql -h 127.0.0.1 -p 5433 -U postgres -d runopsy -Atc "SELECT pg_is_in_recovery()" 2>/dev/null || echo t)
+    state=$(psql -h 127.0.0.1 -p 5433 -U postgres -d deprehendo -Atc "SELECT pg_is_in_recovery()" 2>/dev/null || echo t)
     [ "$state" = "f" ] && break
     sleep 0.25
   done
@@ -160,37 +160,37 @@ wait_http() {
 }
 
 echo "== 2. migrate, seed an organization and upload the pre-loss incident =="
-./bin/runopsy-cloud migrate -database "$DSN"
-docker exec "$CT" psql -h 127.0.0.1 -U postgres -d runopsy -Atc \
+./bin/deprehendo-cloud migrate -database "$DSN"
+docker exec "$CT" psql -h 127.0.0.1 -U postgres -d deprehendo -Atc \
   "INSERT INTO organizations (id,name) VALUES ('org_pitr01','PITR Drill')" >/dev/null
-TOKEN=$(./bin/runopsy-cloud token -database "$DSN" -user pitr-user -org org_pitr01 -description pitr)
-./bin/runopsy-cloud serve -database "$DSN" -addr "$ADDR_LIVE" \
-  -storage-root "$LIVE_STORE" -analyzer "$ROOT/bin/runopsy-analyzer" -stats-interval 0 \
+TOKEN=$(./bin/deprehendo-cloud token -database "$DSN" -user pitr-user -org org_pitr01 -description pitr)
+./bin/deprehendo-cloud serve -database "$DSN" -addr "$ADDR_LIVE" \
+  -storage-root "$LIVE_STORE" -analyzer "$ROOT/bin/deprehendo-analyzer" -stats-interval 0 \
   >"$WORK/serve-live.log" 2>&1 &
 SERVE_PID=$!
 wait_http "$ADDR_LIVE" || fail "live server did not start"
 printf '{"endpoint":"http://%s","token":"%s"}\n' "$ADDR_LIVE" "$TOKEN" >"$WORK/config.json"
 chmod 600 "$WORK/config.json"
-./bin/runopsy-agent upload -config "$WORK/config.json" testdata/incidents/frozen-worker.runopsy >/dev/null
-./bin/runopsy-agent analyze --document "$WORK/local.json" testdata/incidents/frozen-worker.runopsy >/dev/null
-INCIDENT_ONE=$(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d runopsy -Atc \
+./bin/deprehendo-agent upload -config "$WORK/config.json" testdata/incidents/frozen-worker.deprehendo >/dev/null
+./bin/deprehendo-agent analyze --document "$WORK/local.json" testdata/incidents/frozen-worker.deprehendo >/dev/null
+INCIDENT_ONE=$(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d deprehendo -Atc \
   "SELECT external_incident_id FROM incidents")
 [ -n "$INCIDENT_ONE" ] || fail "the first upload produced no incident row"
 
 echo "== 3. mark the recovery point, snapshot objects, then commit past it =="
-TARGET=$(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d runopsy -Atc "SELECT clock_timestamp()")
+TARGET=$(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d deprehendo -Atc "SELECT clock_timestamp()")
 docker exec -u postgres "$CT" bash /work/inside.sh checkpoint
 cp -R "$LIVE_STORE"/. "$SNAP_STORE"/
 # enough separation that the two commits cannot share a timestamp.
 sleep 2
-./bin/runopsy-agent upload -config "$WORK/config.json" testdata/incidents/process-group-kill.runopsy >/dev/null
-INCIDENT_TWO=$(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d runopsy -Atc \
+./bin/deprehendo-agent upload -config "$WORK/config.json" testdata/incidents/process-group-kill.deprehendo >/dev/null
+INCIDENT_TWO=$(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d deprehendo -Atc \
   "SELECT external_incident_id FROM incidents WHERE external_incident_id <> '$INCIDENT_ONE'")
 [ -n "$INCIDENT_TWO" ] || fail "the second upload produced no incident row"
 echo "   recovery target: $TARGET"
 echo "   before target: $INCIDENT_ONE (should survive)"
 echo "   after  target: $INCIDENT_TWO (should be gone)"
-echo "   sql rows before loss: $(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d runopsy -Atc "SELECT count(*) FROM incidents")"
+echo "   sql rows before loss: $(docker exec "$CT" psql -h 127.0.0.1 -U postgres -d deprehendo -Atc "SELECT count(*) FROM incidents")"
 docker exec -u postgres "$CT" bash /work/inside.sh checkpoint
 kill "$SERVE_PID"; wait "$SERVE_PID" 2>/dev/null || true; SERVE_PID=""
 
@@ -198,11 +198,11 @@ echo "== 4. lose the primary and restore to the timestamp =="
 docker exec -u postgres "$CT" bash /work/inside.sh stop
 docker exec -u postgres "$CT" bash /work/inside.sh restore "$TARGET"
 
-RESTORED_INCIDENTS=$(docker exec "$CT" psql -h 127.0.0.1 -p 5433 -U postgres -d runopsy -Atc \
+RESTORED_INCIDENTS=$(docker exec "$CT" psql -h 127.0.0.1 -p 5433 -U postgres -d deprehendo -Atc \
   "SELECT count(*) FROM incidents")
-RESTORED_ID=$(docker exec "$CT" psql -h 127.0.0.1 -p 5433 -U postgres -d runopsy -Atc \
+RESTORED_ID=$(docker exec "$CT" psql -h 127.0.0.1 -p 5433 -U postgres -d deprehendo -Atc \
   "SELECT external_incident_id FROM incidents")
-LOST_PRESENT=$(docker exec "$CT" psql -h 127.0.0.1 -p 5433 -U postgres -d runopsy -Atc \
+LOST_PRESENT=$(docker exec "$CT" psql -h 127.0.0.1 -p 5433 -U postgres -d deprehendo -Atc \
   "SELECT count(*) FROM incidents WHERE external_incident_id = '$INCIDENT_TWO'")
 echo "   restored incidents: $RESTORED_INCIDENTS (want 1)"
 echo "   restored id: $RESTORED_ID (want $INCIDENT_ONE)"
@@ -210,18 +210,18 @@ echo "   post-target rows present: $LOST_PRESENT (want 0)"
 [ "$RESTORED_INCIDENTS" = "1" ] || fail "restored database has $RESTORED_INCIDENTS incidents, want 1"
 [ "$RESTORED_ID" = "$INCIDENT_ONE" ] || fail "restored incident is $RESTORED_ID, want $INCIDENT_ONE"
 [ "$LOST_PRESENT" = "0" ] || fail "a commit after the recovery target survived"
-echo "   schema: $(./bin/runopsy-cloud migrate -database "$RDSN")"
+echo "   schema: $(./bin/deprehendo-cloud migrate -database "$RDSN")"
 
 echo "== 5. serve the restored pair: database plus object snapshot =="
-./bin/runopsy-cloud serve -database "$RDSN" -addr "$ADDR_RESTORED" \
-  -storage-root "$SNAP_STORE" -analyzer "$ROOT/bin/runopsy-analyzer" -stats-interval 0 \
+./bin/deprehendo-cloud serve -database "$RDSN" -addr "$ADDR_RESTORED" \
+  -storage-root "$SNAP_STORE" -analyzer "$ROOT/bin/deprehendo-analyzer" -stats-interval 0 \
   >"$WORK/serve-restored.log" 2>&1 &
 SERVE_PID=$!
 wait_http "$ADDR_RESTORED" || fail "restored server did not start"
 CODE_ANALYSIS=$(curl -s -o "$WORK/analysis.json" -w '%{http_code}' \
   -H "Authorization: Bearer $TOKEN" \
   "http://$ADDR_RESTORED/api/incidents/$INCIDENT_ONE/analysis")
-CODE_BUNDLE=$(curl -s -o "$WORK/bundle.runopsy" -w '%{http_code}' \
+CODE_BUNDLE=$(curl -s -o "$WORK/bundle.deprehendo" -w '%{http_code}' \
   -H "Authorization: Bearer $TOKEN" \
   "http://$ADDR_RESTORED/api/incidents/$INCIDENT_ONE/bundle")
 CODE_LOST=$(curl -s -o /dev/null -w '%{http_code}' \
@@ -232,7 +232,7 @@ echo "   pre-loss analysis: $CODE_ANALYSIS (want 200); bundle: $CODE_BUNDLE (wan
 [ "$CODE_BUNDLE" = "200" ] || fail "restored bundle answered $CODE_BUNDLE"
 [ "$CODE_LOST" = "404" ] || fail "post-target incident answered $CODE_LOST, want 404"
 cmp "$WORK/analysis.json" "$WORK/local.json" || fail "restored analysis differs from the CLI document"
-cmp "$WORK/bundle.runopsy" testdata/incidents/frozen-worker.runopsy || fail "restored bundle differs from the original"
+cmp "$WORK/bundle.deprehendo" testdata/incidents/frozen-worker.deprehendo || fail "restored bundle differs from the original"
 echo "   restored analysis == CLI document; restored bundle == original bytes"
 
 echo "PITR-DRILL-OK: database and object store recovered as a pair to $TARGET"

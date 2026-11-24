@@ -8,8 +8,8 @@ import (
 	"sort"
 	"time"
 
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 // signature is one diagnosis rule evaluated over the precomputed context
@@ -125,7 +125,7 @@ type strongObservation struct {
 }
 
 // strongObservations collects bounded factual anchors for incidents where no
-// signature crossed the threshold (3.24): what runopsy did observe strongly,
+// signature crossed the threshold (3.24): what deprehendo did observe strongly,
 // without claiming a cause.
 func (c *AnalysisContext) strongObservations() []Evidence {
 	var out []strongObservation

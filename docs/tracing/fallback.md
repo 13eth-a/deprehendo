@@ -66,7 +66,7 @@ non-initial network namespace answers ECONNREFUSED rather than EPERM, so the
 connector's own capability check cannot be the source of EPERM there. Two
 real kernel refusals are still reachable, and the suite exercises both:
 
-- `unshare -U --map-root-user runopsy-trace capabilities`: `bpf()` returns
+- `unshare -U --map-root-user deprehendo-trace capabilities`: `bpf()` returns
   EPERM (`bpf_object__load: Operation not permitted`), the tracer names it in
   `selection_reason`, and the connector fallback serves the session.
 - `TestFallbackOnRealPermissionRefusal` (Linux-only) runs the unmodified

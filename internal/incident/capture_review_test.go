@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 func terminalCapture(t *testing.T, c *Capture, id string) CaptureStatus {

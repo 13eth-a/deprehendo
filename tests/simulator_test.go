@@ -27,18 +27,18 @@ func TestMain(m *testing.M) {
 		_, _ = os.Stderr.WriteString("find module root: " + err.Error() + "\n")
 		os.Exit(1)
 	}
-	dir, err := os.MkdirTemp("", "runopsy-acceptance-")
+	dir, err := os.MkdirTemp("", "deprehendo-acceptance-")
 	if err != nil {
 		_, _ = os.Stderr.WriteString("create test temp dir: " + err.Error() + "\n")
 		os.Exit(1)
 	}
-	simPath = filepath.Join(dir, "runopsy-sim")
-	agentPath = filepath.Join(dir, "runopsy-agent")
-	analyzerPath = filepath.Join(dir, "runopsy-analyzer")
-	build := exec.Command("go", "build", "-o", dir, "./cmd/runopsy-sim", "./cmd/runopsy-agent", "./cmd/runopsy-analyzer")
+	simPath = filepath.Join(dir, "deprehendo-sim")
+	agentPath = filepath.Join(dir, "deprehendo-agent")
+	analyzerPath = filepath.Join(dir, "deprehendo-analyzer")
+	build := exec.Command("go", "build", "-o", dir, "./cmd/deprehendo-sim", "./cmd/deprehendo-agent", "./cmd/deprehendo-analyzer")
 	build.Dir = root
 	if out, err := build.CombinedOutput(); err != nil {
-		_, _ = os.Stderr.WriteString("build runopsy-sim: " + err.Error() + "\n" + string(out))
+		_, _ = os.Stderr.WriteString("build deprehendo-sim: " + err.Error() + "\n" + string(out))
 		_ = os.RemoveAll(dir)
 		os.Exit(1)
 	}
@@ -94,7 +94,7 @@ func runJSON(t *testing.T, timeout time.Duration, args ...string) runResult {
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
 	err := cmd.Run()
 	if ctx.Err() != nil {
-		t.Fatalf("runopsy-sim %v timed out after %s\nstderr: %s\nstdout: %s", args, timeout, stderr.String(), stdout.String())
+		t.Fatalf("deprehendo-sim %v timed out after %s\nstderr: %s\nstdout: %s", args, timeout, stderr.String(), stdout.String())
 	}
 	return runResult{stdout: stdout.Bytes(), stderr: stderr.Bytes(), err: err}
 }

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/events"
+	"deprehendo/internal/events"
 )
 
 func decodeEvents(t *testing.T, b *bytes.Buffer) []events.Event {

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/collector"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/collector"
 )
 
 // recorderHarness runs one simulator scenario and samples the real recorder
@@ -36,7 +36,7 @@ func startRecorder(t *testing.T, args ...string) *recorderHarness {
 	cmd.Stdout = &output
 	cmd.Stderr = &output
 	if err := cmd.Start(); err != nil {
-		t.Fatalf("start runopsy-sim %v: %v", args, err)
+		t.Fatalf("start deprehendo-sim %v: %v", args, err)
 	}
 	rt, err := agent.New(agent.Options{
 		Interval: 25 * time.Millisecond,
@@ -298,7 +298,7 @@ func TestRecorderObservesOrphanReparenting(t *testing.T) {
 	h := startRecorder(t, "orphan-process", "--tasks", "1", "--grace", "1500ms")
 	// orphans cease to be descendants. keep matching by name to observe them
 	// after reparenting rather than interpreting filter exclusion as death.
-	rt, err := agent.New(agent.Options{Interval: 20 * time.Millisecond, Capacity: 200, Filter: collector.Filter{Name: "runopsy-sim"}})
+	rt, err := agent.New(agent.Options{Interval: 20 * time.Millisecond, Capacity: 200, Filter: collector.Filter{Name: "deprehendo-sim"}})
 	if err != nil {
 		t.Fatal(err)
 	}

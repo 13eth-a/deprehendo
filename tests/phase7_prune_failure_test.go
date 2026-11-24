@@ -24,7 +24,7 @@ func TestPhase7PruneKeepsRowWhenStorageFails(t *testing.T) {
 	h := newCloudHarness(t, dsn, nil)
 	ctx := context.Background()
 
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	uploadid, incidentid := createAndStore(t, h, h.TokenA, bundlepath)
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, uploadid, 90*time.Second); status != http.StatusOK {
 		t.Fatalf("complete = %d %s, want 200", status, body)

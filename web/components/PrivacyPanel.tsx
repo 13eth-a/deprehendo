@@ -1,7 +1,7 @@
 import type { PrivacyReport } from "../types/analysis.ts";
 
 /**
- * what the bundle contains (checklist 7.27). A true flag means that kind of
+ * What the bundle contains (checklist 7.27). A true flag means that kind of
  * data is in the bundle. A false flag means it is not, whether it was redacted
  * or never collected: the report does not separate the two, so the panel does
  * not claim either.
@@ -19,14 +19,22 @@ const ROWS: { key: keyof PrivacyReport; label: string }[] = [
 ];
 
 export function PrivacyPanel({ privacy }: { privacy: PrivacyReport }) {
+  const rows = ROWS.filter((row) => privacy[row.key] !== undefined);
   return (
-    <section aria-labelledby="privacy-title">
-      <h2 id="privacy-title">Privacy</h2>
-      <p className="muted">
-        Policy <code>{privacy.policy}</code>. “Not in bundle” means the bundle does not contain that data. It does not
-        say whether the data was redacted or never collected.
+    <section aria-labelledby="privacy-title" className="subsection">
+      <div className="subsection__head">
+        <h3 id="privacy-title" className="subhead">
+          Privacy
+        </h3>
+        <span className="muted small">
+          Policy <code>{privacy.policy}</code>
+        </span>
+      </div>
+      <p className="muted small">
+        “Not in bundle” means the bundle does not contain that data. It does not say whether the data was redacted or
+        never collected.
       </p>
-      <table>
+      <table className="data-table privacy-table">
         <caption>What this bundle contains</caption>
         <thead>
           <tr>
@@ -35,10 +43,10 @@ export function PrivacyPanel({ privacy }: { privacy: PrivacyReport }) {
           </tr>
         </thead>
         <tbody>
-          {ROWS.filter((row) => privacy[row.key] !== undefined).map((row) => (
+          {rows.map((row) => (
             <tr key={row.key}>
               <td>{row.label}</td>
-              <td>{privacy[row.key] ? "Present" : "Not in bundle"}</td>
+              <td data-present={privacy[row.key] ? "true" : undefined}>{privacy[row.key] ? "Present" : "Not in bundle"}</td>
             </tr>
           ))}
         </tbody>

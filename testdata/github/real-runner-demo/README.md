@@ -8,8 +8,8 @@ stall scenarios, and `tests/demo_corpus_test.go` checks them.
 
 | Bundle | Fault | Engine verdict | Provider finding |
 |---|---|---|---|
-| `7.62-oom.runopsy` | A job allocates 4 GiB on a 4 GiB VM; the kernel kills it (exit 137) | `OOM_KILL` HIGH 0.80 | — |
-| `7.62-stall.runopsy` | All outbound HTTPS blocked for three minutes on an idle runner | `UNKNOWN` (by design) | `GITHUB_RUNNER_COMMUNICATION_STALL` MEDIUM |
+| `7.62-oom.deprehendo` | A job allocates 4 GiB on a 4 GiB VM; the kernel kills it (exit 137) | `OOM_KILL` HIGH 0.80 | — |
+| `7.62-stall.deprehendo` | All outbound HTTPS blocked for three minutes on an idle runner | `UNKNOWN` (by design) | `GITHUB_RUNNER_COMMUNICATION_STALL` MEDIUM |
 
 Each bundle has a `.ground-truth.json` with the injected fault, and the
 `.analyze.txt` and `.timeline.txt` reports from the capture. Provider

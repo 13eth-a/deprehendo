@@ -13,7 +13,7 @@ package github
 import (
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 // signature labels (§10A.2).

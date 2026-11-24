@@ -31,7 +31,7 @@ separately rather than blended into one flattering number.
 
 ```bash
 go test -count=1 -run TestPipelineChurn -v ./internal/trace
-RUNOPSY_TRACE_CHURN=100000 go test -count=1 -run TestPipelineChurn -v ./internal/trace
+DEPREHENDO_TRACE_CHURN=100000 go test -count=1 -run TestPipelineChurn -v ./internal/trace
 go test -run '^$' -bench . -benchmem ./internal/trace
 ```
 
@@ -39,7 +39,7 @@ go test -run '^$' -bench . -benchmem ./internal/trace
 the **real** Unix-socket framing and the **real** session reader, then asserts:
 no sequence gap, contiguous sequences, no stream restart, and bounded heap
 growth (a per-event retention bug shows up immediately at 10k/100k). Sizes are
-1 000 by default and 10 000 / 100 000 via `RUNOPSY_TRACE_CHURN`, matching the
+1 000 by default and 10 000 / 100 000 via `DEPREHENDO_TRACE_CHURN`, matching the
 1k/10k/100k plan. The benchmarks cover the decode path, a full frame
 round-trip, and percentile computation.
 
@@ -50,7 +50,7 @@ round-trip, and percentile computation.
 ```bash
 make trace-live                     # builds the tracer, then runs the live tests
 # or:
-RUNOPSY_TRACE_BINARY=$PWD/bin/runopsy-trace go test -count=1 -run TestLive -v ./internal/trace
+DEPREHENDO_TRACE_BINARY=$PWD/bin/deprehendo-trace go test -count=1 -run TestLive -v ./internal/trace
 ```
 
 - `TestLiveShortLivedProcessCapture` (6.37): N shells block on stdin, their
@@ -96,10 +96,10 @@ and the proc connector was selected with that reason, which is the expected
 unprivileged path:
 
 ```sh
-CARGO_TARGET_DIR=/tmp/runopsy-target cargo build --release --manifest-path trace-rs/Cargo.toml
+CARGO_TARGET_DIR=/tmp/deprehendo-target cargo build --release --manifest-path trace-rs/Cargo.toml
 GOOS=linux GOARCH=arm64 go test -c -o bin/trace-churn.test ./internal/trace
-RUNOPSY_TRACE_BINARY=/tmp/runopsy-target/release/runopsy-trace \
-  RUNOPSY_LIVE_CHURN=100000 ./bin/trace-churn.test -test.run TestLiveChurn -test.v -test.timeout 20m
+DEPREHENDO_TRACE_BINARY=/tmp/deprehendo-target/release/deprehendo-trace \
+  DEPREHENDO_LIVE_CHURN=100000 ./bin/trace-churn.test -test.run TestLiveChurn -test.v -test.timeout 20m
 # or, on Linux with the Go toolchain: make trace-churn-live
 ```
 

@@ -26,7 +26,7 @@ func TestProviderImportBoundaries(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	module := "runopsy"
+	module := "deprehendo"
 	direct := map[string][]string{}
 	for _, top := range []string{"internal", "cmd"} {
 		err := filepath.Walk(filepath.Join(root, top), func(path string, info os.FileInfo, err error) error {
@@ -67,10 +67,10 @@ func TestProviderImportBoundaries(t *testing.T) {
 		return seen
 	}
 	const (
-		neutral  = "runopsy/internal/provider"
-		schema   = "runopsy/internal/provider/evidence"
-		testkit  = "runopsy/internal/provider/providertest"
-		provRoot = "runopsy/internal/provider/"
+		neutral  = "deprehendo/internal/provider"
+		schema   = "deprehendo/internal/provider/evidence"
+		testkit  = "deprehendo/internal/provider/providertest"
+		provRoot = "deprehendo/internal/provider/"
 	)
 	isconcrete := func(p string) bool {
 		return strings.HasPrefix(p, provRoot) && p != schema && p != testkit
@@ -82,13 +82,13 @@ func TestProviderImportBoundaries(t *testing.T) {
 		deps := closure(pkg)
 		for dep := range deps {
 			switch {
-			case hasPrefixAny(pkg, "runopsy/internal/collector", "runopsy/internal/platform", "runopsy/internal/events") && isprovider(dep):
+			case hasPrefixAny(pkg, "deprehendo/internal/collector", "deprehendo/internal/platform", "deprehendo/internal/events") && isprovider(dep):
 				violations = append(violations, pkg+" (recorder) imports "+dep)
-			case pkg == "runopsy/internal/incident" && isprovider(dep) && dep != schema:
+			case pkg == "deprehendo/internal/incident" && isprovider(dep) && dep != schema:
 				violations = append(violations, pkg+" (bundle) imports "+dep+"; only the evidence schema is allowed")
 			case pkg == schema:
 				violations = append(violations, schema+" must import only the standard library, imports "+dep)
-			case strings.HasPrefix(pkg, "runopsy/internal/") && !strings.HasPrefix(pkg, provRoot) && pkg != neutral && isconcrete(dep):
+			case strings.HasPrefix(pkg, "deprehendo/internal/") && !strings.HasPrefix(pkg, provRoot) && pkg != neutral && isconcrete(dep):
 				violations = append(violations, pkg+" imports concrete provider "+dep+"; wire providers in cmd/ only")
 			case pkg == neutral && isconcrete(dep):
 				violations = append(violations, "the neutral provider package imports concrete provider "+dep)

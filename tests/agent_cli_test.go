@@ -12,15 +12,15 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/collector"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/collector"
 )
 
 func TestAgentCLIRecordsInspectableTimelineAndCleansUp(t *testing.T) {
 	if testing.Short() {
 		t.Skip("foreground CLI lifecycle")
 	}
-	dir, err := os.MkdirTemp("/tmp", "runopsy-cli-")
+	dir, err := os.MkdirTemp("/tmp", "deprehendo-cli-")
 	if err != nil {
 		t.Fatal(err)
 	}

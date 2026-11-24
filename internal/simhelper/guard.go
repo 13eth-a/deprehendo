@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // A stopped worker cannot run its own lifetime checks. this independent

@@ -14,10 +14,10 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/trace"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/trace"
 )
 
 type memoryIncidentWriter struct {
@@ -53,7 +53,7 @@ func TestRecorderContinuesWhenTracerIsUnavailable(t *testing.T) {
 	// A tracer that cannot start: on linux the binary is missing, on other
 	// platforms the supervisor's platform gate refuses first. both are the
 	// degraded path (6.52/6.53), not an error.
-	manager := trace.NewManager(trace.ManagerConfig{Binary: "/nonexistent/runopsy-trace"})
+	manager := trace.NewManager(trace.ManagerConfig{Binary: "/nonexistent/deprehendo-trace"})
 
 	capture, err := incident.NewCapture(incident.CaptureOptions{
 		Window: incident.CaptureWindow{PreTrigger: 200 * time.Millisecond, PostTrigger: 50 * time.Millisecond},

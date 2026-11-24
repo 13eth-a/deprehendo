@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/incident"
+	"deprehendo/internal/incident"
 )
 
 // phase 6 signal / OOM evidence in the causal graph (contract §3.4 "Y sent

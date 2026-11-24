@@ -14,7 +14,7 @@ import (
 )
 
 // live §11.1 attack cases against the real tracer and kernel. like the other
-// live tests they skip unless RUNOPSY_TRACE_BINARY names a working tracer.
+// live tests they skip unless DEPREHENDO_TRACE_BINARY names a working tracer.
 // the expected outcome in every case is the contract's: the recorder keeps
 // going, and anything the tracer could not deliver is reported, never silent.
 

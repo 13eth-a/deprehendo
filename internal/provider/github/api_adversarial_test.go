@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 var testNow = time.Date(2026, 9, 3, 18, 40, 0, 0, time.UTC)

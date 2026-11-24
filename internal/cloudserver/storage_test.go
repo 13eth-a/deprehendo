@@ -17,17 +17,17 @@ const safeTestOrg = "org_0123456789abcdef0123456789abcdef"
 func TestLocalStoreKeySafety(t *testing.T) {
 	for _, escaped := range []string{
 		"orgs/../escape",
-		"orgs/" + safeTestOrg + "/bundles/UPPER9f2c.runopsy",
+		"orgs/" + safeTestOrg + "/bundles/UPPER9f2c.deprehendo",
 		"/absolute/path",
-		"orgs//bundles/empty-segment.runopsy",
-		"orgs/" + safeTestOrg + "/bundles/.runopsy",
+		"orgs//bundles/empty-segment.deprehendo",
+		"orgs/" + safeTestOrg + "/bundles/.deprehendo",
 		"path with spaces",
 	} {
 		if safeKey(escaped) {
 			t.Errorf("safeKey(%q) accepted an unsafe key", escaped)
 		}
 	}
-	if !safeKey("orgs/" + safeTestOrg + "/bundles/" + strings.Repeat("a", 62) + "cd.runopsy") {
+	if !safeKey("orgs/" + safeTestOrg + "/bundles/" + strings.Repeat("a", 62) + "cd.deprehendo") {
 		t.Error("safeKey refused the §6 key shape")
 	}
 }
@@ -38,7 +38,7 @@ func TestLocalStoreImmutable(t *testing.T) {
 		t.Fatal(err)
 	}
 	ctx := context.Background()
-	key := "orgs/" + safeTestOrg + "/bundles/" + strings.Repeat("a", 64) + ".runopsy"
+	key := "orgs/" + safeTestOrg + "/bundles/" + strings.Repeat("a", 64) + ".deprehendo"
 	if _, err := store.Put(ctx, key, []byte("first")); err != nil {
 		t.Fatalf("first put: %v", err)
 	}
@@ -62,7 +62,7 @@ func TestLocalStoreImmutable(t *testing.T) {
 func TestPolicySignAndVerify(t *testing.T) {
 	secret := []byte("test-secret")
 	p := policyPayload{
-		Key:      "orgs/" + safeTestOrg + "/bundles/" + strings.Repeat("9f", 32) + ".runopsy",
+		Key:      "orgs/" + safeTestOrg + "/bundles/" + strings.Repeat("9f", 32) + ".deprehendo",
 		Org:      safeTestOrg,
 		SHA256:   strings.Repeat("9f", 32),
 		MinBytes: 22,
@@ -79,7 +79,7 @@ func TestPolicySignAndVerify(t *testing.T) {
 		t.Fatalf("roundtrip mismatch: %+v", got)
 	}
 	// tampering with any part refuses.
-	if _, err := parsePolicy(parts[0], "orgs/x/bundles/other.runopsy", parts[1], secret); err == nil {
+	if _, err := parsePolicy(parts[0], "orgs/x/bundles/other.deprehendo", parts[1], secret); err == nil {
 		t.Error("mismatched key accepted")
 	}
 	if _, err := parsePolicy(parts[0], p.Key, parts[1], []byte("other-secret")); err == nil {

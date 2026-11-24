@@ -6,7 +6,7 @@ package tests
 // the internal/diagnosis corpus tests because they exercise the collector,
 // redactor, bundle writer and reader as well as the signature rules.
 //
-// gated behind RUNOPSY_E2E_DIAGNOSIS because the CPU-spin rule requires a real
+// gated behind DEPREHENDO_E2E_DIAGNOSIS because the CPU-spin rule requires a real
 // 60s sustained-CPU window, so the suite takes about a minute and a half.
 
 import (
@@ -23,13 +23,13 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/diagnosis"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/diagnosis"
 )
 
 func TestPhase3DiagnosisEndToEnd(t *testing.T) {
-	if os.Getenv("RUNOPSY_E2E_DIAGNOSIS") == "" {
-		t.Skip("set RUNOPSY_E2E_DIAGNOSIS=1 to run simulator -> recorder -> analyzer fault evaluation")
+	if os.Getenv("DEPREHENDO_E2E_DIAGNOSIS") == "" {
+		t.Skip("set DEPREHENDO_E2E_DIAGNOSIS=1 to run simulator -> recorder -> analyzer fault evaluation")
 	}
 	if testing.Short() {
 		t.Skip("live fault-injection diagnosis")
@@ -66,7 +66,7 @@ type diagnosisHarness struct {
 
 func startDiagnosisRecorder(t *testing.T, timeout time.Duration, extra ...string) *diagnosisHarness {
 	t.Helper()
-	base, err := os.MkdirTemp("/tmp", "runopsy-phase3-")
+	base, err := os.MkdirTemp("/tmp", "deprehendo-phase3-")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +83,7 @@ func startDiagnosisRecorder(t *testing.T, timeout time.Duration, extra ...string
 		t.Fatal(err)
 	}
 	// watch a private copy under a name unique to this test process: a plain
-	// --watch-name runopsy-sim would also capture simulators started by other
+	// --watch-name deprehendo-sim would also capture simulators started by other
 	// packages' tests running in parallel, and their exits would leak into this
 	// incident's process group. linux truncates comm to 15 bytes, so the name
 	// stays short.

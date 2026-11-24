@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/cloudclient"
-	"runopsy/internal/incident"
+	"deprehendo/internal/cloudclient"
+	"deprehendo/internal/incident"
 )
 
 // listenLoopback opens a TCP listener on a free loopback port.
@@ -105,7 +105,7 @@ func storagePut(t *testing.T, url string, fields map[string]string, data []byte)
 			return err
 		}
 	}
-	part, err := writer.CreateFormFile("file", "bundle.runopsy")
+	part, err := writer.CreateFormFile("file", "bundle.deprehendo")
 	if err != nil {
 		return err
 	}

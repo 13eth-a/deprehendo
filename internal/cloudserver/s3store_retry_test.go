@@ -125,7 +125,7 @@ func TestS3StoreRetriesGetAndDelete(t *testing.T) {
 
 // A dropped connection (no HTTP answer at all) is retried like a 5xx.
 func TestS3StoreRetriesDroppedConnections(t *testing.T) {
-	fake := &fakeProvider{bucket: "runopsy-test", accessKey: "AKIATESTKEY", secretKey: "test-secret-value", objects: map[string][]byte{}}
+	fake := &fakeProvider{bucket: "deprehendo-test", accessKey: "AKIATESTKEY", secretKey: "test-secret-value", objects: map[string][]byte{}}
 	var mu sync.Mutex
 	drops := 1
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +145,7 @@ func TestS3StoreRetriesDroppedConnections(t *testing.T) {
 		fake.ServeHTTP(w, r)
 	}))
 	defer srv.Close()
-	st, err := NewS3Store(S3Config{Endpoint: srv.URL, Region: "eu-west-1", Bucket: "runopsy-test", AccessKey: "AKIATESTKEY", SecretKey: "test-secret-value"})
+	st, err := NewS3Store(S3Config{Endpoint: srv.URL, Region: "eu-west-1", Bucket: "deprehendo-test", AccessKey: "AKIATESTKEY", SecretKey: "test-secret-value"})
 	if err != nil {
 		t.Fatal(err)
 	}

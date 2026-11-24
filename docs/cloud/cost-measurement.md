@@ -10,7 +10,7 @@ bucket) plus Neon Postgres on the Free plan.
 ## Real bills: deployed stack, November 20, 2026
 
 `caffeinate -i bash scripts/cost-load.sh` loaded the deployed API
-(`https://runopsy.up.railway.app`) through the real CLI. Every upload was a
+(the Railway deployment) through the real CLI. Every upload was a
 real create, storage POST and complete, with the analysis run on Railway. It
 used 53 throwaway orgs (`costload-11202208-NN`), each holding the 19 bundles
 from `testdata/incidents/` once, which kept every org far under the 60
@@ -79,7 +79,7 @@ The script refuses to touch any org that does not carry its run's name.
 
 ```bash
 make build
-./bin/runopsy-cost -runs 5 -database "$DSN"
+./bin/deprehendo-cost -runs 5 -database "$DSN"
 ```
 
 Measurement owner: MiMo 2.6 Pro. secondary's review verified the current Neon object
@@ -89,7 +89,7 @@ model below.
 ## What was measured
 
 Real bundles: the 19 incidents in `testdata/incidents/`, measured on **this
-Mac (Apple silicon) on November 9, 2026** by `cmd/runopsy-cost`, which runs the
+Mac (Apple silicon) on November 9, 2026** by `cmd/deprehendo-cost`, which runs the
 real analyzer child binary five times per bundle and takes each bundle's median
 before taking the median across bundles. Document bytes now come from the
 analyzer's own output rather than from the checked-in fixtures, so the two
@@ -102,8 +102,8 @@ columns cannot drift.
 | 10,000 events (integration, Mac, `performance.md`) | 56 KB | 10.86 MB | 6.95–13.2 s |
 
 The synthetic rows are carried from `performance.md` and are not re-measured
-here; `runopsy-cost` reads `testdata/incidents/` and would need those bundles
-materialized to time them. The first `runopsy-cost` run showed one 725 ms
+here; `deprehendo-cost` reads `testdata/incidents/` and would need those bundles
+materialized to time them. The first `deprehendo-cost` run showed one 725 ms
 outlier where a bundle's first analysis paid for cold page cache; the second
 run's maximum was 85 ms. The per-bundle median absorbs it, which is why the
 median — not the mean — is the model's input.
@@ -165,7 +165,7 @@ month; three Cloud Run HTTP requests. Database rows are counted, not priced
 
 ## Database rows per incident: now measured
 
-`runopsy-cost -database DSN` applies the migrations, inserts one incident's
+`deprehendo-cost -database DSN` applies the migrations, inserts one incident's
 rows inside a transaction, reads each tuple with `pg_column_size`, and rolls
 back. Measured on PostgreSQL 16, one analysis row:
 
@@ -212,7 +212,7 @@ outside this per-incident model.
 
 This pass replaced the hand-computed inputs with a tool, because a table copied
 from a previous pass drifts the moment a bundle or a price changes.
-`cmd/runopsy-cost` does the whole model: it reads the bundles, runs the real
+`cmd/deprehendo-cost` does the whole model: it reads the bundles, runs the real
 analyzer child (so process spawn is costed), optionally measures real row
 bytes, and prints the 1/100/1,000 table. Every price is a flag.
 
@@ -239,7 +239,7 @@ fixture-sized incidents. Two corrections came out of building the tool:
 
 - **The analyzer path bug reached a third caller.** `analyzer.NewRunner`
   accepted a relative child path, but `Run` starts the child in a private
-  working directory, so `bin/runopsy-analyzer` could never resolve. `serve` had
+  working directory, so `bin/deprehendo-analyzer` could never resolve. `serve` had
   been patched locally in the 7.56 drill; the cost tool hit the same wall. The
   runner now resolves the path itself, so the next caller cannot repeat it.
 - **The database column is no longer unpriced for lack of data.** Row bytes are

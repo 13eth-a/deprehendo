@@ -5,7 +5,7 @@
 //   1. sign up a new user with email and password;
 //   2. read the current user back from the session;
 //   3. sign out, sign in again with the same password, read the user again;
-//   4. take the session JWT and, if RUNOPSY_API_URL is set, call the runopsy
+//   4. take the session JWT and, if DEPREHENDO_API_URL is set, call the deprehendo
 //      API's GET /api/me with it, which checks the go verifier against
 //      neon's real signing keys.
 //
@@ -28,9 +28,9 @@ if (!baseURL) {
   process.exit(2);
 }
 const origin = process.env.AUTH_SMOKE_ORIGIN ?? "http://localhost:3000";
-const email = process.env.AUTH_SMOKE_EMAIL ?? `runopsy-smoke-${Date.now()}@example.com`;
+const email = process.env.AUTH_SMOKE_EMAIL ?? `deprehendo-smoke-${Date.now()}@example.com`;
 const password = randomBytes(18).toString("base64url"); // never printed
-const apiURL = process.env.RUNOPSY_API_URL; // optional, e.g. http://127.0.0.1:6080
+const apiURL = process.env.DEPREHENDO_API_URL; // optional, e.g. http://127.0.0.1:6080
 
 // plain better auth methods, no adapter (the skill's non-React form).
 const client = createAuthClient(baseURL);
@@ -94,7 +94,7 @@ console.log(`auth: ${new URL(baseURL).origin}`);
 console.log(`test user: ${email}`);
 
 // 1. sign up.
-const signUp = await call(() => client.signUp.email({ email, password, name: "Runopsy smoke test" }, fetchOptions()) as Promise<Result<any>>);
+const signUp = await call(() => client.signUp.email({ email, password, name: "Deprehendo smoke test" }, fetchOptions()) as Promise<Result<any>>);
 if (signUp.error) fail("sign-up", signUp.error);
 const signedUpID = signUp.data?.user?.id;
 console.log(`PASS sign-up: user ${signedUpID}`);
@@ -126,7 +126,7 @@ const again = await currentUser("session after sign-in");
 if (again.id !== signedUpID) fail("session after sign-in", { message: "signed in as a different user" });
 console.log(`PASS sign-in: ${again.id}`);
 
-// 4. the session JWT, and the runopsy API reading the user from it.
+// 4. the session JWT, and the deprehendo API reading the user from it.
 if (!sessionJWT) {
   const tok = await call(() => client.token({ fetchOptions: fetchOptions() }) as Promise<Result<any>>);
   if (tok.error) fail("session JWT", tok.error);
@@ -139,11 +139,11 @@ if (apiURL) {
   const res = await fetch(new URL("/api/me", apiURL), { headers: { authorization: `Bearer ${sessionJWT}` } });
   const body = (await res.json().catch(() => ({}))) as { user_id?: string; auth?: string; error?: { code?: string } };
   if (res.status !== 200 || body.user_id !== signedUpID || body.auth !== "browser") {
-    fail("Runopsy /api/me", { status: res.status, code: body.error?.code, message: "API did not return the signed-in user" });
+    fail("Deprehendo /api/me", { status: res.status, code: body.error?.code, message: "API did not return the signed-in user" });
   }
-  console.log(`PASS Runopsy API /api/me: user ${body.user_id} (auth ${body.auth})`);
+  console.log(`PASS Deprehendo API /api/me: user ${body.user_id} (auth ${body.auth})`);
 } else {
-  console.log("SKIP Runopsy API check (set RUNOPSY_API_URL to run it)");
+  console.log("SKIP Deprehendo API check (set DEPREHENDO_API_URL to run it)");
 }
 
 console.log("ALL PASS");

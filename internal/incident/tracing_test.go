@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/trace"
+	"deprehendo/internal/trace"
 )
 
 func TestTraceReliabilityValidate(t *testing.T) {
@@ -15,7 +15,7 @@ func TestTraceReliabilityValidate(t *testing.T) {
 		wantErr bool
 	}{
 		{"active with backend", TraceReliability{State: "active", Backend: "proc_connector"}, false},
-		{"degraded with reason", TraceReliability{State: "unavailable", Reason: "runopsy-trace binary not found"}, false},
+		{"degraded with reason", TraceReliability{State: "unavailable", Reason: "deprehendo-trace binary not found"}, false},
 		{"empty state rejected", TraceReliability{State: ""}, true},
 		{"unknown state rejected", TraceReliability{State: "hyper"}, true},
 		{"unknown backend rejected", TraceReliability{State: "active", Backend: "perf"}, true},

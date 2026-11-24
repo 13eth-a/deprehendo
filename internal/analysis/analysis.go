@@ -7,14 +7,14 @@ import (
 	"fmt"
 	"io"
 
-	"runopsy/internal/causal"
-	"runopsy/internal/collector"
-	"runopsy/internal/diagnosis"
-	"runopsy/internal/incident"
-	"runopsy/internal/provider"
+	"deprehendo/internal/causal"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/diagnosis"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/provider"
 )
 
-// run produces the runopsy.analysis document for one verified bundle
+// run produces the deprehendo.analysis document for one verified bundle
 // (contract docs/cloud/contract.md §3.3). the document is the stored analysis
 // of phase 7: the CLI (`analyze --document`), the timeline renderer and the
 // analyzer worker all read from it, so there is exactly one interpretation of

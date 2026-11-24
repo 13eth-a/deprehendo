@@ -9,7 +9,7 @@ import (
 	"sort"
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 // detectConflicts evaluates stored state for contradictions once, at

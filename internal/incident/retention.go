@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var bundleName = regexp.MustCompile(`^inc_[a-f0-9]{32}\.runopsy$`)
+var bundleName = regexp.MustCompile(`^inc_[a-f0-9]{32}\.(deprehendo|runopsy)$`)
 
 // DefaultDir is the per-user incident directory. the directory itself is
 // created by EnsureDir with mode 0700; merely computing the path has no side
@@ -21,7 +21,7 @@ func DefaultDir() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("incident: locate home directory: %w", err)
 	}
-	return filepath.Join(home, ".runopsy", "incidents"), nil
+	return filepath.Join(home, ".deprehendo", "incidents"), nil
 }
 
 // EnsureDir creates missing parents with mode 0700 and rejects an existing
@@ -89,7 +89,7 @@ func List(directory string) ([]IncidentFile, error) {
 		if err != nil {
 			return nil, fmt.Errorf("incident: validate %s: %w", entry.Name(), err)
 		}
-		if entry.Name() != bundle.Incident.ID+".runopsy" {
+		if strings.TrimSuffix(entry.Name(), filepath.Ext(entry.Name())) != bundle.Incident.ID {
 			return nil, fmt.Errorf("incident: filename does not match incident identity: %s", entry.Name())
 		}
 		files = append(files, IncidentFile{Path: path, ID: bundle.Incident.ID, Trigger: bundle.Incident.Trigger.Type, Size: info.Size(), ModTime: info.ModTime()})
@@ -142,7 +142,7 @@ func Prune(directory string, policy RetentionPolicy, now time.Time) (PruneResult
 		if !info.Mode().IsRegular() {
 			continue
 		}
-		files = append(files, IncidentFile{Path: filepath.Join(directory, e.Name()), ID: strings.TrimSuffix(e.Name(), ".runopsy"), Size: info.Size(), ModTime: info.ModTime()})
+		files = append(files, IncidentFile{Path: filepath.Join(directory, e.Name()), ID: strings.TrimSuffix(e.Name(), filepath.Ext(e.Name())), Size: info.Size(), ModTime: info.ModTime()})
 	}
 	// newest first; name order makes equal timestamps deterministic.
 	sort.Slice(files, func(a, b int) bool {

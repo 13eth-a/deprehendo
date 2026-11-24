@@ -14,11 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // GitHubProvider implements provider.Provider for GitHub actions runners.
@@ -55,13 +55,13 @@ func (p GitHubProvider) Interpret(section evidence.Section, inc *incident.Incide
 // is stalled. A single-process compile is never stalled: CPU deltas are
 // progress. it is a default, not a constant (phase 5 gap G4): a long-
 // lasting sleep-heavy step cannot be told apart from a stall at any one
-// fixed window, so the session reads RUNOPSY_GITHUB_STALL_WINDOW (a go
+// fixed window, so the session reads DEPREHENDO_GITHUB_STALL_WINDOW (a go
 // duration, e.g. 45s); 5.18 must not be enabled by default before this
 // knob exists.
 const defaultStallWindow = 2 * time.Minute
 
 // stallWindowEnvironment names the G4 override of the C11 progress window.
-const stallWindowEnvironment = "RUNOPSY_GITHUB_STALL_WINDOW"
+const stallWindowEnvironment = "DEPREHENDO_GITHUB_STALL_WINDOW"
 
 // minStallWindow is the smallest accepted override (audit F3): a window of a
 // few samples turns every quiet sample into a C11 progress stall. A shorter
@@ -69,7 +69,7 @@ const stallWindowEnvironment = "RUNOPSY_GITHUB_STALL_WINDOW"
 const minStallWindow = 10 * time.Second
 
 // stallWindowFromEnv returns the configured C11 progress-stall window: the
-// RUNOPSY_GITHUB_STALL_WINDOW override when it parses as a positive go
+// DEPREHENDO_GITHUB_STALL_WINDOW override when it parses as a positive go
 // duration, the default otherwise. an unparseable or non-positive override
 // keeps the default, so a misconfigured environment can change the knob's
 // value but never disable progress detection (the audit's G4: a fixed

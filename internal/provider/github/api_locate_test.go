@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 // G1: locate a recorded job in a named repository by time (and runner name

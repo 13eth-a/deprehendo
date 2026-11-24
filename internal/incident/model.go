@@ -13,9 +13,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider/evidence"
 )
 
 const SchemaVersion = 1
@@ -270,7 +270,7 @@ func Validate(i *Incident) error {
 		return fmt.Errorf("incident: nil incident")
 	}
 	if i.SchemaVersion != SchemaVersion {
-		return fmt.Errorf("unsupported Runopsy bundle schema: %d", i.SchemaVersion)
+		return fmt.Errorf("unsupported Deprehendo bundle schema: %d", i.SchemaVersion)
 	}
 	if !validID.MatchString(i.ID) || !validTrigger(i.Trigger.Type) || i.Trigger.PID < 0 || i.Trigger.StartTicks < 0 || len(i.Trigger.Note) > 1024 || !utf8.ValidString(i.Trigger.Note) {
 		return fmt.Errorf("incident: invalid identity or trigger")

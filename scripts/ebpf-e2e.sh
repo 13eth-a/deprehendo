@@ -11,10 +11,10 @@
 #   - an unwatched process stopped and resumed meanwhile must not appear;
 #   - a dead PID in the watch set must not be reported as lost events.
 #
-# run on linux (lima VM / CI):  sudo -n scripts/ebpf-e2e.sh /path/to/runopsy-trace
+# run on linux (lima VM / CI):  sudo -n scripts/ebpf-e2e.sh /path/to/deprehendo-trace
 set -u
-tracer="${1:?usage: $(basename "$0") /path/to/runopsy-trace}"
-work="$(mktemp -d /tmp/runopsy-ebpf-e2e.XXXXXX)"
+tracer="${1:?usage: $(basename "$0") /path/to/deprehendo-trace}"
+work="$(mktemp -d /tmp/deprehendo-ebpf-e2e.XXXXXX)"
 out="$work/events"
 err="$work/stderr"
 

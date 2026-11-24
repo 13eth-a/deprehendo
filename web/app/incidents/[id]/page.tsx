@@ -1,23 +1,22 @@
 import { notFound, redirect } from "next/navigation";
 
-import { AppHeader } from "../../../components/AppHeader.tsx";
-import { CausalChain } from "../../../components/CausalChain.tsx";
-import { DiagnosisPanel } from "../../../components/DiagnosisPanel.tsx";
+import { AppShell } from "../../../components/AppShell.tsx";
 import { FailureState } from "../../../components/FailureState.tsx";
-import { NetworkTable } from "../../../components/NetworkTable.tsx";
-import { Overview } from "../../../components/Overview.tsx";
-import { PrivacyPanel } from "../../../components/PrivacyPanel.tsx";
-import { ProcessTree } from "../../../components/ProcessTree.tsx";
-import { CpuChart } from "../../../components/Sparkline.tsx";
-import { TimelineTable } from "../../../components/TimelineTable.tsx";
+import { IncidentView } from "../../../components/IncidentView.tsx";
+import { ProgressBar } from "../../../components/uiverse/Loaders.tsx";
 import { isIncidentId } from "../../../lib/api-incidents.ts";
 import { checkAnalysisDocument } from "../../../lib/guards.ts";
 import { pageOf } from "../../../lib/paging.ts";
-import { apiGet, chosenOrganization, requireUser } from "../../../lib/runopsy-api.ts";
+import { apiGet, chosenOrganization, requireUser } from "../../../lib/deprehendo-api.ts";
 
 export const dynamic = "force-dynamic";
 
 const TIMELINE_PAGE = 200;
+
+function one(value: string | string[] | undefined): string | undefined {
+  const v = Array.isArray(value) ? value[0] : value;
+  return v ? v.slice(0, 200) : undefined;
+}
 
 export default async function IncidentDetail({
   params,
@@ -31,69 +30,85 @@ export default async function IncidentDetail({
   if (!isIncidentId(id)) notFound();
   const res = await apiGet<unknown>(`/api/incidents/${encodeURIComponent(id)}/analysis`);
   if (res.status === 400) redirect("/org");
-  // another organization's incident is a 404 from the API, never a 403.
+  // Another organization's incident is a 404 from the API, never a 403.
   if (res.status === 404) notFound();
-  const header = <AppHeader email={user.email} organization={await chosenOrganization()} />;
+  const organization = await chosenOrganization();
+  const base = `/incidents/${encodeURIComponent(id)}`;
+  const crumbs = (
+    <nav className="crumbs" aria-label="Breadcrumb">
+      <a href="/incidents">Incidents</a>
+      <span aria-hidden="true">/</span>
+      <code aria-current="page">{id}</code>
+    </nav>
+  );
+
   if (res.status === 202) {
     return (
-      <>
-        {header}
-        <main role="status">
-          <h1>Analysis in progress</h1>
-          <p>This incident is still being analyzed. Reload in a few seconds.</p>
-        </main>
-      </>
+      <AppShell email={user.email} organization={organization} active="incidents" label={`Incident ${id}`}>
+        <div className="page">
+          {crumbs}
+          <section className="panel pending" role="status" aria-labelledby="pending-title">
+            <h1 id="pending-title">Analysis in progress</h1>
+            <p className="muted">This incident is still being analyzed. Reload in a few seconds.</p>
+            <ProgressBar label="Analysis in progress" />
+          </section>
+        </div>
+      </AppShell>
     );
   }
   if (res.status !== 200) {
     return (
-      <>
-        {header}
-        <main role="status">
-          <h1>Analysis unavailable</h1>
-          <p>The deprehendo API answered {res.status}{res.errorCode ? ` (${res.errorCode})` : ""}.</p>
-        </main>
-      </>
+      <AppShell email={user.email} organization={organization} active="incidents" label={`Incident ${id}`}>
+        <div className="page" role="status">
+          {crumbs}
+          <section className="failure panel" aria-labelledby="unavailable-title">
+            <span className="failure__mark" aria-hidden="true">!</span>
+            <div>
+              <h1 id="unavailable-title">Analysis unavailable</h1>
+              <p>The deprehendo API answered {res.status}{res.errorCode ? ` (${res.errorCode})` : ""}.</p>
+            </div>
+          </section>
+        </div>
+      </AppShell>
     );
   }
 
   const check = checkAnalysisDocument(res.body);
   if (!check.ok) {
     return (
-      <>
-        {header}
-        <main>
+      <AppShell email={user.email} organization={organization} active="incidents" label={`Incident ${id}`}>
+        <div className="page">
+          {crumbs}
           <FailureState kind={check.reason === "unsupported_version" ? "unsupported_version" : "invalid_document"} detail={check.detail} />
-        </main>
-      </>
+        </div>
+      </AppShell>
     );
   }
   const doc = check.document;
-  const requested = Number((await searchParams).page ?? "1");
+  const query = await searchParams;
+  const requested = Number(one(query.page) ?? "1");
   const page = pageOf(doc.timeline, Number.isInteger(requested) ? requested : 1, TIMELINE_PAGE);
-  const sample = doc.series.length > 0 ? doc.series.length - 1 : 0;
+  const hrefFor = ({ page: p, event, evidence }: { page?: number; event?: string; evidence?: string }) => {
+    const qs = new URLSearchParams();
+    if (p && p > 1) qs.set("page", String(p));
+    if (event) qs.set("event", event);
+    if (evidence) qs.set("evidence", evidence);
+    const s = qs.toString();
+    return s ? `${base}?${s}` : base;
+  };
 
   return (
-    <>
-      {header}
-      <main className="incident" aria-label={`Incident ${doc.bundle.incident_id}`}>
-        <p><a href="/incidents">← All incidents</a></p>
-        <Overview doc={doc} />
-        {doc.diagnosis ? <DiagnosisPanel doc={doc} /> : <FailureState kind="unknown_diagnosis" />}
-        <CausalChain doc={doc} />
-        <CpuChart series={doc.series} triggeredAt={doc.diagnosis?.triggered_at} />
-        <TimelineTable page={page} origin={doc.bundle.created_at} />
-        {page.pages > 1 && (
-          <nav aria-label="Timeline pages" className="actions">
-            {page.page > 1 && <a href={`?page=${page.page - 1}`}>Previous page</a>}
-            <span>Page {page.page} of {page.pages}</span>
-            {page.page < page.pages && <a href={`?page=${page.page + 1}`}>Next page</a>}
-          </nav>
-        )}
-        <ProcessTree series={doc.series} index={sample} />
-        <NetworkTable series={doc.series} index={sample} />
-        <PrivacyPanel privacy={doc.privacy} />
-      </main>
-    </>
+    <AppShell email={user.email} organization={organization} active="incidents" label={`Incident ${doc.bundle.incident_id}`}>
+      <div className="page">
+        {crumbs}
+        <IncidentView
+          doc={doc}
+          page={page}
+          selectedEvent={one(query.event)}
+          selectedEvidence={one(query.evidence)}
+          hrefFor={hrefFor}
+        />
+      </div>
+    </AppShell>
   );
 }

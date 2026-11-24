@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 var testVocabOnce sync.Once
@@ -152,7 +152,7 @@ func TestProviderSectionInvalidRejected(t *testing.T) {
 // TestOldBundleWithoutProvidersStillReads guards the additive-field contract:
 // a bundle written before phase 5 decodes and validates unchanged.
 func TestOldBundleWithoutProvidersStillReads(t *testing.T) {
-	data, err := os.ReadFile("testdata/v1-minimal.runopsy")
+	data, err := os.ReadFile("testdata/v1-minimal.deprehendo")
 	if err != nil {
 		t.Fatal(err)
 	}

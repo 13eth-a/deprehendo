@@ -514,7 +514,7 @@ func (s *Server) getBundle(w http.ResponseWriter, r *http.Request, id identity) 
 	}
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.runopsy"`, i.IncidentID))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.deprehendo"`, i.IncidentID))
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(bundle)
 }

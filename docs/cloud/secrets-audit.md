@@ -1,6 +1,6 @@
 # Secrets audit: cloud upload path (checklist 7.39)
 
-Scope: `cmd/runopsy-agent/cloud.go` (login, upload, config file) and
+Scope: `cmd/deprehendo-agent/cloud.go` (login, upload, config file) and
 `internal/cloudclient/client.go` (HTTP client, presigned storage upload).
 Status: review by adversarial; **F1–F3 fixed and tested on the Go side**
 (November 5, 2026), see each finding. F4/F5 remain informational.
@@ -13,7 +13,7 @@ Status: review by adversarial; **F1–F3 fixed and tested on the Go side**
   file, restricts it to 0600, then renames it into place. A reader refuses a
   config whose permissions are not 0600.
 - **Bearer token only on API calls.** `do()` sets `Authorization` for the
-  Runopsy API. The presigned storage upload sets no `Authorization` header
+  Deprehendo API. The presigned storage upload sets no `Authorization` header
   (the URL is already signed).
 - **Redirects cannot move the token to another host.** `sameHostRedirects`
   refuses any redirect to a different host.
@@ -31,7 +31,7 @@ Status: review by adversarial; **F1–F3 fixed and tested on the Go side**
 
 `NormalizeEndpoint` formats the caller's endpoint with `%q` in its errors
 (`must use https`, `must be an https URL`, `has no host`). The login command
-prints that error to stderr (`runopsy-agent login: %v`). An endpoint written as
+prints that error to stderr (`deprehendo-agent login: %v`). An endpoint written as
 `http://user:password@host` therefore prints the password to the terminal and
 to any captured log.
 
@@ -95,7 +95,7 @@ The audit above covered the CLI and client. The server and queue added since
 were checked against the same rules:
 
 - **Tokens**: looked up by SHA-256 hash, never logged; the raw value is printed
-  once by `runopsy-cloud token` and stored hashed. Nothing in
+  once by `deprehendo-cloud token` and stored hashed. Nothing in
   `internal/cloudserver` logs an `Authorization` header.
 - **Request data**: handler logs carry only server-produced error values
   (`logf("incident list: %v", err)`), never a bundle, document, incident id or

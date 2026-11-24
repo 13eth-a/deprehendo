@@ -20,7 +20,7 @@ not yet covered by an executable test: they need the browser session (adversaria
 | 7 | set active analysis | — | ⏳ not built |
 | 8 | download original | `getBundle` | ✅ org-B 404 + byte-identical download |
 | 9 | delete | `deleteIncident` | ✅ org-B 404, owner 200, rows and objects gone |
-| 10 | token create / revoke | `clouddb` + `runopsy-cloud token` | ⏳ unit-level only |
+| 10 | token create / revoke | `clouddb` + `deprehendo-cloud token` | ⏳ unit-level only |
 | 11 | worker job call | in-process `JobRunner` | ⏳ no HTTP worker yet (contract §2.2, hosting decision) |
 | 12 | storage object direct access | `LocalStore` | ✅ no route exposes a key; forged policy refused |
 

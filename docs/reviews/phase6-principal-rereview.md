@@ -60,7 +60,7 @@ identity enforcement; the `Session.Err()` publish-once fix.
   README not present in the sandbox copy, no readable `/proc/1/fd`, no
   cgroup2 mount); the same three fail with the old tracer.
 - Live trace tests pass on both backends (eBPF, and proc connector forced
-  with `RUNOPSY_TRACE_BPF_OBJECT=/nonexistent.o`).
+  with `DEPREHENDO_TRACE_BPF_OBJECT=/nonexistent.o`).
 - Flakes seen, not reproduced: one full-suite run where three live trace
   tests captured nothing (passed in three later full runs and alone), and one
   of seven `go test -race` runs of `internal/trace` (passed six others,

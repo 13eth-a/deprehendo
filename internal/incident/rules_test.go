@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 func systemSample(at time.Time, usedPercent, freePercent float64) collector.Snapshot {

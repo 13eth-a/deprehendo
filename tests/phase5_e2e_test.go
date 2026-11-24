@@ -13,11 +13,11 @@ package tests
 // produce a failure-shaped claim.
 //
 // A real self-hosted runner (5.42) can replace the harness without changing
-// anything else: point RUNOPSY_E2E_GITHUB_RUNNER_ROOT at an installation whose
+// anything else: point DEPREHENDO_E2E_GITHUB_RUNNER_ROOT at an installation whose
 // Runner.Listener is already running. that path is skipped when unset because
 // it needs a disposable runner and a real workflow.
 //
-// gated behind RUNOPSY_E2E_GITHUB because each case runs a live recorder.
+// gated behind DEPREHENDO_E2E_GITHUB because each case runs a live recorder.
 
 import (
 	"bytes"
@@ -34,17 +34,17 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/diagnosis"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
-	"runopsy/internal/provider/github"
-	"runopsy/internal/simhelper"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/diagnosis"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
+	"deprehendo/internal/provider/github"
+	"deprehendo/internal/simhelper"
 )
 
 func TestPhase5GitHubEndToEnd(t *testing.T) {
-	if os.Getenv("RUNOPSY_E2E_GITHUB") == "" {
-		t.Skip("set RUNOPSY_E2E_GITHUB=1 to run fake-runner -> recorder -> GitHub-aware report")
+	if os.Getenv("DEPREHENDO_E2E_GITHUB") == "" {
+		t.Skip("set DEPREHENDO_E2E_GITHUB=1 to run fake-runner -> recorder -> GitHub-aware report")
 	}
 	if testing.Short() {
 		t.Skip("live fake runner and recorder")
@@ -82,7 +82,7 @@ type githubE2E struct {
 // camera instead of before the first snapshot.
 func startGitHubE2E(t *testing.T, scenario string) *githubE2E {
 	t.Helper()
-	base, err := os.MkdirTemp("", "runopsy-phase5-")
+	base, err := os.MkdirTemp("", "deprehendo-phase5-")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -271,7 +271,7 @@ func hasSectionEvent(section evidence.Section, eventType string) bool {
 
 // registerGitHub installs the provider vocabulary in this test process, which
 // is what a stored section validates against. the shipped binaries do the same
-// at start-up (cmd/runopsy-agent/github.go).
+// at start-up (cmd/deprehendo-agent/github.go).
 var registerGitHubOnce sync.Once
 
 func registerGitHub(t *testing.T) {

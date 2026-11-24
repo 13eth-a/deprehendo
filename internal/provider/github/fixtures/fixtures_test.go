@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 // fixtureRoot is the committed scenario corpus (5.39).

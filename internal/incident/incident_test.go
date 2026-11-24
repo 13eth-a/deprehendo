@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 func fixture() *Incident {
@@ -203,11 +203,11 @@ func TestAtomicWriterFailuresAndCollision(t *testing.T) {
 }
 func TestCleanupOnlyStaleTemps(t *testing.T) {
 	dir := privateDir(t)
-	old := filepath.Join(dir, ".runopsy-123.tmp")
+	old := filepath.Join(dir, ".deprehendo-123.tmp")
 	os.WriteFile(old, []byte("partial"), 0600)
 	os.Chtimes(old, time.Now().Add(-time.Hour), time.Now().Add(-time.Hour))
 	os.WriteFile(filepath.Join(dir, "other.tmp"), nil, 0600)
-	os.Symlink(old, filepath.Join(dir, ".runopsy-link.tmp"))
+	os.Symlink(old, filepath.Join(dir, ".deprehendo-link.tmp"))
 	count, err := CleanupStaleTemps(dir, time.Now().Add(-time.Minute))
 	if err != nil || count != 1 {
 		t.Fatalf("cleanup %d %v", count, err)

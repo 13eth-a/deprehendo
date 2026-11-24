@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 // ---------------------------------------------------------------------------

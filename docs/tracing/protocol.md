@@ -1,4 +1,4 @@
-# Tracer protocol (`runopsy-trace` ↔ Go agent)
+# Tracer protocol (`deprehendo-trace` ↔ Go agent)
 
 Status: Phase 6 (implemented). The Rust tracer and the Go agent exchange
 events and control messages over one Unix-domain socket. This document is the

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 // stubHostSystem replaces every host sensor so tests never depend on the live

@@ -1,6 +1,6 @@
 -- phase 7: organizations, memberships, uploads, analyses (docs/cloud/contract.md
 -- §7.1). metadata only: bundle bytes live in object storage, keyed per §6
--- (orgs/{organization_id}/bundles/{sha256}.runopsy). the web app owns auth
+-- (orgs/{organization_id}/bundles/{sha256}.deprehendo). the web app owns auth
 -- tables beyond these two; tokens are hashed here (7.12) so a database dump
 -- never yields a usable credential.
 --

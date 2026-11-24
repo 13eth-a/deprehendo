@@ -22,19 +22,19 @@
 # with the run's costload- prefix.
 #
 # secrets are never printed: owner tokens go straight into 0600 config files.
-# overrides: RUNOPSY_API, RUNOPSY_S3_BUCKET, STAGES ("1 100 1000"), OUT.
+# overrides: DEPREHENDO_API, DEPREHENDO_S3_BUCKET, STAGES ("1 100 1000"), OUT.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-API=${RUNOPSY_API:-https://runopsy.up.railway.app}
-BUCKET=${RUNOPSY_S3_BUCKET:-runopsy-0uz5hzbri3moxaaaa}
+API=${DEPREHENDO_API:?set DEPREHENDO_API to your deployed API URL}
+BUCKET=${DEPREHENDO_S3_BUCKET:-deprehendo-0uz5hzbri3moxaaaa}
 STAGES=${STAGES:-"1 100 1000"}
 FIXTURES_DIR=testdata/incidents
 MODE=${1:-run}
 
 die() { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
 for c in psql curl python3 openssl; do command -v "$c" >/dev/null 2>&1 || die "missing command: $c"; done
-[ -x bin/runopsy-agent ] && [ -x bin/runopsy-cloud ] || die "run 'make build' first"
+[ -x bin/deprehendo-agent ] && [ -x bin/deprehendo-cloud ] || die "run 'make build' first"
 [ -f .env.local ] || die ".env.local not found in the repo root"
 set -a
 # shellcheck disable=SC1091
@@ -171,7 +171,7 @@ fi
 
 # ------------------------------------------------------------------- load run
 RUN="costload-$(date -u +%m%d%H%M)"
-OUT=${OUT:-"/tmp/runopsy-cost-load-$(date -u +%Y%m%dT%H%M%SZ)"}
+OUT=${OUT:-"/tmp/deprehendo-cost-load-$(date -u +%Y%m%dT%H%M%SZ)"}
 mkdir -p "$OUT"
 chmod 700 "$OUT"
 echo "$RUN" > "$OUT/run.txt"
@@ -180,7 +180,7 @@ echo "$RUN" > "$OUT/run.txt"
 printf 'stage\tincidents\tuploads_ok\tuploads_failed\tstage_seconds\tmedian_upload_s\tdb_bytes\tbucket_objects\tbucket_bytes\trailway_usage\tneon_usage\n' > "$OUT/stages.tsv"
 
 FIX=()
-for f in "$FIXTURES_DIR"/*.runopsy; do FIX+=("$f"); done
+for f in "$FIXTURES_DIR"/*.deprehendo; do FIX+=("$f"); done
 NFIX=${#FIX[@]}
 [ "$NFIX" -ge 1 ] || die "no bundles in $FIXTURES_DIR"
 MAX=0
@@ -224,7 +224,7 @@ new_org() {
     sleep $((try * 10))
   done
   for try in 1 2 3 4; do
-    tok=$(bin/runopsy-cloud token -database "$DSN" -user "$RUN" -org "$id" -role owner -description "7.59 cost load $RUN") && break
+    tok=$(bin/deprehendo-cloud token -database "$DSN" -user "$RUN" -org "$id" -role owner -description "7.59 cost load $RUN") && break
     [ "$try" = 4 ] && die "could not create a token for $name (database unreachable); run cleanup"
     echo "  database unreachable creating a token for $name; retrying in $((try * 10))s"
     sleep $((try * 10))
@@ -279,7 +279,7 @@ for stage in $STAGES; do
     [ "$o" -lt "${#ORG_IDS[@]}" ] || new_org $((o + 1))
     bundle=${FIX[$((k % NFIX))]}
     u0=$(now)
-    if bin/runopsy-agent upload -config "${ORG_CFGS[$o]}" "$bundle" </dev/null >> "$OUT/upload.log" 2>&1; then
+    if bin/deprehendo-agent upload -config "${ORG_CFGS[$o]}" "$bundle" </dev/null >> "$OUT/upload.log" 2>&1; then
       res=ok
       ok=$((ok + 1))
     else

@@ -4,7 +4,7 @@
 //! refusing before any of this compiles in (§2.2).
 //!
 //! Layers:
-//!   - `runopsy.bpf.c`: the kernel programs, tracepoints and one raw
+//!   - `deprehendo.bpf.c`: the kernel programs, tracepoints and one raw
 //!     tracepoint for exec/exit/fork/sent/stop-resume/oom, a ring buffer,
 //!     and an identity-aware watch map;
 //!   - `libbpf.rs`: the FFI this module drives;
@@ -30,7 +30,7 @@ use crate::watch::WatchSet;
 
 use crate::libbpf::{self, Link, Object, PollRing};
 
-// ---- record layout (mirrors `struct rec` in runopsy.bpf.c) -----------------
+// ---- record layout (mirrors `struct rec` in deprehendo.bpf.c) -----------------
 //
 // u64 ts; u32 kind, pid, ppid, pgid, other_pid, sig, fact, flags;
 // (natural pad 4) s64 status, start_ticks, other_start_ticks, send_result;
@@ -55,7 +55,7 @@ const OFF_OTHER_TICKS: usize = 56;
 const OFF_SEND_RESULT: usize = 64;
 const OFF_PATH: usize = REC_HEADER_SIZE;
 
-// record kinds; numbers are shared with runopsy.bpf.c.
+// record kinds; numbers are shared with deprehendo.bpf.c.
 const REC_EXEC: u32 = 1;
 const REC_EXIT: u32 = 2;
 const REC_FORK: u32 = 3;
@@ -343,12 +343,12 @@ fn cap_state(ok: bool, reason: &str) -> String {
 /// Object path: build-time-embedded default, with a runtime override for
 /// tests pointing at an object built elsewhere.
 fn object_path() -> Result<std::path::PathBuf, String> {
-    if let Ok(p) = std::env::var("RUNOPSY_TRACE_BPF_OBJECT") {
+    if let Ok(p) = std::env::var("DEPREHENDO_TRACE_BPF_OBJECT") {
         if !p.is_empty() {
             return Ok(std::path::PathBuf::from(p));
         }
     }
-    let p = option_env!("RUNOPSY_BPF_O").unwrap_or("");
+    let p = option_env!("DEPREHENDO_BPF_O").unwrap_or("");
     if p.is_empty() {
         return Err(
             "this binary was built without the BPF object (clang + bpftool missing at \
@@ -479,7 +479,7 @@ impl TraceBackend for EbpfBackend {
         let mut attached = match self.state.take() {
             Some(a) => a,
             None => {
-                eprintln!("runopsy-trace: eBPF backend already ran (one session per attach)");
+                eprintln!("deprehendo-trace: eBPF backend already ran (one session per attach)");
                 return;
             }
         };
@@ -513,7 +513,7 @@ impl TraceBackend for EbpfBackend {
                 // ring refused: collection is degraded, which is health
                 // visible, never a dead process (§6.40). the counters show
                 // a quiet pump; the resubscribe stage records the gap.
-                eprintln!("runopsy-trace: eBPF ring buffer unavailable: {e}");
+                eprintln!("deprehendo-trace: eBPF ring buffer unavailable: {e}");
                 loss.bump(STAGE_RESUBSCRIBE, 1);
                 return;
             }
@@ -538,7 +538,7 @@ impl TraceBackend for EbpfBackend {
             }
             match ring.poll(POLL_TIMEOUT_MS) {
                 Ok(_) => {}
-                Err(e) => eprintln!("runopsy-trace: ring poll: {e}"),
+                Err(e) => eprintln!("deprehendo-trace: ring poll: {e}"),
             }
             // Kernel-side loss: ring-buffer reserve failures (KERNEL) and
             // fork inheritance refused by a full watch map (WATCH_FULL). A
@@ -710,7 +710,7 @@ pub(crate) fn sample_dispatch(sample: &[u8], pump: &mut Pump, loss: &LossCounter
             // unknown record kind: forward-compat protection (§6.4):
             // counted and skipped, never fatal, never silent.
             loss.bump(STAGE_KERNEL, 1);
-            eprintln!("runopsy-trace: unknown kernel record kind {unknown} skipped");
+            eprintln!("deprehendo-trace: unknown kernel record kind {unknown} skipped");
         }
     }
 }
@@ -742,7 +742,7 @@ fn write_watch(fd: i32, pid: u32, ticks: i64) {
     let key = pid.to_le_bytes();
     let value = (ticks.max(0) as u64).to_le_bytes();
     if let Err(e) = libbpf::map_update(fd, &key, &value, 0) {
-        eprintln!("runopsy-trace: watch update: {e}");
+        eprintln!("deprehendo-trace: watch update: {e}");
     }
 }
 
@@ -835,7 +835,7 @@ pub(crate) fn watch_entry(
     WatchEntry::Write(want)
 }
 
-/// Kernel-side loss counter indices (mirror `LOSS_*` in runopsy.bpf.c).
+/// Kernel-side loss counter indices (mirror `LOSS_*` in deprehendo.bpf.c).
 const LOSS_RING: u32 = 0;
 const LOSS_WATCH_FULL: u32 = 1;
 

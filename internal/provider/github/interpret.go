@@ -9,9 +9,9 @@ package github
 import (
 	"time"
 
-	"runopsy/internal/incident"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // genericByEvent maps each registered provider event to its neutral kind.

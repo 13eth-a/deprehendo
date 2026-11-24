@@ -1,6 +1,6 @@
 // package clouddb owns the cloud's database access: the migration runner for
 // db/migrations (checklist 7.57) and the identity helpers the API server and
-// the runopsy-cloud CLI share (7.5/7.12). everything here talks plain SQL
+// the deprehendo-cloud CLI share (7.5/7.12). everything here talks plain SQL
 // against the §7.1 schema; no ORM layer exists in this repository.
 //
 // user accounts are the web auth layer's business (contract §8.2 [user]);

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 func benchmarkTimeline(n int) *Timeline {

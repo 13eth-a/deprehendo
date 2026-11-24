@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/incident"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/incident"
 )
 
 func incidentBundles(t *testing.T, dir string) []string {
@@ -26,7 +26,7 @@ func incidentBundles(t *testing.T, dir string) []string {
 	}
 	var paths []string
 	for _, entry := range entries {
-		if entry.Type().IsRegular() && strings.HasPrefix(entry.Name(), "inc_") && strings.HasSuffix(entry.Name(), ".runopsy") {
+		if entry.Type().IsRegular() && strings.HasPrefix(entry.Name(), "inc_") && strings.HasSuffix(entry.Name(), ".deprehendo") {
 			paths = append(paths, filepath.Join(dir, entry.Name()))
 		}
 	}
@@ -35,8 +35,8 @@ func incidentBundles(t *testing.T, dir string) []string {
 
 // privateSim copies the test-built simulator into dir under a name unique to
 // this test process, and returns its path and process name. watching the shared
-// name runopsy-sim also matches simulators that other packages' tests run in
-// parallel (internal/simulator builds and runs its own runopsy-sim, including a
+// name deprehendo-sim also matches simulators that other packages' tests run in
+// parallel (internal/simulator builds and runs its own deprehendo-sim, including a
 // stopped frozen worker), so a test could trigger on, and then inspect, a
 // process it never started. linux truncates comm to 15 bytes, so the name
 // stays short. same approach as the phase 3 harness.
@@ -80,7 +80,7 @@ func TestPhase2IncidentEndToEnd(t *testing.T) {
 	if runtime.GOOS != "darwin" && runtime.GOOS != "linux" {
 		t.Skipf("requires Linux or macOS, got %s", runtime.GOOS)
 	}
-	base, err := os.MkdirTemp("/tmp", "runopsy-phase2-")
+	base, err := os.MkdirTemp("/tmp", "deprehendo-phase2-")
 	if err != nil {
 		t.Fatal(err)
 	}

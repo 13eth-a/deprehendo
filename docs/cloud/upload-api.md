@@ -1,7 +1,7 @@
 # Upload API (client contract, v1)
 
 Status: **pinned by secondary, November 5, 2026.** This is the wire shape the
-`runopsy-agent` CLI implements (`internal/cloudclient`, `docs/cloud/contract.md`
+`deprehendo-agent` CLI implements (`internal/cloudclient`, `docs/cloud/contract.md`
 §2.1/§6). The server is engineering's to build; when the server and this document
 disagree, one of them is wrong and the difference must be resolved here rather
 than in two clients.
@@ -32,7 +32,7 @@ Content-Type: application/json
 ```json
 {
   "upload_id": "upl_01J…",
-  "object_key": "orgs/org_5f1b…/bundles/9f2c….runopsy",
+  "object_key": "orgs/org_5f1b…/bundles/9f2c….deprehendo",
   "upload": {
     "url": "https://app.example.com/storage",
     "fields": {"key": "orgs/…", "policy": "…", "x-amz-signature": "…"}
@@ -118,7 +118,7 @@ Every non-2xx API response uses one envelope:
 
 | status | code (recommended) | CLI behaviour |
 |---|---|---|
-| 401 | `UNAUTHENTICATED` | "run `runopsy-agent login`" |
+| 401 | `UNAUTHENTICATED` | "run `deprehendo-agent login`" |
 | 403 | `FORBIDDEN` | print message, no retry |
 | 413 | `TOO_LARGE` | print the server's limit |
 | 422 | `INVALID_BUNDLE` | print the reader's rejection reason |
@@ -134,11 +134,11 @@ incident is queued after it is saved locally and retried there.
 
 The read half has its own document: **`docs/cloud/read-api.md`** (list with
 search and filters, one incident, the analysis document, the original bundle,
-delete). Token creation is `runopsy-cloud token`; there is no `GET /api/me`, so
+delete). Token creation is `deprehendo-cloud token`; there is no `GET /api/me`, so
 `login` stores an endpoint and a token after a format check and correctness is
 proven by the first upload (`401` is unambiguous). Re-analysis is designed but
 not built (contract §7.1).
 
 The server implementing this contract is `internal/cloudserver`, wired up by
-`runopsy-cloud serve`; the reference server in `tests/phase7_e2e_test.go`
+`deprehendo-cloud serve`; the reference server in `tests/phase7_e2e_test.go`
 remains the client's independent fixture.

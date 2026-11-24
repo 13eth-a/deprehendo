@@ -18,10 +18,10 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/incident"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
-	"runopsy/internal/provider/github/fixtures"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
+	"deprehendo/internal/provider/github/fixtures"
 )
 
 const fixtureRoot = "../../../testdata/github"

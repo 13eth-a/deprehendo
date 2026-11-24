@@ -36,7 +36,7 @@ func TestControlServesRetainedDataAndCleansSocket(t *testing.T) {
 		t.Fatal(err)
 	}
 	// keep socket paths short enough for macOS sockaddr_un.
-	dir, err := os.MkdirTemp("/tmp", "runopsy-control-")
+	dir, err := os.MkdirTemp("/tmp", "deprehendo-control-")
 	if err != nil {
 		t.Fatal(err)
 	}

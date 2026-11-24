@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 func exitRuleSample(at time.Time, processes ...collector.ProcessSnapshot) collector.Snapshot {

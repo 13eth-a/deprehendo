@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"io"
 
-	"runopsy/internal/analysis"
-	"runopsy/internal/incident"
+	"deprehendo/internal/analysis"
+	"deprehendo/internal/incident"
 )
 
 // exit codes of the child process. they are the statuses' machine contract;
@@ -36,7 +36,7 @@ const maxStdinRead = incident.MaxPayloadBytes + (1 << 20) + 1
 
 // child runs the analysis child process in-process: bundle bytes on the
 // reader, document on the writer, classified reason on the error writer. the
-// child command in cmd/runopsy-analyzer wires real descriptors to this; tests
+// child command in cmd/deprehendo-analyzer wires real descriptors to this; tests
 // call it directly.
 //
 // byte accounting is deliberate: stdin is read with a limit one byte past

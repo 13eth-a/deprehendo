@@ -86,16 +86,16 @@ retention policy exists (§7.58 optional).
 
 The first pass could only list requirements. This pass ran the drill against a
 real corpus row: one organization, one token, one upload of
-`testdata/incidents/frozen-worker.runopsy`, one READY analysis and one incident
+`testdata/incidents/frozen-worker.deprehendo`, one READY analysis and one incident
 with `FROZEN_PROCESS`. Storage held the two objects a real upload writes:
-`orgs/{org}/bundles/{sha256}.runopsy` and `orgs/{org}/documents/{upload}.json`.
+`orgs/{org}/bundles/{sha256}.deprehendo` and `orgs/{org}/documents/{upload}.json`.
 
 | Check | Result |
 |---|---|
 | `pg_dump -U postgres -Fc` | 19,076 bytes |
 | `pg_restore` into a newly created database | exit 0, no warnings |
 | Row counts before vs after | identical: orgs 1, memberships 1, tokens 1, uploads 1, analyses 1, incidents 1, usage 1 |
-| `runopsy-cloud migrate` on the restored database | `schema is current` (`schema_migrations` survives the dump) |
+| `deprehendo-cloud migrate` on the restored database | `schema is current` (`schema_migrations` survives the dump) |
 | Incident metadata on the restored database | `inc_…002 | FROZEN_PROCESS | READY` |
 | `TestPhase7ServerPipeline` against the restored DSN | pass (3.2 s) |
 | Copy of the object tree, compared by SHA-256 | byte-identical, 2 of 2 files |
@@ -114,7 +114,7 @@ gone and the API answers 404. Requirements that follow:
    missing object as `NOT_FOUND` (bundle/document), not a crash, so out-of-order
    restore degrades rather than corrupts. Restoring rows first still leaves an
    incident page whose evidence 404s.
-3. **Verify after restore.** `runopsy-cloud migrate` must print
+3. **Verify after restore.** `deprehendo-cloud migrate` must print
    `schema is current` (it also refuses to serve if migrations are recorded but
    missing), then run the gated pipeline test and spot-check a bundle download:
    the server re-hashes the stored bytes against the row's digest and refuses to
@@ -134,7 +134,7 @@ gone and the API answers 404. Requirements that follow:
    Free, 6 h, which is too short for real use. Cross-region copies, encryption
    and restore time at scale remain untested.
 
-The drill also found a startup defect: `runopsy-cloud serve` accepted a
+The drill also found a startup defect: `deprehendo-cloud serve` accepted a
 relative `-analyzer` path and then failed every job, because the analyzer child
 runs in a private temporary directory. `serve` now resolves the path to an
 absolute one before validating it; the drill's live upload passes with the
@@ -144,14 +144,14 @@ relative form.
 
 The optional time-based control is now built: migration `0002_retention_index`
 adds `uploads(uploaded_at)`, `Server.PruneUploadsOlderThan` deletes by age, and
-`runopsy-cloud prune -older-than 90d` is the operator entry point. This pass
+`deprehendo-cloud prune -older-than 90d` is the operator entry point. This pass
 reviewed it as the MiMo slot's retention item. Four real defects were found and
 fixed; two behaviours are accepted and recorded.
 
 | Requirement | Support |
 |---|---|
 | delete manually (the minimum) | yes: delete the `uploads` row; `analyses` and `incidents` cascade; the application then deletes the objects. Tested in the 7.36 suite. |
-| delete after N days (optional) | yes: `runopsy-cloud prune`. Dry run first, then apply. Gated by `TestPhase7PruneUploadsOlderThan`. |
+| delete after N days (optional) | yes: `deprehendo-cloud prune`. Dry run first, then apply. Gated by `TestPhase7PruneUploadsOlderThan`. |
 | stale never-completed uploads | pruned by the same rule, which is the cleanup contract §2.1 deferred here |
 | history preserved while the upload exists | yes: `analyses` is append-only and `original_analysis_id` survives until the upload is deleted |
 

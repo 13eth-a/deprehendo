@@ -7,9 +7,9 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
-	provider "runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
+	provider "deprehendo/internal/provider/evidence"
 )
 
 // PrivacyPolicy is the identifier of the only redaction policy the writer

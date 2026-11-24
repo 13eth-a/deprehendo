@@ -15,9 +15,9 @@ import (
 )
 
 func TestWriterCrashBoundaries(t *testing.T) {
-	if os.Getenv("RUNOPSY_CRASH_STEP") != "" {
-		writer := FileWriter{Directory: os.Getenv("RUNOPSY_CRASH_DIR"), before: func(step string) error {
-			if step == os.Getenv("RUNOPSY_CRASH_STEP") {
+	if os.Getenv("DEPREHENDO_CRASH_STEP") != "" {
+		writer := FileWriter{Directory: os.Getenv("DEPREHENDO_CRASH_DIR"), before: func(step string) error {
+			if step == os.Getenv("DEPREHENDO_CRASH_STEP") {
 				os.Exit(83)
 			}
 			return nil
@@ -31,7 +31,7 @@ func TestWriterCrashBoundaries(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestWriterCrashBoundaries$")
-			cmd.Env = append(os.Environ(), "RUNOPSY_CRASH_STEP="+step, "RUNOPSY_CRASH_DIR="+dir)
+			cmd.Env = append(os.Environ(), "DEPREHENDO_CRASH_STEP="+step, "DEPREHENDO_CRASH_DIR="+dir)
 			err := cmd.Run()
 			if ctx.Err() != nil {
 				t.Fatal(ctx.Err())
@@ -46,7 +46,7 @@ func TestWriterCrashBoundaries(t *testing.T) {
 			}
 			complete := 0
 			for _, e := range entries {
-				if filepath.Ext(e.Name()) == ".runopsy" {
+				if filepath.Ext(e.Name()) == ".deprehendo" {
 					complete++
 					if _, err := ReadFile(filepath.Join(dir, e.Name())); err != nil {
 						t.Fatal(err)

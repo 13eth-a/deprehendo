@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 func sock(inode uint64, acked, received uint64) collector.ConnectionSnapshot {

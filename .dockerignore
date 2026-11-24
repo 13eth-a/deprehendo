@@ -12,5 +12,5 @@ storage
 tmp-smoke-*
 .env
 .env.*
-*.runopsy
+*.deprehendo
 token.txt

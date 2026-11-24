@@ -1,7 +1,7 @@
 # Test fixtures: analysis documents
 
-`analysis/*.json` holds 19 real `runopsy.analysis` version 1 documents, one per
-bundle in `testdata/incidents/*.runopsy`. They are the input to
+`analysis/*.json` holds 19 real `deprehendo.analysis` version 1 documents, one per
+bundle in `testdata/incidents/*.deprehendo`. They are the input to
 `test/fixtures.test.ts` and the render tests.
 
 ## Provenance
@@ -9,7 +9,7 @@ bundle in `testdata/incidents/*.runopsy`. They are the input to
 - Each file is the output of `analysis.Run(bundle, sha256hex, Options)`
   followed by `analysis.WriteJSON`, run on the Mac repository's Go tree.
 - Output is deterministic: the same bundle gives byte-identical JSON.
-- The file name is the bundle name without `.runopsy`.
+- The file name is the bundle name without `.deprehendo`.
 - The CLI's diagnosis and the document's diagnosis agree on all 19 bundles,
   after the documented enrichment.
 

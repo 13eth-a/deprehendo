@@ -14,7 +14,7 @@
 //     auth sets both to the origin of the auth URL. exp is required and
 //     enforced with a 60 s leeway.
 //   - sub is the better auth user id. it is what memberships.user_id stores,
-//     so organizations and roles stay in runopsy's tables, never in the token
+//     so organizations and roles stay in deprehendo's tables, never in the token
 //     (the token's own "o" active-organization claim is ignored).
 //
 // personal API tokens for the CLI are unchanged: requireToken tries a JWT

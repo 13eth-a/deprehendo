@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider/evidence"
 )
 
 // log record grammar (closed set, §9.1). two record shapes are accepted:

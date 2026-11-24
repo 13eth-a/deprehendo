@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // adversarial adversarial pass (phase 5 items 5.7, 5.12, 5.36). each test tries to

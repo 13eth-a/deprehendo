@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/platform"
-	"runopsy/internal/trace"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/trace"
 )
 
 // trace capture tests (6.27/6.47/6.29–6.31): the evidence path from live

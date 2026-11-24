@@ -7,8 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/provider/evidence"
 )
 
 // SupervisorConfig bounds how much a provider can cost the recorder.

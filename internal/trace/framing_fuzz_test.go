@@ -23,7 +23,7 @@ import (
 // corpus runs on every CI pass without -fuzz.
 
 // seedFixtures adds every Rust-encoded fixture as a seed. these are real
-// frames produced by runopsy-trace genfixtures, so the fuzzer starts from
+// frames produced by deprehendo-trace genfixtures, so the fuzzer starts from
 // the cross-language contract instead of from nothing (6.44).
 func seedFixtures(f *testing.F) {
 	paths, _ := filepath.Glob("../../testdata/trace/*.bin")

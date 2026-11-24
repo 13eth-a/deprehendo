@@ -4,7 +4,7 @@
 #   sudo bash scripts/demo-capture.sh oom     # then dispatch scenario=memory
 #   sudo bash scripts/demo-capture.sh stall   # runner idle; blocks HTTPS 3 min
 #
-# both modes start `runopsy-agent github watch --tracing auto` (eBPF, falling
+# both modes start `deprehendo-agent github watch --tracing auto` (eBPF, falling
 # back to the proc connector), check what the capture shows, and copy the
 # bundle and its reports to ~/demo-out for the hosted check on the Mac.
 #
@@ -17,8 +17,8 @@
 #
 # never run this on a production runner: the stall mode cuts all outbound
 # HTTPS from the machine for three minutes (it is always restored on exit).
-# paths: RUNOPSY_BIN (default ~/runopsy-bin of the sudo user) must hold
-# runopsy-agent and runopsy-trace. STALL_BASELINE_SECONDS (90) and
+# paths: DEPREHENDO_BIN (default ~/deprehendo-bin of the sudo user) must hold
+# deprehendo-agent and deprehendo-trace. STALL_BASELINE_SECONDS (90) and
 # STALL_BLOCK_SECONDS (180) exist for testing; keep the defaults for the demo.
 set -euo pipefail
 
@@ -30,14 +30,14 @@ command -v python3 >/dev/null || die "python3 is required"
 
 U=${SUDO_USER:-root}
 UHOME=$(getent passwd "$U" | cut -d: -f6)
-BIN=${RUNOPSY_BIN:-$UHOME/runopsy-bin}
-AGENT=$BIN/runopsy-agent
+BIN=${DEPREHENDO_BIN:-$UHOME/deprehendo-bin}
+AGENT=$BIN/deprehendo-agent
 [ -x "$AGENT" ] || die "$AGENT not found; build it first (runbook step 3)"
-[ -x "$BIN/runopsy-trace" ] || die "$BIN/runopsy-trace not found; the demo must be traced (runbook step 3)"
+[ -x "$BIN/deprehendo-trace" ] || die "$BIN/deprehendo-trace not found; the demo must be traced (runbook step 3)"
 pgrep -f Runner.Listener >/dev/null || die "no Runner.Listener is running; start the runner (./run.sh) first"
 
 TS=$(date -u +%Y%m%dT%H%M%SZ)
-WORK=/var/tmp/runopsy-demo/$MODE-$TS
+WORK=/var/tmp/deprehendo-demo/$MODE-$TS
 mkdir -p "$WORK"
 chmod 700 "$WORK"
 # the agent refuses an incident directory that is not private (0700).
@@ -92,7 +92,7 @@ start_watch() {
 # doc_of BUNDLE -> path of its analysis document. fails while the bundle does
 # not analyze; the error is kept in BUNDLE's .err file for the report below.
 doc_of() {
-  local d="$WORK/$(basename "$1" .runopsy).json"
+  local d="$WORK/$(basename "$1" .deprehendo).json"
   "$AGENT" analyze --document "$d" "$1" >/dev/null 2>"$d.err" && printf '%s' "$d"
 }
 verdict() {
@@ -112,7 +112,7 @@ print(" ".join(sorted({s.get("Label", "") for p in d.get("providers") or [] for 
 # keep BUNDLE NAME -> copy the bundle and its reports to ~/demo-out
 keep() {
   local b=$1 name=$2
-  install -o "$U" -m 0644 "$b" "$OUT/$name.runopsy"
+  install -o "$U" -m 0644 "$b" "$OUT/$name.deprehendo"
   "$AGENT" analyze --report "$b" > "$OUT/$name.analyze.txt" 2>&1 || true
   "$AGENT" timeline --report "$b" > "$OUT/$name.timeline.txt" 2>&1 || true
   "$AGENT" analyze --document "$OUT/$name.document.json" "$b" >/dev/null 2>&1 || true
@@ -129,15 +129,15 @@ if [ "$MODE" = oom ]; then
   echo "Starting a traced watch with exit triggers (250 ms samples)"
   start_watch --interval 250ms --window 180s --capture-pre 90s --capture-post 10s --trigger-on-process-exit
   echo
-  echo "Now dispatch the job: GitHub -> 13eth-a/runopsy-runner-e2e -> Actions -> runopsy-b3 -> Run workflow -> scenario: memory"
-  echo "  (or on the Mac: gh workflow run runopsy-b3 -R 13eth-a/runopsy-runner-e2e -f scenario=memory)"
+  echo "Now dispatch the job: GitHub -> 13eth-a/deprehendo-runner-e2e -> Actions -> deprehendo-b3 -> Run workflow -> scenario: memory"
+  echo "  (or on the Mac: gh workflow run deprehendo-b3 -R 13eth-a/deprehendo-runner-e2e -f scenario=memory)"
   echo "Waiting up to 15 minutes for a capture whose diagnosis is OOM_KILL..."
   checked=" "
   tries=" "
   last_note=0
   deadline=$(( $(date +%s) + 900 ))
   while [ "$(date +%s)" -lt "$deadline" ]; do
-    for b in "$WORK"/incidents/*.runopsy; do
+    for b in "$WORK"/incidents/*.deprehendo; do
       [ -e "$b" ] || continue
       case "$checked" in *" $b "*) continue ;; esac
       sleep 2
@@ -148,7 +148,7 @@ if [ "$MODE" = oom ]; then
         if [ "$n" -ge 3 ]; then
           checked="$checked$b "
           echo "  capture $(basename "$b"): could not be analyzed:"
-          sed 's/^/    /' "$WORK/$(basename "$b" .runopsy).json.err" | head -5
+          sed 's/^/    /' "$WORK/$(basename "$b" .deprehendo).json.err" | head -5
         fi
         continue
       fi
@@ -167,7 +167,7 @@ if [ "$MODE" = oom ]; then
     if [ $((now_s - last_note)) -ge 60 ]; then
       last_note=$now_s
       # ls exits 1 while there are no captures yet; that must count as zero.
-      n=$( { ls "$WORK"/incidents/*.runopsy 2>/dev/null || true; } | wc -l | tr -d ' ')
+      n=$( { ls "$WORK"/incidents/*.deprehendo 2>/dev/null || true; } | wc -l | tr -d ' ')
       kill -0 "$WATCH" 2>/dev/null || { tail -20 "$WORK/agent.log"; die "github watch stopped"; }
       echo "  $(date -u +%H:%M:%SZ) watch running; $n capture(s) so far"
     fi
@@ -198,7 +198,7 @@ iptables -D OUTPUT -p tcp --dport 443 -j DROP
 BLOCKED=0
 echo "$(date -u +%H:%M:%SZ) HTTPS restored; waiting for the bundle..."
 for _ in $(seq 1 45); do
-  b=$(ls "$WORK"/incidents/*.runopsy 2>/dev/null | head -1 || true)
+  b=$(ls "$WORK"/incidents/*.deprehendo 2>/dev/null | head -1 || true)
   if [ -n "$b" ]; then
     sleep 2
     d=$(doc_of "$b") || { sleep 2; continue; }

@@ -2,13 +2,13 @@ package simulator
 
 // the fake GitHub actions runner harness (phase 5 item 5.41).
 //
-// `runopsy-sim github <scenario>` materializes a runner installation, starts a
+// `deprehendo-sim github <scenario>` materializes a runner installation, starts a
 // real Runner.Listener process, and lets it run the scenario: spawn a worker,
 // spawn the job process tree, write diagnostic logs, hold a broker-shaped TCP
 // connection, and then fail in the scenario's own way. every process is a real
 // kernel process named after the runner binary it runs from, so
 //
-//	runopsy-agent github watch
+//	deprehendo-agent github watch
 //
 // and the recorder see the same observations a genuine runner produces. the
 // harness never needs GitHub, credentials, or network access, which keeps the
@@ -26,9 +26,9 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/events"
-	"runopsy/internal/platform"
-	"runopsy/internal/simhelper"
+	"deprehendo/internal/events"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/simhelper"
 )
 
 const (
@@ -36,7 +36,7 @@ const (
 	githubReadyTimeout    = 8 * time.Second
 )
 
-// RunGitHubCLI is the `github` subcommand of runopsy-sim.
+// RunGitHubCLI is the `github` subcommand of deprehendo-sim.
 func RunGitHubCLI(args []string, stdout, stderr io.Writer) int {
 	if len(args) == 0 {
 		printGitHubUsage(stdout)
@@ -49,12 +49,12 @@ func RunGitHubCLI(args []string, stdout, stderr io.Writer) int {
 	}
 	scenario := args[0]
 	if simhelper.GitHubDescription(scenario) == "" {
-		fmt.Fprintf(stderr, "runopsy-sim github: unknown scenario %q\n\n", scenario)
+		fmt.Fprintf(stderr, "deprehendo-sim github: unknown scenario %q\n\n", scenario)
 		printGitHubUsage(stderr)
 		return 2
 	}
 
-	fs := flag.NewFlagSet("runopsy-sim github "+scenario, flag.ContinueOnError)
+	fs := flag.NewFlagSet("deprehendo-sim github "+scenario, flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	root := fs.String("root", "", "installation root (default: a new temporary directory, removed on exit)")
 	duration := fs.Duration("duration", defaultGitHubDuration, "scenario lifetime")
@@ -68,11 +68,11 @@ func RunGitHubCLI(args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	if fs.NArg() != 0 {
-		fmt.Fprintf(stderr, "runopsy-sim github: unexpected argument %q\n", fs.Arg(0))
+		fmt.Fprintf(stderr, "deprehendo-sim github: unexpected argument %q\n", fs.Arg(0))
 		return 2
 	}
 	if *duration <= 0 || *duration > 10*time.Minute {
-		fmt.Fprintln(stderr, "runopsy-sim github: --duration must be positive and at most 10m")
+		fmt.Fprintln(stderr, "deprehendo-sim github: --duration must be positive and at most 10m")
 		return 2
 	}
 
@@ -82,9 +82,9 @@ func RunGitHubCLI(args []string, stdout, stderr io.Writer) int {
 	}
 	temporary := false
 	if *root == "" {
-		dir, err := os.MkdirTemp("", "runopsy-github-"+scenario+"-")
+		dir, err := os.MkdirTemp("", "deprehendo-github-"+scenario+"-")
 		if err != nil {
-			fmt.Fprintf(stderr, "runopsy-sim github: %v\n", err)
+			fmt.Fprintf(stderr, "deprehendo-sim github: %v\n", err)
 			return 1
 		}
 		*root = dir
@@ -95,7 +95,7 @@ func RunGitHubCLI(args []string, stdout, stderr io.Writer) int {
 	}
 	runner, err := MaterializeGitHubRunner(*root, scenario)
 	if err != nil {
-		fmt.Fprintf(stderr, "runopsy-sim github: %v\n", err)
+		fmt.Fprintf(stderr, "deprehendo-sim github: %v\n", err)
 		return 1
 	}
 	if temporary {
@@ -112,7 +112,7 @@ func RunGitHubCLI(args []string, stdout, stderr io.Writer) int {
 		"_ghrunner", "--root", runner.Root, "--scenario", scenario, "--hold", duration.String(),
 	}, "Runner.Listener", true)
 	if err != nil {
-		fmt.Fprintf(stderr, "runopsy-sim github: %v\n", err)
+		fmt.Fprintf(stderr, "deprehendo-sim github: %v\n", err)
 		return 1
 	}
 	cfg.Emit("listener_started", map[string]any{"listener_pid": listener.PID()})
@@ -190,7 +190,7 @@ func RunGitHubCLI(args []string, stdout, stderr io.Writer) int {
 	if waitErr != nil && !errors.Is(waitErr, os.ErrProcessDone) {
 		// A signaled listener is expected for the self-kill scenario.
 		if scenario != simhelper.GitHubRunnerSelfKill {
-			fmt.Fprintf(stderr, "runopsy-sim github: listener wait: %v\n", waitErr)
+			fmt.Fprintf(stderr, "deprehendo-sim github: listener wait: %v\n", waitErr)
 			return 1
 		}
 	}
@@ -256,13 +256,13 @@ func MaterializeGitHubRunner(root, scenario string) (GitHubRunner, error) {
 }
 
 func printGitHubUsage(w io.Writer) {
-	fmt.Fprint(w, "Usage:\n  runopsy-sim github <scenario> [--root DIR] [--duration DUR] [--keep] [--json]\n\n")
+	fmt.Fprint(w, "Usage:\n  deprehendo-sim github <scenario> [--root DIR] [--duration DUR] [--keep] [--json]\n\n")
 	fmt.Fprintln(w, "Fake GitHub Actions runner scenarios:")
 	for _, name := range simhelper.GitHubScenarios() {
 		fmt.Fprintf(w, "  %-24s %s\n", name, simhelper.GitHubDescription(name))
 	}
 	fmt.Fprintln(w, "\nThe harness writes a real installation (bin/Runner.Listener, bin/Runner.Worker,")
-	fmt.Fprintln(w, ".runner, config.sh, _diag/) and real processes, so `runopsy-agent start")
+	fmt.Fprintln(w, ".runner, config.sh, _diag/) and real processes, so `deprehendo-agent start")
 	fmt.Fprintln(w, "--github-runner-pids <listener>` can record it without GitHub access.")
 }
 

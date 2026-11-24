@@ -23,7 +23,7 @@ func sleepForeverCmd(t *testing.T) func(string) *exec.Cmd {
 }
 
 func TestManagerMissingBinaryDegrades(t *testing.T) {
-	m := NewManager(ManagerConfig{Binary: "/nonexistent/runopsy-trace"})
+	m := NewManager(ManagerConfig{Binary: "/nonexistent/deprehendo-trace"})
 	done := make(chan struct{})
 	go func() { _ = m.Run(context.Background()); close(done) }()
 
@@ -133,7 +133,7 @@ func TestManagerLinuxGate(t *testing.T) {
 	// the platform gate is compile-time honest: on non-Linux the manager
 	// never spawns anything. on linux this test still passes trivially.
 	if runtime.GOOS != "linux" {
-		m := NewManager(ManagerConfig{Binary: "/nonexistent/runopsy-trace"})
+		m := NewManager(ManagerConfig{Binary: "/nonexistent/deprehendo-trace"})
 		done := make(chan struct{})
 		go func() { _ = m.Run(context.Background()); close(done) }()
 		select {
@@ -153,7 +153,7 @@ func TestManagerLinuxGate(t *testing.T) {
 }
 
 func TestManagerStoppedBeforeRunIsSafe(t *testing.T) {
-	m := NewManager(ManagerConfig{Binary: "/nonexistent/runopsy-trace"})
+	m := NewManager(ManagerConfig{Binary: "/nonexistent/deprehendo-trace"})
 	m.Stop() // before run: must not panic or block
 	h := m.Health()
 	if h.State != "" && h.State != StateStopped && h.State != StateUnavailable {
@@ -166,8 +166,8 @@ func TestResolveBinaryOverride(t *testing.T) {
 	// it does not exist the supervisor degrades at once with a reason (6.52),
 	// instead of spending its restart budget spawning a missing file (principal
 	// phase 6 review).
-	bin, why := ResolveBinary("/explicit/runopsy-trace")
-	if bin != "" || !strings.Contains(why, "/explicit/runopsy-trace") {
+	bin, why := ResolveBinary("/explicit/deprehendo-trace")
+	if bin != "" || !strings.Contains(why, "/explicit/deprehendo-trace") {
 		t.Fatalf("missing override: bin=%q why=%q", bin, why)
 	}
 	self, err := os.Executable()
@@ -180,7 +180,7 @@ func TestResolveBinaryOverride(t *testing.T) {
 }
 
 func TestSocketPathPreferredIsNotDeleted(t *testing.T) {
-	dir, err := os.MkdirTemp("", "runopsy-trace-sockpath")
+	dir, err := os.MkdirTemp("", "deprehendo-trace-sockpath")
 	if err != nil {
 		t.Fatal(err)
 	}

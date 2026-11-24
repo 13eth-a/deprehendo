@@ -9,7 +9,7 @@ package trace
 // tracer cannot force a 16 MiB receive buffer and overruns become visible
 // gaps instead of being absorbed.
 //
-// Opt-in (RUNOPSY_LIVE_CHURN=N) because it takes minutes, not because it is
+// Opt-in (DEPREHENDO_LIVE_CHURN=N) because it takes minutes, not because it is
 // synthetic: every process here is real and every event crosses the real
 // socket. the assertions are the invariants, not a flattering number:
 //
@@ -39,13 +39,13 @@ import (
 // processes, and a measurement that was not run is never reported as passed.
 func liveChurnCount(t *testing.T) int {
 	t.Helper()
-	raw := os.Getenv("RUNOPSY_LIVE_CHURN")
+	raw := os.Getenv("DEPREHENDO_LIVE_CHURN")
 	if raw == "" {
-		t.Skip("live churn skipped: set RUNOPSY_LIVE_CHURN=N (make trace-churn-live uses 100000)")
+		t.Skip("live churn skipped: set DEPREHENDO_LIVE_CHURN=N (make trace-churn-live uses 100000)")
 	}
 	n, err := strconv.Atoi(raw)
 	if err != nil || n < 1 || n > 500000 {
-		t.Fatalf("RUNOPSY_LIVE_CHURN must be 1..500000, got %q", raw)
+		t.Fatalf("DEPREHENDO_LIVE_CHURN must be 1..500000, got %q", raw)
 	}
 	return n
 }

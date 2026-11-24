@@ -69,7 +69,7 @@ engineering implements the GitHub provider (`internal/provider/github`) and the 
 ## 2. Layering (enforced by `TestProviderImportBoundaries`)
 
 ```text
-cmd/runopsy-agent ──► internal/provider/github ──► internal/provider ──► internal/provider/evidence
+cmd/deprehendo-agent ──► internal/provider/github ──► internal/provider ──► internal/provider/evidence
         │                                              │                       ▲
         └──► internal/agent ──► internal/collector     └──► internal/incident ─┘
                                 internal/platform
@@ -156,7 +156,7 @@ agent stop ─► Supervisor.Close(bounded)
 - `--github-runner-pid` (5.2 manual override) feeds
   `AttachOptions.SupervisorPIDs`. Facts derived from it carry
   `SOURCE_USER_OVERRIDE`.
-- `runopsy github watch` (5.30) = Discover → set the recorder filter to the
+- `deprehendo github watch` (5.30) = Discover → set the recorder filter to the
   supervisor PIDs with `Descendants: true` → Start supervisors. It is
   composition in `cmd/`, not new core machinery.
 
@@ -425,7 +425,7 @@ default until the user says otherwise.
 
 ### 9.3 API credentials (5.11, 5.37)
 
-- Sources: `RUNOPSY_GITHUB_TOKEN`, or a token file that must be mode
+- Sources: `DEPREHENDO_GITHUB_TOKEN`, or a token file that must be mode
   `0600` and owned by the agent user (refuse otherwise). Never a CLI flag,
   because argv is world-readable in `/proc`.
 - The token is fetched per request through `provider.Credentials` and is
@@ -569,7 +569,7 @@ signatures (e.g. `OOM_KILL`) are unaffected.
 |---|---|---|
 | 1 | Incident integration (§3.3): `Providers []evidence.Section`, validation, redaction hook, `Capture.finalize` freeze, `PrivacyReport.provider_identifiers` | bundle round-trip and old-bundle read tests |
 | 2 | Agent wiring: `HostView` implementation (procfs `Inspect` with incarnation check, salt file), `Supervisor` per detected provider fed from `OnSnapshot`, clean shutdown | the recorder must behave identically with no provider compiled in |
-| 3 | `internal/provider/github`: `Name`, vocabulary, `Detect`, `Discover` (C2, C3, §9.1 `.runner` allowlist), `runopsy github discover` | adversarial reviews C2/C3 and the `.runner` allowlist |
+| 3 | `internal/provider/github`: `Name`, vocabulary, `Detect`, `Discover` (C2, C3, §9.1 `.runner` allowlist), `deprehendo github discover` | adversarial reviews C2/C3 and the `.runner` allowlist |
 | 4 | GitHub `Session`: process roles (C1–C4, C8, C9), worker/job records, generic translation, `Freeze` | conformance kit + fake-runner harness (5.41) |
 | 5 | Log reader (5.7): bounded tailing, rotation, closed pattern set, offsets only | adversarial: "find log lines this parser misreads"; canary test |
 | 6 | Control channel (C12), intent (§7), conflicts (§8) | principal reviews (5.15/5.44–46/5.48) |

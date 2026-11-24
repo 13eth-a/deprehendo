@@ -1,5 +1,5 @@
 // gated tests for the principal security-gate fixes that need a real
-// postgres (RUNOPSY_CLOUD_TEST_DSN; run with `make test-cloud`):
+// postgres (DEPREHENDO_CLOUD_TEST_DSN; run with `make test-cloud`):
 //
 //   - deleting an incident removes every stored object it owns, including the
 //     per-engine analysis documents (before the fix, the cascade removed the
@@ -25,8 +25,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/clouddb"
-	"runopsy/internal/cloudserver"
+	"deprehendo/internal/clouddb"
+	"deprehendo/internal/cloudserver"
 )
 
 func TestPhase7DeleteRemovesEveryStoredObject(t *testing.T) {
@@ -36,7 +36,7 @@ func TestPhase7DeleteRemovesEveryStoredObject(t *testing.T) {
 		t.Fatal(err)
 	}
 	h := newCloudHarness(t, dsn, nil)
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	uploadid, incidentid := createAndStore(t, h, h.TokenA, bundlepath)
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, uploadid, 90*time.Second); status != http.StatusOK {
 		t.Fatalf("complete = %d %s, want 200", status, body)
@@ -83,7 +83,7 @@ func TestPhase7MemberCannotDeleteOrActivate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	uploadid, incidentid := createAndStore(t, h, h.TokenA, bundlepath)
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, uploadid, 90*time.Second); status != http.StatusOK {
 		t.Fatalf("complete = %d %s, want 200", status, body)
@@ -129,12 +129,12 @@ func TestPhase7AnalysisLimitIsPerOrganizationPerHour(t *testing.T) {
 	h := newCloudHarness(t, dsn, func(c *cloudserver.Config) { c.MaxAnalysesPerHour = 1 })
 	incidents := filepath.Join(root, "testdata", "incidents")
 
-	first, _ := createAndStore(t, h, h.TokenA, filepath.Join(incidents, "frozen-worker.runopsy"))
+	first, _ := createAndStore(t, h, h.TokenA, filepath.Join(incidents, "frozen-worker.deprehendo"))
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, first, 90*time.Second); status != http.StatusOK {
 		t.Fatalf("first complete = %d %s, want 200", status, body)
 	}
 
-	second, _ := createAndStore(t, h, h.TokenA, filepath.Join(incidents, "oom.runopsy"))
+	second, _ := createAndStore(t, h, h.TokenA, filepath.Join(incidents, "oom.deprehendo"))
 	status, retryafter, body := completeWithHeaders(t, h.Endpoint, h.TokenA, second)
 	if status != http.StatusTooManyRequests || apiErrorCode(t, body) != "RATE_LIMITED" {
 		t.Fatalf("second complete in the same hour = %d %s, want 429 RATE_LIMITED", status, body)
@@ -144,7 +144,7 @@ func TestPhase7AnalysisLimitIsPerOrganizationPerHour(t *testing.T) {
 	}
 
 	// another organization has its own window.
-	other, _ := createAndStore(t, h, h.TokenB, filepath.Join(incidents, "frozen-worker.runopsy"))
+	other, _ := createAndStore(t, h, h.TokenB, filepath.Join(incidents, "frozen-worker.deprehendo"))
 	if status, body := postComplete(t, h.Endpoint, h.TokenB, other, 90*time.Second); status != http.StatusOK {
 		t.Fatalf("org B complete = %d %s, want 200", status, body)
 	}

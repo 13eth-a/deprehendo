@@ -1,5 +1,5 @@
 // package trace contains the phase 6 wire contract between the go agent and
-// the runopsy-trace rust component. everything in this package is language
+// the deprehendo-trace rust component. everything in this package is language
 // neutral: the rust side implements the identical module in
 // trace-rs/src/schema.rs, and the two must be changed together (see
 // docs/tracing/protocol.md for the compatibility policy).
@@ -79,7 +79,7 @@ func (t EventType) String() string {
 }
 
 // signal semantics (6.14): the kernel does not let userspace observe signal
-// delivery as a generic event, so runopsy records strictly weaker facts and
+// delivery as a generic event, so deprehendo records strictly weaker facts and
 // lets the causal engine treat them accordingly.
 type SignalFact uint8
 

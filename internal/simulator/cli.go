@@ -12,10 +12,10 @@ import (
 	"syscall"
 	"time"
 
-	"runopsy/internal/events"
+	"deprehendo/internal/events"
 )
 
-// RunCLI is the runopsy-sim entrypoint, kept separate from main so it can be
+// RunCLI is the deprehendo-sim entrypoint, kept separate from main so it can be
 // tested without spawning a process. it returns the process exit code.
 //
 // exit codes: 0 success (including a clean ctrl+C), 1 scenario failure,
@@ -38,11 +38,11 @@ func RunCLI(args []string, stdout, stderr io.Writer) int {
 	name := args[0]
 	sc, ok := Lookup(name)
 	if !ok {
-		fmt.Fprintf(stderr, "runopsy-sim: unknown scenario %q\n\n%s", name, usageText())
+		fmt.Fprintf(stderr, "deprehendo-sim: unknown scenario %q\n\n%s", name, usageText())
 		return 2
 	}
 
-	fs := flag.NewFlagSet("runopsy-sim "+name, flag.ContinueOnError)
+	fs := flag.NewFlagSet("deprehendo-sim "+name, flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	var (
 		duration time.Duration
@@ -62,11 +62,11 @@ func RunCLI(args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	if fs.NArg() > 0 {
-		fmt.Fprintf(stderr, "runopsy-sim: unexpected argument %q\n", fs.Arg(0))
+		fmt.Fprintf(stderr, "deprehendo-sim: unexpected argument %q\n", fs.Arg(0))
 		return 2
 	}
 	if duration < 0 {
-		fmt.Fprintln(stderr, "runopsy-sim: --duration must not be negative")
+		fmt.Fprintln(stderr, "deprehendo-sim: --duration must not be negative")
 		return 2
 	}
 
@@ -103,7 +103,7 @@ func RunCLI(args []string, stdout, stderr io.Writer) int {
 		return chosen.Code
 	}
 	if err != nil {
-		fmt.Fprintf(stderr, "runopsy-sim: %s: %v\n", name, err)
+		fmt.Fprintf(stderr, "deprehendo-sim: %s: %v\n", name, err)
 		return 1
 	}
 	return 0
@@ -111,17 +111,17 @@ func RunCLI(args []string, stdout, stderr io.Writer) int {
 
 func usageText() string {
 	var b strings.Builder
-	b.WriteString("Usage:\n  runopsy-sim <scenario> [flags]\n\nScenarios:\n")
+	b.WriteString("Usage:\n  deprehendo-sim <scenario> [flags]\n\nScenarios:\n")
 	for _, sc := range Scenarios() {
 		fmt.Fprintf(&b, "  %-16s %s\n", sc.Name(), sc.Description())
 	}
 	b.WriteString("\nAdditional commands:\n")
-	b.WriteString("  github <scenario>  fake GitHub Actions runner harness (`runopsy-sim github --help`)\n")
+	b.WriteString("  github <scenario>  fake GitHub Actions runner harness (`deprehendo-sim github --help`)\n")
 	b.WriteString("\nFlags:\n")
 	b.WriteString("  --duration DUR   overall runtime; 0 means the scenario's default\n")
 	b.WriteString("  --verbose        include extra detail\n")
 	b.WriteString("  --json           emit newline-delimited JSON events on stdout\n")
 	b.WriteString("  -h, --help       show this help\n")
-	b.WriteString("\nRun \"runopsy-sim <scenario> --help\" for scenario-specific flags.\n")
+	b.WriteString("\nRun \"deprehendo-sim <scenario> --help\" for scenario-specific flags.\n")
 	return b.String()
 }

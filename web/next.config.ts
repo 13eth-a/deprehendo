@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 // security headers for the dashboard (7.60 gate; docs/cloud/browser-auth.md
 // step 4). the browser talks only to this app's own origin: the auth client
-// goes through /api/auth, and runopsy API calls are made server-side, so
+// goes through /api/auth, and deprehendo API calls are made server-side, so
 // connect-src stays 'self'. the neon auth origin is allowed for frames only,
 // for the SDK's OAuth popup flow.
 //

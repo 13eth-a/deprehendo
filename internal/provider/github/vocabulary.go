@@ -6,7 +6,7 @@
 // stored section into the neutral vocabulary for the causal engine.
 package github
 
-import "runopsy/internal/provider/evidence"
+import "deprehendo/internal/provider/evidence"
 
 // name of the provider in registries and bundle sections.
 const Name = "github-actions"

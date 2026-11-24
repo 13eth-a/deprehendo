@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/incident"
+	"deprehendo/internal/incident"
 )
 
 // TestTimelineConsumesMergedTraceEvents asserts the merged tracer stream

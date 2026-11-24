@@ -1,11 +1,11 @@
-# Handoff — Runopsy
+# Handoff — Deprehendo
 
 The release includes phases 1–7.
 
 ## Phase 7 — 7.62 real-runner demo done; Phase 7 complete (November 21, 2026)
 
 - **7.62 passes.** Two traced captures from a self-hosted runner on a Lima VM
-  (`13eth-a/runopsy-runner-e2e`, label `runopsy-b3`). Runbook and results:
+  (`13eth-a/deprehendo-runner-e2e`, label `deprehendo-b3`). Runbook and results:
   `docs/github/real-runner-demo.md`.
   - OOM: a real job allocates 4 GiB on a 4 GiB VM and is killed (exit 137).
     The engine names `OOM_KILL` HIGH 0.80 from the cgroup OOM counter.
@@ -15,7 +15,7 @@ The release includes phases 1–7.
   - Both are byte-identical between hosted `/analysis` and local
     `analyze --document`, and the hosted dashboard renders both.
 - **Fixed:** the hosted analyzer did not register the GitHub provider.
-  `cmd/runopsy-analyzer/main.go` now does. Test:
+  `cmd/deprehendo-analyzer/main.go` now does. Test:
   `tests/phase7_hosted_provider_test.go`.
 - **Demo corpus:** `testdata/demo/manifest.json` is now version 2. The OOM and
   stall scenarios point at the real bundles in
@@ -25,11 +25,11 @@ The release includes phases 1–7.
   `scripts/demo-verify-hosted.sh [--replace]`.
 - **Gate doc:** the 7.62 row is PASS and the final review is closed.
 - **Next:**
-  - Clean up: remove the VM runner, `limactl delete -f runopsy-demo`, delete
-    the stale offline runners `runopsy-b3-vm` and `runopsy-lima-runopsy`.
+  - Clean up: remove the VM runner, `limactl delete -f deprehendo-demo`, delete
+    the stale offline runners `deprehendo-b3-vm` and `deprehendo-lima-deprehendo`.
   - Follow-ups: the tracer fell back to the proc connector, not eBPF; a
     dashboard provider panel; the list's Confidence column shows "—";
-    `runopsy-cloud token -org-name` mismatch.
+    `deprehendo-cloud token -org-name` mismatch.
 
 ## Phase 7 — Security gate closed; CI green; macOS bundle states fixed (November 18, 2026)
 
@@ -51,7 +51,7 @@ The release includes phases 1–7.
   - secondary (`phase7-secondary-gate-review.md`, `phase7-secondary-review.md`) found L1:
     the retention sweep had the same row-first order. Fixed:
     `PruneUploadsOlderThan` deletes objects first and stops on a storage error
-    with the row kept, and `runopsy-cloud prune` prints partial progress and
+    with the row kept, and `deprehendo-cloud prune` prints partial progress and
     exits non-zero. Test: `TestPhase7PruneKeepsRowWhenStorageFails`.
     `docs/cloud/operations.md` updated.
 - **macOS bundle bug (found through CI).** The privacy filter `cleanState`
@@ -71,12 +71,12 @@ The release includes phases 1–7.
   - `TestZombieFullCycle` accepts `Z+`, as the rest of `internal/simulator`
     does.
   - The Phase 2 e2e and matrix tests run a private simulator copy
-    (`privateSim`, named `rph2-<pid>` / `rpm2-<pid>`). Watching `runopsy-sim`
+    (`privateSim`, named `rph2-<pid>` / `rpm2-<pid>`). Watching `deprehendo-sim`
     by name matched `internal/simulator`'s own stopped worker running in
     parallel. The e2e test now prints the trigger, the PID's recorded states
     and the logs when it fails.
 - **Housekeeping.**
-  - The `runopsy-smoke-*` users were deleted from `neon_auth."user"`
+  - The `deprehendo-smoke-*` users were deleted from `neon_auth."user"`
     (`memberships.user_id` is text, so the subquery casts `id::text`).
   - The untracked `cloud.json` and `local.json` were removed.
   - The Neon `neondb_owner` password was reset after it was printed in a
@@ -125,7 +125,7 @@ The release includes phases 1–7.
     and dropped connections, and a retried PUT that finds its own bytes
     counts as stored. Tests: `s3store_retry_test.go`. The rerun had 0
     failures in 1,000 uploads.
-  - Also noted: `runopsy-cloud token -org-name` creates an org with a random
+  - Also noted: `deprehendo-cloud token -org-name` creates an org with a random
     id, then rejects it as a mismatch. The load script inserts orgs directly
     instead.
   - Details in `docs/cloud/cost-measurement.md`.
@@ -141,7 +141,7 @@ The release includes phases 1–7.
 - **Checks:** `npm test` (34), typecheck and `next build` pass.
   `make test-cloud` passes, including the gated browser-session test.
 - **Verified:** the local dashboard against the deployed Railway API
-  (`RUNOPSY_AUTH_URL` set). Sign-up, the owner grant via `runopsy-cloud
+  (`DEPREHENDO_AUTH_URL` set). Sign-up, the owner grant via `deprehendo-cloud
   member`, the incident list, the `frozen-worker` analysis from the Railway
   bucket, and the sign-out redirect all work.
 - **Next:**
@@ -161,15 +161,15 @@ The release includes phases 1–7.
 - **Verified with a real user:** `web/scripts/auth-smoke.ts`
   (`npm run auth:smoke`) uses `@neon/auth` to sign up, read the current user,
   sign out, refuse a wrong password (401), sign in, and take the session JWT.
-  Then a local `runopsy-cloud serve` with
-  `RUNOPSY_AUTH_URL=$NEON_AUTH_BASE_URL` verified that JWT against Neon's real
+  Then a local `deprehendo-cloud serve` with
+  `DEPREHENDO_AUTH_URL=$NEON_AUTH_BASE_URL` verified that JWT against Neon's real
   JWKS: `GET /api/me` returned the same user, `auth browser`. **ALL PASS.**
 - **Next:**
   - Add GitHub OAuth.
-  - Set `RUNOPSY_AUTH_URL` on Railway.
+  - Set `DEPREHENDO_AUTH_URL` on Railway.
   - Build the Next.js host (`docs/cloud/browser-auth.md`).
   - Run `make test-cloud` for the gated browser-session test.
-  - Delete the `runopsy-smoke-*` test users when done (SQL in
+  - Delete the `deprehendo-smoke-*` test users when done (SQL in
     `browser-auth.md`).
 
 ## Phase 7 — Browser sign-in decided and API side built (November 12, 2026)
@@ -182,11 +182,11 @@ The release includes phases 1–7.
     unknown key ids refetched at most every 30 s; last good keys kept through
     an outage. `iss`/`aud` must equal the auth URL origin; `exp` required.
   - `requireToken` accepts a session JWT beside personal tokens.
-    `X-Runopsy-Organization` picks the membership (optional with exactly one),
+    `X-Deprehendo-Organization` picks the membership (optional with exactly one),
     and roles apply as for tokens.
   - New `GET /api/me` lists the caller's organizations.
-  - New `runopsy-cloud member` grants or revokes memberships.
-  - Configured by `RUNOPSY_AUTH_URL` (unset means token-only, so the current
+  - New `deprehendo-cloud member` grants or revokes memberships.
+  - Configured by `DEPREHENDO_AUTH_URL` (unset means token-only, so the current
     Railway deploy is unaffected).
 - **Tests:**
   - `browserauth_test.go` (6 tests, including 16 refusal cases, key rotation,
@@ -195,7 +195,7 @@ The release includes phases 1–7.
   - The gated `TestPhase7BrowserSessionsUseMembershipsAndOrganizationHeader`
     typechecks. **Run `make test-cloud` on the Mac** before deploying.
 - **Next:**
-  - Enable Neon Auth with GitHub, then set `RUNOPSY_AUTH_URL` on Railway.
+  - Enable Neon Auth with GitHub, then set `DEPREHENDO_AUTH_URL` on Railway.
   - Build the Next.js host: server-side proxy route, org picker, cookie and
     security headers (`browser-auth.md` steps 1–6).
 
@@ -227,7 +227,7 @@ review roles for 7.4–7.6, 7.8, 7.9/7.38, 7.12, 7.27, 7.34, 7.36, 7.37, 7.39,
   - Job-slot waits end when the request does (503).
   - HTTP read, write and idle timeouts.
   - The F3 sanitizing gap on the client's storage-failure path is closed.
-  - The container now runs as non-root (`USER runopsy`).
+  - The container now runs as non-root (`USER deprehendo`).
 - **Recorded, not changed:**
   - The analysis limit is now **60 per org per hour** (owner decision §8.3):
     a rolling window over per-minute counters (migration
@@ -243,7 +243,7 @@ review roles for 7.4–7.6, 7.8, 7.9/7.38, 7.12, 7.27, 7.34, 7.36, 7.37, 7.39,
   Go 1.24 and a `pgx` stub: build, `go vet`, `gofmt`, and the unit tests for
   `cloudserver`/`cloudclient` (including `-race`). **On the Mac, November 11
   (Go 1.27.1):** `go vet ./...` clean, unit tests pass, and `make test-cloud`
-  applied `0001`–`0003` (`schema is current`) with `ok runopsy/tests` for the
+  applied `0001`–`0003` (`schema is current`) with `ok deprehendo/tests` for the
   whole gated suite.
 - **Dependency scan (November 11):** `govulncheck` found 12 standard-library
   vulnerabilities in Go 1.27.1. Two hit the gate's own code:
@@ -302,7 +302,7 @@ The items the Phase 7 roster assigns to MiMo 2.6 Pro are closed: 7.59 cost
 measurement, and the 7.56–7.58 database/migration/retention review. Detail in
 `docs/cloud/cost-measurement.md` and `docs/cloud/db-review.md`.
 
-- **7.59 is now reproducible, not a copied table.** New `cmd/runopsy-cost`
+- **7.59 is now reproducible, not a copied table.** New `cmd/deprehendo-cost`
   reads the 19 real bundles, runs the real analyzer child five times each,
   takes per-bundle medians, optionally measures real row bytes with
   `pg_column_size`, and prints the 1/100/1,000 table with every price as a
@@ -313,7 +313,7 @@ measurement, and the 7.56–7.58 database/migration/retention review. Detail in
 - **Defect fixed in the shared runner, not a third caller.**
   `analyzer.NewRunner` accepted a relative child path while `Run` starts the
   child in a private temp directory; `serve` was patched locally during the
-  7.56 drill and `runopsy-cost` then hit the same wall. `NewRunner` now
+  7.56 drill and `deprehendo-cost` then hit the same wall. `NewRunner` now
   resolves the path itself, so no caller can repeat it.
 - **7.58 retention reviewed, four defects fixed.** `prune` deletes by age with
   no preview → added `PlanPrune` and `prune -dry-run` (a mistyped `90h` for
@@ -343,15 +343,15 @@ stack ran end to end against a Neon project. Credentials are in `.env.local`
 - **Store:** `internal/cloudserver/s3store.go` implements `Store` over
   S3-compatible HTTP with AWS SigV4, using only the standard library. Puts are
   conditional (`If-None-Match: *`), so a stored original cannot be overwritten.
-  Selected by `RUNOPSY_S3_BUCKET`; the local store is used when it is unset.
+  Selected by `DEPREHENDO_S3_BUCKET`; the local store is used when it is unset.
   Endpoint must be https (plain http only for loopback). Tests in
   `s3store_test.go` cover the AWS signing vector, round trip, immutability,
   wrong secret, unsafe keys, and config validation. `go vet` and
-  `go test ./internal/cloudserver/ ./cmd/runopsy-cloud/` pass on the Mac.
+  `go test ./internal/cloudserver/ ./cmd/deprehendo-cloud/` pass on the Mac.
 - **Neon:** Postgres via `DATABASE_URL_UNPOOLED` (migrations applied by
-  `runopsy-cloud serve`); private bucket `assets` for objects, configured
+  `deprehendo-cloud serve`); private bucket `assets` for objects, configured
   with `AWS_ENDPOINT_URL_S3` and `AWS_REGION` from `.env.local`.
-- **Run result:** an org and token were created, and `runopsy-agent login` and
+- **Run result:** an org and token were created, and `deprehendo-agent login` and
   `upload` succeeded against `http://127.0.0.1:6080`. Telemetry showed
   `uploads_completed=1`, `analysis_runs=1`, `storage_failures=0`,
   `parse_failures=0`. The bundle and analysis document are in `s3://assets/`
@@ -383,7 +383,7 @@ snapshotted at the same moment.
 - **Result:** two incidents uploaded; the target was recorded after the first.
   Recovery to that timestamp (2026-11-06 08:01:56.621888+00) left exactly one
   incident, the pre-target one; the post-target upload was absent;
-  `runopsy-cloud migrate` printed `schema is current`; the restored pair served
+  `deprehendo-cloud migrate` printed `schema is current`; the restored pair served
   `/analysis` and `/bundle` with 200, byte-identical to the CLI document and the
   original bundle; the post-target incident answered 404. Printed
   `PITR-DRILL-OK`.
@@ -419,7 +419,7 @@ detail: `docs/cloud/db-review.md` and `docs/cloud/cost-measurement.md`.
   contract**: readiness is read from `analyses.status`, and a column nothing
   writes would be dead state.
 - **7.56 backup and restore drill run for real.** On PostgreSQL 16: migrated,
-  uploaded `frozen-worker.runopsy` through the live server (`/analysis` and
+  uploaded `frozen-worker.deprehendo` through the live server (`/analysis` and
   `/bundle` byte-identical to the CLI/original), `pg_dump -Fc` = 19,076 bytes,
   `pg_restore` into a fresh database with no warnings and identical row counts,
   `migrate` → `schema is current`, and the gated `TestPhase7ServerPipeline`
@@ -434,15 +434,15 @@ detail: `docs/cloud/db-review.md` and `docs/cloud/cost-measurement.md`.
   "Compute" column was noted to include request charges. Price provenance was
   made honest: the AWS page confirms the tier but renders the number
   client-side, so storage and PUT prices still need invoice confirmation.
-- **Defect found by the drill, fixed:** `runopsy-cloud serve -analyzer
-  ./bin/runopsy-analyzer` passed its startup stat but failed every job, because
+- **Defect found by the drill, fixed:** `deprehendo-cloud serve -analyzer
+  ./bin/deprehendo-analyzer` passed its startup stat but failed every job, because
   the analyzer child runs in a private temp dir. `serve` now resolves the path to
   an absolute one first; the relative form was re-run through a live upload.
 
 ### Verification
 
 `make test-cloud` passes after the migration changes (migrations applied twice;
-`ok runopsy/tests`), including the new
+`ok deprehendo/tests`), including the new
 `TestPhase7SchemaRefusesReadyAnalysisWithoutDocument` that pins P2. Down then up
 was re-run on a scratch Postgres; the gated suite passed against the restored
 database. `gofmt -l` clean, `go vet ./...`
@@ -486,7 +486,7 @@ that need hardware this machine does not have. Full record and measurements:
 `docs/reviews/phase7-integration-e2e.md`.
 
 - **7.61 dashboard leg.** `tests/phase7_dashboard_render_test.go` hands the
-  document `runopsy-agent analyze --document` wrote to
+  document `deprehendo-agent analyze --document` wrote to
   `web/test/render-document.tsx`, which renders it through the real
   `Overview`/`DiagnosisPanel`/`CausalChain`/`TimelineTable`/process/network/
   privacy components. The test asserts the page's headline, confidence band,
@@ -495,7 +495,7 @@ that need hardware this machine does not have. Full record and measurements:
   blank (7.32). Skips with instructions when `node` or `web/node_modules` is
   absent.
 - **7.61 server failure matrix** (`tests/phase7_failures_test.go`, gated on
-  `RUNOPSY_CLOUD_TEST_DSN`): analyzer `REJECTED`/`FAILED_LIMIT`/`FAILED_CRASH`
+  `DEPREHENDO_CLOUD_TEST_DSN`): analyzer `REJECTED`/`FAILED_LIMIT`/`FAILED_CRASH`
   each answer their pinned status and leave one queryable row with the status
   and no invented signature. The timeout case runs the real child-process
   runner with an expired wall-clock deadline. A failing bundle read and a failing document
@@ -504,7 +504,7 @@ that need hardware this machine does not have. Full record and measurements:
   another organization's token keeps returning 404.
 - **Real-server local/cloud equality.** `TestPhase7ServerPipeline` now asserts
   `GET /api/incidents/{id}/analysis` is byte-identical to
-  `runopsy-agent analyze --document` for the same bundle, so 7.43 holds against
+  `deprehendo-agent analyze --document` for the same bundle, so 7.43 holds against
   engineering's server, not only against the reference fixture.
 - **7.44 rendered half.** `web/test/performance.test.tsx` measures the real
   timeline table at 100/1,000/10,000 events: a 200-row page is 1,612 elements
@@ -537,7 +537,7 @@ that need hardware this machine does not have. Full record and measurements:
 
 ### Verification
 
-`make test-cloud` passes (migrations twice, then `ok runopsy/tests`, 9.5 s for
+`make test-cloud` passes (migrations twice, then `ok deprehendo/tests`, 9.5 s for
 `-run TestPhase7`); `go test -run TestPhase7DashboardRendersTheCLIDocument`
 passes; `npm test` is 31/31 and **`npm run typecheck` is clean** now that
 `@types/*` install and `tsconfig` sets `"types": ["node"]`; `gofmt -l` clean,
@@ -586,7 +586,7 @@ The cloud still stores, indexes and shows; it never diagnoses. Detail lives in
   `POST /api/uploads/{id}/complete` (recompute digest from stored bytes →
   analyzer child → append-only `analyses` row → `incidents` view → URL), and
   `GET /api/incidents`, `GET /api/incidents/{id}`, `…/analysis`, `…/bundle`,
-  `DELETE /api/incidents/{id}`. `cmd/runopsy-cloud serve` wires it to Postgres,
+  `DELETE /api/incidents/{id}`. `cmd/deprehendo-cloud serve` wires it to Postgres,
   the analyzer child and the store; `… token` mints personal tokens (hashes
   only) and `… migrate` applies the migrations.
 - **Organization scoping is structural**: every query starts from the token's
@@ -595,8 +595,8 @@ The cloud still stores, indexes and shows; it never diagnoses. Detail lives in
   incident-id shape); complete ignores the client's digest and re-hashes the
   stored object; the analyzer runs as a resource-limited child; storage
   policies are HMAC-signed, bound to one key under
-  `orgs/{org}/bundles/{sha256}.runopsy`, and refuse a mismatched digest.
-- **Migrations are tested, not hand-checked**: `runopsy-cloud migrate` applies
+  `orgs/{org}/bundles/{sha256}.deprehendo`, and refuse a mismatched digest.
+- **Migrations are tested, not hand-checked**: `deprehendo-cloud migrate` applies
   each file in one transaction and records it; a paired `.down.sql` is
   required. `make test-cloud` applies them twice against a throwaway Postgres
   and then runs the gated suite; a new `cloud` CI job does the same against a
@@ -635,7 +635,7 @@ The cloud still stores, indexes and shows; it never diagnoses. Detail lives in
 ### Verification
 
 `make test-cloud` (Postgres 16 in docker, migrations applied twice, then the
-suite) passes: `applied 0001_init` / `schema is current` / `ok runopsy/tests`.
+suite) passes: `applied 0001_init` / `schema is current` / `ok deprehendo/tests`.
 The gated suite now also asserts search results and non-results from two
 organizations, the telemetry counters after a real flow, the 7.36 matrix per
 read path, dedupe (7.30), delete removing rows and objects, a byte-identical
@@ -643,7 +643,7 @@ download and hostile-storage refusal. `go test ./internal/uploadqueue` covers
 offline-first, backoff bounding/terminal state, idempotent enqueue, missing
 bundle, file permissions and the queue-size bound;
 `go test ./internal/cloudserver` covers the filter renderer and the counters;
-`go test ./cmd/runopsy-agent -run 'TestLogin|TestUpload|TestAutoUpload|TestQueue'`
+`go test ./cmd/deprehendo-agent -run 'TestLogin|TestUpload|TestAutoUpload|TestQueue'`
 covers the opt-in, the offline `queue` path and unchanged bundle bytes.
 `gofmt -l .` clean, `go build ./...`, `go vet ./...` clean.
 
@@ -665,7 +665,7 @@ covers the opt-in, the offline `queue` path and unchanged bundle bytes.
 adversarial's dashboard scaffold and its test-only and documentation items are in
 `web/` and `docs/cloud/`. No Go code changed, and nothing is committed to git.
 
-- **`web/`**: a React and TypeScript view layer over the `runopsy.analysis` v1
+- **`web/`**: a React and TypeScript view layer over the `deprehendo.analysis` v1
   documents. It only formats and filters; it does not diagnose (7.43). Types,
   guards, formatting, the timeline, incident and process lib, and 12 components.
   `npm test` passes 29 of 29: 6 fixture-contract tests against the 19 real
@@ -767,7 +767,7 @@ The last Phase 6 gate row — GitHub job correlation on a real runner — is
 closed, and the run found one remaining false claim.
 
 - **Reproduction, traced.** `selfhosted-e2e` run `41950041166` on the Lima
-  self-hosted runner (`runopsy-linux`), watched with `github watch --tracing
+  self-hosted runner (`deprehendo-linux`), watched with `github watch --tracing
   proc`: the job correlated (`GITHUB_JOB_*` accepted/assigned/completed
   `SUCCEEDED`), the tracer was `active` (`proc_connector`, 280 traced exits,
   0 reported loss), and the analyzer still reported `PROCESS_GROUP_TERMINATION`
@@ -787,7 +787,7 @@ closed, and the run found one remaining false claim.
   the same watch flags: tracer `active`, 280 traced exits, analyzer matches
   `[]`.
 - **Regression fixture.** The before-bundle is committed at
-  `testdata/github/selfhosted-e2e-job-success/incident.runopsy` (provider
+  `testdata/github/selfhosted-e2e-job-success/incident.deprehendo` (provider
   identifiers withheld) with `TestRealRunnerSuccessfulJobIsNotAGroupKill`;
   the rule is pinned by `TestGroupKillJobTreeCoverExplainsTheJobsOwnGroup` and
   `TestGroupKillJobTreeCoverDoesNotExplainAnUnrelatedGroup`.
@@ -801,7 +801,7 @@ Running the full check on the Lima VM (kernel 7.0.0-34-generic, aarch64, Go
 real defect in the eBPF path. The e2e and the rest of the suite were green.
 
 - **The defect: the watch ACK raced the kernel map.** With a tracer binary
-  actually configured (`RUNOPSY_TRACE_BINARY`),
+  actually configured (`DEPREHENDO_TRACE_BINARY`),
   `TestLiveShortLivedProcessCapture` and `TestLiveTracerOverhead` captured 0
   events (0/24 and 0/400 edges). The transport ACKed ADD/REMOVE/RESET as soon
   as `WatchSet::apply` returned; the eBPF pump only mirrored the set into the
@@ -818,7 +818,7 @@ real defect in the eBPF path. The e2e and the rest of the suite were green.
   connector filters in user space and is unchanged
   (`TraceBackend::watch_sync_is_kernel_visible`, default false).
 - **Checks on the VM, as root:** `scripts/ebpf-e2e.sh` → `EBPF-E2E-OK`;
-  `internal/trace` with `RUNOPSY_TRACE_BINARY` → ok (27.6 s; 24/24, 400/400,
+  `internal/trace` with `DEPREHENDO_TRACE_BINARY` → ok (27.6 s; 24/24, 400/400,
   zero loss); `go test -race -count=1 ./...` → every package ok; `cargo fmt
   --check` clean and `cargo test --all-targets` green (one proc-connector
   short-lived test flaked once under load, 3/3 on rerun and covered by the
@@ -949,7 +949,7 @@ selected with that reason. A watched shell ran **100,000** back-to-back
   that closes `Done()`, so a status reader polling a healthy session left
   `Close()` blocked forever. Fixed (`errMu` guards the value; `errOnce` only
   publishes), with `TestErrOnLiveSessionDoesNotWedgeShutdown`.
-- **Harness added:** `TestLiveChurn` (`RUNOPSY_LIVE_CHURN=N`, opt-in) plus
+- **Harness added:** `TestLiveChurn` (`DEPREHENDO_LIVE_CHURN=N`, opt-in) plus
   `make trace-churn-live`; it asserts accounted loss, flat memory, one stream,
   and the 6.50 CPU budget. Numbers: `docs/tracing/benchmarks.md`. Findings:
   `docs/reviews/phase6-integration-churn.md`.
@@ -1043,7 +1043,7 @@ behaviour is unchanged (three race-enabled runs pass).
 ## Phase 6: real-runner correlation and kernel-evidence follow-ups (November 4, 2026)
 
 The last ◐ row — GitHub job correlation with tracing active — was executed on
-the live self-hosted runner (`runopsy-lima-runopsy`, label `runopsy-linux`,
+the live self-hosted runner (`deprehendo-lima-deprehendo`, label `deprehendo-linux`,
 `selfhosted-e2e` workflow), as uid 501 with `--tracing auto`:
 `proc_connector`, 490 events, 0 lost. **Correlation holds:** the job was
 accepted, assigned and completed `SUCCEEDED`, the worker and its tree were
@@ -1082,11 +1082,11 @@ with the real toolchain, and passed a live E2E on the Lima VM's kernel
 ordered chain — `PROCESS_EXEC /bin/sh`, `PROCESS_EXIT exit=7`, child
 `PROCESS_EXEC /bin/sleep`/`exit=0`, `SIGNAL_SENT signal=15 fact=1`,
 `PROCESS_EXIT signal=15 fact=2` — with clean sequence numbers and zero
-unrelated-sender leakage. Unprivileged, `runopsy-trace capabilities`
+unrelated-sender leakage. Unprivileged, `deprehendo-trace capabilities`
 refuses with the privilege reason and selects the proc connector; as root
 all five capability rows report `attached`.
 
-- **BPF programs** (`trace-rs/src/ebpf/runopsy.bpf.c`, CO-RE with the
+- **BPF programs** (`trace-rs/src/ebpf/deprehendo.bpf.c`, CO-RE with the
   committed vmlinux.h): `sched_process_exec`, `sched_process_exit`
   (`group_dead`), raw `sched_process_fork` (in-kernel watch inheritance),
   the six kill-family enter tracepoints + six exit tracepoints for
@@ -1134,7 +1134,7 @@ production binary. engineering queue items 2 and 3 are done; the eBPF backend
 (item 4) is closed too (see the November 3 entry above), which completes
 the queue.
 
-- **Supervised tracer mode (§6.3 a, 6.39/6.40).** `runopsy-trace
+- **Supervised tracer mode (§6.3 a, 6.39/6.40).** `deprehendo-trace
   --supervised` arms `PR_SET_PDEATHSIG(SIGKILL)` (plus the fork→prctl race
   check), serves exactly one session, and dies with the agent; a refused
   pdeathsig or a dead-at-startup parent is a hard refusal. `Tracer.serve` is
@@ -1159,7 +1159,7 @@ the queue.
   counted refusal, never a silent drop.
 - **Crate is library + binary (finding O17).** `src/lib.rs` exports the
   schema/framing/transport, and the integration tests speak to the
-  production `runopsy-trace` server: Go's exact control framing, ack field
+  production `deprehendo-trace` server: Go's exact control framing, ack field
   names, null-vs-absent `pids`, refused-handshake survival, and SHUTDOWN
   semantics, end to end (`trace-rs/tests/wire_compat_test.rs`).
 - **Verified:** `cargo fmt` clean, `cargo clippy --all-targets` zero
@@ -1231,12 +1231,12 @@ verification: `docs/reviews/phase6-secondary-audit.md`.
   6.29/6.47 (engineering), and start warns about it rather than implying otherwise.
 - **Also delivered:** 6.44 fixtures (production encoder + Go decode),
   6.55 Rust CI (fmt, clippy `-D warnings`, all targets, live job),
-  6.58 `runopsy-agent trace status|capabilities|replay`, 6.62 direct-vs-inferred
+  6.58 `deprehendo-agent trace status|capabilities|replay`, 6.62 direct-vs-inferred
   report, and 6.63 docs including `docs/tracing/ebpf.md` and
   `docs/tracing/permissions.md`.
 - **Residuals, recorded not hidden:** the agent's handshake `monotonic_ns` is a
   wall-clock reading (ordering is safe, the 6.49–6.51 latency anchor is not,
-  across a clock step), and `runopsy-agent status` still does not show tracer
+  across a clock step), and `deprehendo-agent status` still does not show tracer
   health (6.38).
 
 ## Phase 6: principal decisions and review (November 2, 2026)
@@ -1351,7 +1351,7 @@ phase can start; nothing in Phase 5 is waiting on a model.
   records that ran inside the capture, each with its `ref` (a capture with no
   job of its own used to print the previous day's `FAILED` job).
 - **Verification:** `go build ./...`, `GOOS=linux GOARCH=arm64 go build
-  ./cmd/runopsy-agent`, `go vet ./...`, `gofmt -l` clean, `go test -count=1
+  ./cmd/deprehendo-agent`, `go vet ./...`, `gofmt -l` clean, `go test -count=1
   ./...` green (macOS). Provider cost per sample: idle 77.7 µs, active job
   254.7 µs, multiple runners 312.5 µs, churn 148.1 µs, `Freeze` 12.9 µs.
 - **Residual risks (documented, not blocking):** macOS runner identity is
@@ -1361,9 +1361,9 @@ phase can start; nothing in Phase 5 is waiting on a model.
   (`GITHUB_JOB_ASSIGNMENT_STALL`, S12) names no job, because a job ref is bound
   to a worker and a stall has none; the report header lists every runner
   installation on the host, which is noisy on a VM with old checkouts.
-- **Cleanup owed:** the throwaway repo `13eth-a/runopsy-runner-e2e` still
+- **Cleanup owed:** the throwaway repo `13eth-a/deprehendo-runner-e2e` still
   exists (`gh` lacks the `delete_repo` scope), and both Lima VMs still run
-  runners (`linux` = `runopsy-b3-vm`, `runopsy` = the earlier runner).
+  runners (`linux` = `deprehendo-b3-vm`, `deprehendo` = the earlier runner).
 
 ## Phase 5 code items closed (principal, October 31, 2026, evening): only B3 and secondary's share remain
 
@@ -1371,7 +1371,7 @@ phase can start; nothing in Phase 5 is waiting on a model.
   now marks every job that was running then with
   `CONTAINER_LINKAGE_UNAVAILABLE`, instead of leaving the process list silently
   incomplete on cgroup hosts.
-- **F3 fixed:** `RUNOPSY_GITHUB_STALL_WINDOW` below 10 s keeps the 2-minute
+- **F3 fixed:** `DEPREHENDO_GITHUB_STALL_WINDOW` below 10 s keeps the 2-minute
   default.
 - **F4 fixed:** the window in force is recorded as
   `stall_window_seconds` in the provider section (bounded 10 s to 24 h). Older
@@ -1379,7 +1379,7 @@ phase can start; nothing in Phase 5 is waiting on a model.
   bundles.
 - **F5 fixed:** `GITHUB_RUNNER_SELF_TERMINATION` cites the new
   `SUPERVISOR_EXIT_OBSERVED` code.
-- **5.45 verified:** `cmd/runopsy-agent/timeout_e2e_test.go` proves a stated
+- **5.45 verified:** `cmd/deprehendo-agent/timeout_e2e_test.go` proves a stated
   timeout covers the job's SIGKILL in `timeline` and `analyze`, and that a
   statement minutes later does not.
 
@@ -1399,7 +1399,7 @@ secondary's final-audit share.
 
 - **S3 (cancel) passes** on a fresh run: `41261769205` cancelled from the UI; bundle `inc_9c0ade…` records `CANCELLED` with no false failure signature.
 - **S4 (timeout) now reported as `TIMED_OUT`:** `api.go` fetches the job's check-run annotation and marks a job `TIMED_OUT` only on "exceeded the maximum execution time"; any lookup failure keeps `CANCELLED`. Run `41262653679` was enriched with `github api-enrich --repo`, which reports `Job outcome TIMED_OUT` (source `PROVIDER_API`). The capture itself does not call the API. Still open: no signature names a timeout.
-- The runner is deregistered and its service is removed. The throwaway repo `13eth-a/runopsy-runner-e2e` still exists: `gh` lacks the `delete_repo` scope (`gh auth refresh -h github.com -s delete_repo`, then delete it).
+- The runner is deregistered and its service is removed. The throwaway repo `13eth-a/deprehendo-runner-e2e` still exists: `gh` lacks the `delete_repo` scope (`gh auth refresh -h github.com -s delete_repo`, then delete it).
 
 ## S10 and S11 causes found, fixed, and confirmed on the VM (October 31, 2026)
 
@@ -1423,12 +1423,12 @@ Details and re-run steps: `docs/github/real-runner-verification.md` §7.
 
 ## B3 partial: healthy job binds on a live runner (October 31, 2026)
 
-**B3 is NOT complete.** S2 (`healthy`), S6 (intended shutdown) and S7 (listener kill) have run. S1 and S3–S5 are untested, and S8 (orphan) is blocked because the VM has no `gh` and no `runopsy-b3` workflow in its checkout. Phase 5 acceptance stays blocked on B3.
+**B3 is NOT complete.** S2 (`healthy`), S6 (intended shutdown) and S7 (listener kill) have run. S1 and S3–S5 are untested, and S8 (orphan) is blocked because the VM has no `gh` and no `deprehendo-b3` workflow in its checkout. Phase 5 acceptance stays blocked on B3.
 
 - **Fixed the job-assignment binding bug.** A worker was bound against the time it was first sampled, not when it started, so a worker that started more than ±2 s earlier stayed unbound. On Linux the session now uses the process start time (`platform.ProcessStartTime`, from `/proc/<pid>/stat` and `btime`). macOS still uses the sample time, so the same lag can affect darwin. Regression test: `TestSessionAssignmentBindsWhenWorkerSampledLate`.
-- **Verified live (S2):** the Lima Linux runner `runopsy-lima-linux` ran `runopsy-b3` on `13eth-a/runopsy-runner-e2e` (run 41177394588). The bundle `inc_77ada79e899d0e34bf3f96b76ce01a8c.runopsy` shows `GITHUB_JOB_ASSIGNED` with `job=job_40063c66…` and `worker=wkr_fb70ece7…`. The job was SUCCEEDED with no failure claim.
-- **Setup notes:** the agent was built from a copy in `~/src` in the VM (Go at `/usr/local/go/bin`). The incident directory must be mode 0700 or the recorder refuses to start. `selfhosted.yml` in the disposable repo only runs the gated Go test, so `runopsy-b3.yml` (healthy only) was added there for S2. Remove it when cleaning up.
-- **S6 (intended shutdown) passes.** `svc.sh stop` logged `GITHUB_RUNNER_SHUTDOWN` at the same second as the listener exit (bundle `inc_c0d4e99be2fd5685900f945a9f45b307.runopsy`), and no `GITHUB_RUNNER_SELF_TERMINATION` was raised. Two fixes made it pass: the shutdown regex in `logreader.go` now matches the real phrasing (`Received Ctrl-C signal`, `Runner will be shutdown for UserCancelled`), and `intentCovers` in `signatures.go` had its T2 window reversed, so a log record up to 1 s after the exit was not counted. Regression tests: `TestLogReaderReadsCtrlCShutdown` and `TestSelfTerminationShutdownLogLagIsSilent`.
+- **Verified live (S2):** the Lima Linux runner `deprehendo-lima-linux` ran `deprehendo-b3` on `13eth-a/deprehendo-runner-e2e` (run 41177394588). The bundle `inc_77ada79e899d0e34bf3f96b76ce01a8c.deprehendo` shows `GITHUB_JOB_ASSIGNED` with `job=job_40063c66…` and `worker=wkr_fb70ece7…`. The job was SUCCEEDED with no failure claim.
+- **Setup notes:** the agent was built from a copy in `~/src` in the VM (Go at `/usr/local/go/bin`). The incident directory must be mode 0700 or the recorder refuses to start. `selfhosted.yml` in the disposable repo only runs the gated Go test, so `deprehendo-b3.yml` (healthy only) was added there for S2. Remove it when cleaning up.
+- **S6 (intended shutdown) passes.** `svc.sh stop` logged `GITHUB_RUNNER_SHUTDOWN` at the same second as the listener exit (bundle `inc_c0d4e99be2fd5685900f945a9f45b307.deprehendo`), and no `GITHUB_RUNNER_SELF_TERMINATION` was raised. Two fixes made it pass: the shutdown regex in `logreader.go` now matches the real phrasing (`Received Ctrl-C signal`, `Runner will be shutdown for UserCancelled`), and `intentCovers` in `signatures.go` had its T2 window reversed, so a log record up to 1 s after the exit was not counted. Regression tests: `TestLogReaderReadsCtrlCShutdown` and `TestSelfTerminationShutdownLogLagIsSilent`.
 - **S7 (listener kill) passes.** `kill -9` on `Runner.Listener` produced `GITHUB_RUNNER_SELF_TERMINATION` at MEDIUM.
 - **Still to do for B3:** S1, S3 (cancel), S4 (timeout), S5 (SIGSTOP worker), S8 (orphan, needs a dispatch from GitHub or `gh` in the VM). Then run `analyze` and `timeline` on each bundle.
 
@@ -1442,14 +1442,14 @@ Details: `docs/reviews/phase5-principal-audit.md` §5 and the updated §3 table.
   `GITHUB_RUNNER_COMMUNICATION_STALL`. Disconnect is now supporting evidence,
   and the IDLE label defers to STOPPING and ASSIGNED. Tests:
   `signatures_s1_test.go`.
-- **G1 closed.** `runopsy-agent github api-enrich --repo OWNER/NAME` locates
+- **G1 closed.** `deprehendo-agent github api-enrich --repo OWNER/NAME` locates
   recorded jobs by local start time (±30 s) and runner name when known. Unique
   match or nothing. Code: `api_locate.go`; the shared client setup moved into
   `apiClient()`/`apiGet()` in `api.go`.
 - **G3 closed** (macOS identity is PID-only, documented in
   `docs/providers/github-actions.md`).
 - **G2 and G4 were already implemented** (by another model); reviewed. Open
-  findings for engineering, executable with `RUNOPSY_REVIEW_AUDIT=1`
+  findings for engineering, executable with `DEPREHENDO_REVIEW_AUDIT=1`
   (`principal_final_audit_test.go`): **F2**, an unattributed container step on a
   cgroup host leaves no `CONTAINER_LINKAGE_UNAVAILABLE` marker; **F3**, the
   stall-window override has no floor. Also F4 (window not recorded in the
@@ -1523,7 +1523,7 @@ materializes each as a real installation and drives the real session.
 proves the assignment stays unbound in the stall case, proves the healthy cases
 carry no stall/cancellation/termination-intent fact, and requires the stored
 section to be interpretable offline.
-- **5.41 fake runner harness**: `runopsy-sim github <scenario>` plus
+- **5.41 fake runner harness**: `deprehendo-sim github <scenario>` plus
 `internal/simhelper/github.go` run a real runner shape — installation layout,
 `Runner.Listener`/`Runner.Worker`/job processes, diagnostic logs, a loopback
 broker socket — and fail in each scenario's own way. `GitHubPlan`/`PlanFor`
@@ -1533,7 +1533,7 @@ assignment for `assignment-stall` with no worker, kills the job tree with the
 worker for `worker-oom` but not for `orphan-job`, and reaps the whole runner on
 SIGINT/SIGTERM. Tests: `internal/simulator/github_test.go`.
 - **5.43 real E2E correlation**: `tests/phase5_e2e_test.go` (gated by
-`RUNOPSY_E2E_GITHUB=1`) runs harness → recorder → bundle → shipped
+`DEPREHENDO_E2E_GITHUB=1`) runs harness → recorder → bundle → shipped
 `timeline --report`. It asserts installation-derived identity, worker → listener
 → runner binding, the job process tree, honest UNKNOWN job identity without API
 access, no failure claim for a healthy job, an unbound assignment for the stall,
@@ -1630,8 +1630,8 @@ translation and conformance fixtures). `go vet` and the full `go test ./...` sui
 is a real evaluator. `SOCKET_OWNED_BY_STOPPED_IDENTITY` is now real too: the collector keeps the
 owner's start-time on `ConnectionSnapshot`, the stall event records the owner's PID and start-time,
 and the check binds the stopped process incarnation (reused PIDs are ABSENT). Verified: `go vet`,
-full `go test ./...` on the Lima Linux VM, and the gated `RUNOPSY_E2E_CAUSAL=1` /
-`RUNOPSY_REVIEW_AUDIT=1` runs.
+full `go test ./...` on the Lima Linux VM, and the gated `DEPREHENDO_E2E_CAUSAL=1` /
+`DEPREHENDO_REVIEW_AUDIT=1` runs.
 
 **Live socket stall (October 28, 2026, Lima Linux VM):** a sender/reader TCP pair with the reader
 SIGSTOPed for 50 s, recorded and triggered mid-stall. The bundle surfaced `PROCESS_STOPPED` on the
@@ -1677,8 +1677,8 @@ summary, §10 item 9 Tier A socket facts (`tx_queue`, `rx_queue`, `timer`,
 **Verified (linux/amd64 sandbox, Go 1.24 with a local `go` directive override
 that was not written back):** gofmt and vet clean; `go test -race` green for
 causal, cmd, collector, incident, diagnosis and agent;
-`RUNOPSY_REVIEW_AUDIT=1` green; `RUNOPSY_E2E_CAUSAL=1` Phase 4 E2E green (socket
-half saw 7 socket facts); `RUNOPSY_E2E_DIAGNOSIS=1` Phase 2 matrix and Phase 3
+`DEPREHENDO_REVIEW_AUDIT=1` green; `DEPREHENDO_E2E_CAUSAL=1` Phase 4 E2E green (socket
+half saw 7 socket facts); `DEPREHENDO_E2E_DIAGNOSIS=1` Phase 2 matrix and Phase 3
 E2E green. Still failing only on sandbox limits, identical before and after:
 `TestLinuxLiveIdentitySocketAndFD`, `TestLinuxLiveCgroupAndPressure` (no
 cgroup2) and `TestProcessScenariosRespectShortDurationAndCleanChildren` (PID 1
@@ -1707,7 +1707,7 @@ is fully green.
 
 State of the check in this workspace (macOS/darwin — Linux re-run still owed):
 
-- `RUNOPSY_REVIEW_AUDIT=1 go test ./internal/causal` passes all 14 principal-audit
+- `DEPREHENDO_REVIEW_AUDIT=1 go test ./internal/causal` passes all 14 principal-audit
   tests and all 13 `TestGoldenFixtureRemovalNeverStrengthens` subtests,
   including the previously open a3, a5, a6, a8 and a11 fixtures.
 - `go vet ./...` and the full `go test ./...` (all 10 packages) pass.
@@ -1741,7 +1741,7 @@ What closed the findings:
 
 1. **Final re-audit with secondary**, starting from `principal_audit_test.go`. Note the
    audit is no longer gated-only: the `principalPending` calls are deleted for the
-   landed findings, so the default suite pins them; `RUNOPSY_REVIEW_AUDIT=1` is
+   landed findings, so the default suite pins them; `DEPREHENDO_REVIEW_AUDIT=1` is
    now belt-and-braces, not the primary switch.
 2. **4.37 counterfactual corpus residual** (acceptance criteria and the
    15 required pairs are in the audit file). Pairs 1, 2 and 7–14 already run
@@ -1773,7 +1773,7 @@ Still assigned elsewhere, unchanged:
   the environment yields no socket facts the test must print a `"flagship
   chain not exercised"` summary instead of a bare pass.
 - Platform debt from the previous entries still stands: run the race suites,
-  `RUNOPSY_E2E_CAUSAL=1`, the socket-stall E2E and the gated matrix on a real
+  `DEPREHENDO_E2E_CAUSAL=1`, the socket-stall E2E and the gated matrix on a real
   Linux host with cgroup2 before calling Phase 4 done.
 
 ## Phase 4 principal pass: architecture decisions, reviews, audit (October 27, 2026)
@@ -1802,7 +1802,7 @@ principal completed every principal-assigned Phase 4 role:
 - **Final audit:** same file, Part 2. 23 findings: 5 S1 (wrong
   root/health conclusion reaches the user), 9 S2, 9 S3. Each S1/S2 finding was
   reproduced. Fourteen are executable in `internal/causal/principal_audit_test.go`;
-  they skip by default and fail with `RUNOPSY_REVIEW_AUDIT=1`.
+  they skip by default and fail with `DEPREHENDO_REVIEW_AUDIT=1`.
 
 Headline S1 findings: (A1) "root cause" reported for a chain that reaches no
 failure (oom-chain fixture); (A2) a healthy build that touches 98% and recovers
@@ -1821,8 +1821,8 @@ the fuzz suite. adversarial: the 4.37 counterfactual corpus, then the final re-a
 with secondary.
 
 Verification in this pass (linux/amd64 sandbox; the first Linux run of Phase 4):
-race tests green for `internal/causal`, `cmd/runopsy-agent`, `internal/diagnosis`;
-`RUNOPSY_E2E_CAUSAL=1` Phase 4 E2E passed. Socket facts did not surface in the
+race tests green for `internal/causal`, `cmd/deprehendo-agent`, `internal/diagnosis`;
+`DEPREHENDO_E2E_CAUSAL=1` Phase 4 E2E passed. Socket facts did not surface in the
 sandbox, so that half is inconclusive and needs a real Linux host. Platform and
 simulator failures in the full suite are sandbox limits (no cgroup2,
 restricted `/proc`). No production code was changed in this pass: only docs,
@@ -1910,7 +1910,7 @@ follows:
 - Verification (this pass): gofmt clean, `go vet ./...` clean, full
   `go test -race -count=1 -timeout=9m ./...` green on macOS/arm64, the corpus
   evaluation via the CLI (16/19, 0 FP, 13 UNKNOWN), and the gated E2E suite
-  (`RUNOPSY_E2E_DIAGNOSIS=1`) green on macOS (frozen-worker diagnosed,
+  (`DEPREHENDO_E2E_DIAGNOSIS=1`) green on macOS (frozen-worker diagnosed,
   watched clean exit UNKNOWN). NOT rerun: the Linux container matrix and the
   Linux-only CPU-spin E2E case.
 - Remaining epistemology work for implementation/architecture/independent is in the sections below;
@@ -1954,7 +1954,7 @@ independent architecture or implementation review. independent review and the fi
 
 The Phase 3 diagnosis engine exists and is tested: `internal/diagnosis`
 (tri-state evidence model, analysis context, nine signatures, exclusion
-semantics) and the offline `runopsy-agent analyze` CLI (text/`--json`/
+semantics) and the offline `deprehendo-agent analyze` CLI (text/`--json`/
 `--explain`/`--min-confidence`). Confidence is a declared-weight sum with
 per-rule caps, never a probability; missing telemetry is UNKNOWN, never FALSE,
 and failed collector sections carry coverage so rules refuse thin evidence.
@@ -1997,9 +1997,9 @@ and 10 healthy-but-weird baselines (CPU-heavy and memory-heavy compiles, long
 idle socket, intended parent exit, brief stop, brief disk dip, reconnects,
 large writes, busy co-tenant CPU pressure). Git-tracked bundles live in
 `testdata/incidents/` with out-of-band `.ground-truth.json` sidecars;
-`RUNOPSY_WRITE_FIXTURES=1` regenerates them and deletes strays.
+`DEPREHENDO_WRITE_FIXTURES=1` regenerates them and deletes strays.
 - **3.31 confusion matrix**: `TestIncidentCorpusConfusionMatrix` and
-`runopsy-agent evaluate DIR [--json]` report 19/19 correct top diagnoses, 0
+`deprehendo-agent evaluate DIR [--json]` report 19/19 correct top diagnoses, 0
 false positives, 10 UNKNOWN, plus the full matrix. `TestHealthyCorpusFalsePositiveHarness`
 requires every healthy fixture to produce zero matches, `Unknown`, and a
 explained rejection for each signature.
@@ -2008,11 +2008,11 @@ explained rejection for each signature.
 snapshots/20 processes/5 sockets), medium (300/80/20) and large (800/200/60),
 plus context construction in isolation.
 - **3.41 E2E fault evaluation**: `tests/phase3_e2e_test.go`, gated by
-`RUNOPSY_E2E_DIAGNOSIS=1`, runs simulator → live recorder → automatic bundle →
-`runopsy-agent analyze`. Cases: frozen worker (must report `FROZEN_PROCESS`), a
+`DEPREHENDO_E2E_DIAGNOSIS=1`, runs simulator → live recorder → automatic bundle →
+`deprehendo-agent analyze`. Cases: frozen worker (must report `FROZEN_PROCESS`), a
 watched clean `exit --code 7` (must stay `UNKNOWN` with no matches), and CPU
 spin (Linux only; 60 s sustained window). The harness watches a private copy of
-the simulator under a per-test-process name because `--watch-name runopsy-sim`
+the simulator under a per-test-process name because `--watch-name deprehendo-sim`
 also captures simulators from other packages' tests running in parallel; that
 cross-talk produced a spurious `PROCESS_GROUP_TERMINATION` under `go test
 ./...` before isolation. There is deliberately no live orphan case: the
@@ -2076,7 +2076,7 @@ are implemented on top of the engineering/implementation core. The agent now exp
 pipeline end to end:
 
 - **2.2 manual trigger**: `POST /trigger` and `GET /incident` on the private
-  control socket, plus `runopsy-agent trigger`. It prints the incident ID,
+  control socket, plus `deprehendo-agent trigger`. It prints the incident ID,
   waits for publication and reports the saved path; the recorder continues.
 - **2.7 host metadata**: `HostMetadata.MemoryTotal` is populated from
   `/proc/meminfo` (Linux) or `hw.memsize` (darwin), with zero meaning unknown.
@@ -2091,19 +2091,19 @@ pipeline end to end:
 - **2.19 compression**: measured Store vs Deflate on a dense 120-snapshot,
   2,322-event payload. Deflate: 46,398 B / 25.1 ms encode / 50.3 ms decode;
   Store: 1,291,842 B / 22.0 ms / 48.3 ms (darwin/arm64, allocations in README).
-- **2.22 timeline inspection**: `runopsy-agent inspect FILE --timeline` reads
+- **2.22 timeline inspection**: `deprehendo-agent inspect FILE --timeline` reads
   bundles offline, prints a factual summary and event timeline, and never
   diagnoses. Bundle validation (layout/schema/checksums/privacy) happens in
   `incident.ReadFile` before output.
 - **2.31 retention**: `incident.RetentionPolicy` + `Prune`, `DefaultDir`,
   `EnsureDir`, and a `pruningWriter` used by the agent. Defaults: 50 bundles,
   no age limit; startup also removes writer temps older than one hour.
-- **2.34 size budget**: env-gated live matrix (`RUNOPSY_INCIDENT_SIZES=1`) for
+- **2.34 size budget**: env-gated live matrix (`DEPREHENDO_INCIDENT_SIZES=1`) for
   normal, cpu-spin, memory-pressure, frozen-worker, orphan-process and
   socket-stall. Linux/container at ~124 snapshots: 14.4–18.5 KB stored,
   281–431 KB uncompressed. The target is met with room to spare.
 - **2.35 end to end**: `TestPhase2IncidentEndToEnd` starts the real agent with
-  `--watch-name runopsy-sim --trigger-on-stop`, runs `frozen-worker`, waits for
+  `--watch-name deprehendo-sim --trigger-on-stop`, runs `frozen-worker`, waits for
   the automatic bundle, validates stopped-process/post-trigger evidence, runs
   `inspect --timeline`, performs a manual trigger with `--max-incidents 1` to
   verify retention and continued recording, then checks graceful shutdown and
@@ -2246,15 +2246,15 @@ supersedes their cleanup claims and pending reviewer questions.
 
 | Path | Contents |
 |---|---|
-| `cmd/runopsy` | placeholder that prints `Runopsy` |
-| `cmd/runopsy-sim` | entrypoint; all logic lives in `internal/simulator.RunCLI` so it is testable |
+| `cmd/deprehendo` | placeholder that prints `Deprehendo` |
+| `cmd/deprehendo-sim` | entrypoint; all logic lives in `internal/simulator.RunCLI` so it is testable |
 | `internal/events` | `Event`, `Emitter` (text + NDJSON), concurrency-safe, first-write-error tracking |
 | `internal/simulator` | `Scenario`, `Flagged`, `Config`, registry, CLI, all nine scenarios, shared process utilities and tests |
 | `internal/platform` | process snapshot (`/proc` or `ps`), `SignalProcess`, `KillGroup`, `Children`, `Find`, `Alive` |
 | `internal/simhelper` | hidden `_node` (task / w(children) trees) and `_cont` (SIGCONT watcher) helpers |
 | `Makefile`, `.github/workflows/ci.yml`, `README.md`, `LICENSE`, `.gitignore` | bootstrap, scenario targets, acceptance target and Phase 0 docs |
 
-`runopsy-sim --help` lists only what is registered, by design: it must never
+`deprehendo-sim --help` lists only what is registered, by design: it must never
 advertise a scenario that cannot run. Scenarios register themselves in `init()`;
 no CLI edits are required to add another one.
 
@@ -2278,7 +2278,7 @@ type Flagged interface {
 * Register in `init()`: `Register(&CPUSpin{})`. Duplicate names panic, on purpose.
 * Flags: the CLI already registers `--duration`, `--verbose`, `--json` before
   calling `RegisterFlags`. Do not redefine those three. Scenario flags appear in
-  `runopsy-sim <name> --help` automatically.
+  `deprehendo-sim <name> --help` automatically.
 * Cancellation: clean up children/sockets/goroutines, then return `nil`.
   Returning `ctx.Err()` is for genuine interruption failures only, because a
   clean Ctrl+C must exit 0.
@@ -2289,7 +2289,7 @@ type Flagged interface {
   Never write to stdout directly — the emitter owns the stream.
   * text mode: narration + one formatted event line per record, on stdout.
   * `--json`: NDJSON only, narration suppressed, stdout stays parseable.
-  * errors: stderr, prefixed `runopsy-sim: <scenario>:`.
+  * errors: stderr, prefixed `deprehendo-sim: <scenario>:`.
 * Exit codes: `0` success (including Ctrl+C), `1` scenario returned an error,
   `2` usage error. *Exception:* a scenario may return `exitCodeError{code}`
   (unexported, in `exit.go`) to choose the process exit code; the `exit`
@@ -2438,7 +2438,7 @@ an Ubuntu run.
    names the field `Type`. I implemented `type` (the struct is the authoritative
    contract). If the recorder wants `event`, change it now — it is the one part
    of this schema that is expensive to migrate later.
-5. **LICENSE** — MIT with "Runopsy contributors" as holder. Replace with a legal
+5. **LICENSE** — MIT with "Deprehendo contributors" as holder. Replace with a legal
    entity if this will be commercialized.
 
 ## Original remaining checks (superseded by completion review)
@@ -2458,24 +2458,24 @@ gofmt -l .                  clean
 go vet ./...                clean
 go test -count=1 ./...      ok  internal/events, internal/simulator
 go test -race -count=1 ./... ok  (no data races, no goroutine leaks)
-make build                  bin/runopsy, bin/runopsy-sim
+make build                  bin/deprehendo, bin/deprehendo-sim
 ```
 
 Manual, on `darwin/arm64` / Go 1.27.1:
 
-* `runopsy-sim normal --duration 1s` -> `started` + heartbeats + `exited code=0`,
+* `deprehendo-sim normal --duration 1s` -> `started` + heartbeats + `exited code=0`,
   exactly 1s, exit 0.
-* `runopsy-sim normal --json --duration 1s | python3 -m json.tool`-style check ->
+* `deprehendo-sim normal --json --duration 1s | python3 -m json.tool`-style check ->
   4 well-formed records, all with `timestamp`/`scenario`/`type`.
-* `runopsy-sim socket-stall` (defaults) -> 7.0s,
+* `deprehendo-sim socket-stall` (defaults) -> 7.0s,
   `HEALTHY -> STALLED -> RECOVERED -> CLOSED`, `stall_detected silent_ms=1000
   socket=open progress=none`, `recovered stall_ms=6203`, exit 0.
 * `SIGINT` and `SIGTERM` during `normal` -> exit 0, `exited reason=interrupted`.
 * `SIGTERM` during `socket-stall`'s stall -> exit 0,
   `HEALTHY -> STALLED -> CLOSED` (no false recovery).
 * 5 back-to-back short socket-stall runs -> all exit 0 with `CLOSED`; no
-  leftover `runopsy-sim` processes, zombies, or listening sockets afterwards.
-* `runopsy-sim --help` lists all registered scenarios; `definitely-unknown` exits 2 with an unknown-scenario message.
+  leftover `deprehendo-sim` processes, zombies, or listening sockets afterwards.
+* `deprehendo-sim --help` lists all registered scenarios; `definitely-unknown` exits 2 with an unknown-scenario message.
 * `go test ./tests` exercises all scenarios through the built CLI, validates JSON event records and checks signal statuses and process cleanup.
 * `make acceptance` runs the repeatable full-binary integration matrix.
 * `go test -race -count=1 ./...`, `go vet ./...`, `go build ./...`, and
@@ -2553,7 +2553,7 @@ rule contract negatives, and unknown/mismatched provenance validation.
 **secondary-owned work completed in this pass** (self-review, not independent
 sign-off):
 
-- 4.30-4.33 CLI: `runopsy-agent timeline FILE` renders normalized events;
+- 4.30-4.33 CLI: `deprehendo-agent timeline FILE` renders normalized events;
   `--causal` adds rule-backed chains and root candidates; `--json` serializes
   the graph; `--explain-edge` accepts a stable `ED_...` ID, numeric index,
   rule ID, or endpoint pair. `--report` combines Phase 3 matches with causal
@@ -2610,8 +2610,8 @@ exact rule-backed edge multiset, root roles and onsets, unknown-cause anchor,
 
 Harness: `internal/causal/fixture_defs_test.go` (definitions, builders, loader,
 writer) and `internal/causal/fixture_compare_test.go` (structure comparison,
-draft printer). Regenerate inputs with `RUNOPSY_WRITE_CAUSAL_FIXTURES=create`
-(`force` overwrites); draft expectations with `RUNOPSY_PRINT_CAUSAL_FIXTURES=write`
+draft printer). Regenerate inputs with `DEPREHENDO_WRITE_CAUSAL_FIXTURES=create`
+(`force` overwrites); draft expectations with `DEPREHENDO_PRINT_CAUSAL_FIXTURES=write`
 and review before committing — the suite never regenerates `expected.json`, so a
 behavior change fails the build. Every fixture also rejects the v1-unobservable
 events (`OOM_EVENT`, `NETWORK_PROGRESS_*`, `RUNNER_*`, `WORKER_*`).
@@ -2665,8 +2665,8 @@ equal sampling instants while PRECEDES/RECOVERY_OF still require observed order.
 
 ### 4.46/4.47 — end-to-end tests
 
-`tests/phase4_e2e_test.go`, gated by `RUNOPSY_E2E_CAUSAL=1`: live simulator →
-recorder → persisted bundle → `runopsy-agent timeline --report --json`.
+`tests/phase4_e2e_test.go`, gated by `DEPREHENDO_E2E_CAUSAL=1`: live simulator →
+recorder → persisted bundle → `deprehendo-agent timeline --report --json`.
 
 - **4.46 memory pressure**: allocates in the simulator and freezes the capture.
   The test asserts the report's honesty invariants: no fabricated OOM/progress
@@ -2686,7 +2686,7 @@ recorder → persisted bundle → `runopsy-agent timeline --report --json`.
 
 Verified commands and results: `gofmt -l .` clean; `go vet ./...` clean;
 `go test -race -count=1 ./...` green across all packages;
-`RUNOPSY_E2E_CAUSAL=1 go test ./tests -run TestPhase4CausalEndToEnd` green in
+`DEPREHENDO_E2E_CAUSAL=1 go test ./tests -run TestPhase4CausalEndToEnd` green in
 ~11 s. Fixture drift was checked by mutating an expectation (fails, then
 restored). Not verified: Linux (no Linux host this session; CI is
 `ubuntu-latest` but has not run — the repo has no remote yet).
@@ -2700,7 +2700,7 @@ moves into it.
 ### 1 — internal/analysis + document v1 (§3.3)
 
 New package `internal/analysis`: `Run(bundle, sha256hex, Options) (*Document,
-error)` and `WriteJSON`. The document (`runopsy.analysis` v1) carries the
+error)` and `WriteJSON`. The document (`deprehendo.analysis` v1) carries the
 engine identity, evaluation options, bundle manifest + sha256 of the original
 bytes, the bundle's privacy report, the diagnosis report, provider
 interpretations, the causal graph (canonical-order nodes with per-event
@@ -2711,9 +2711,9 @@ evidence class, and the full snapshot series in capture order.
 The orchestration that lived in `package main` (`buildCausalGraph`,
 `diagnosisOptions`, `intentCovers`…, `linkDiagnoses`) moved verbatim into
 `internal/analysis/wiring.go`; the CLI functions are thin wrappers, so CLI,
-timeline renderer and worker run the same code (the "one Runopsy" rule).
+timeline renderer and worker run the same code (the "one Deprehendo" rule).
 
-`runopsy-agent analyze --document FILE` (value flag; `-` = stdout) writes the
+`deprehendo-agent analyze --document FILE` (value flag; `-` = stdout) writes the
 document. Existing `--json`/text output is unchanged.
 
 ### 2 — engine identity + golden fingerprint (§4)
@@ -2731,15 +2731,15 @@ bumping requires updating the pin and the analyzer version.
 
 ### 3 — analyzer worker (§5.4)
 
-`cmd/runopsy-analyzer` + `internal/analyzer`. Child: stdin → `incident.Read`
+`cmd/deprehendo-analyzer` + `internal/analyzer`. Child: stdin → `incident.Read`
 (unmodified hostile-input reader) → `analysis.Run` → document on stdout;
 self-limits (`RLIMIT_CPU` 70 s, `RLIMIT_NOFILE` 16), no inherited
 environment (only `GOMEMLIMIT=1GiB`), bounded stdin read, exit codes
 0/3/4 = READY/REJECTED/FAILED_LIMIT. Parent (`Runner.Run`): one child per job
 in a fresh private directory, 60 s wall clock, statuses READY, REJECTED
 (first-line reason), FAILED_LIMIT, FAILED_CRASH, stderr truncated to 4 KiB.
-`-parent -bundle FILE` runs one job locally; `bin/runopsy-analyzer` and
-`runopsy-agent analyze --document` produce **byte-identical** documents for
+`-parent -bundle FILE` runs one job locally; `bin/deprehendo-analyzer` and
+`deprehendo-agent analyze --document` produce **byte-identical** documents for
 the same fixture (checked with cmp), which is the 7.43 precondition.
 
 ### 4 — Postgres schema (§7.1) — written, NOT yet applied
@@ -2756,7 +2756,7 @@ SQL was hand-checked, nothing executed it).
 
 `internal/analysis`: golden fingerprint, determinism (double render + TZ
 change, byte-equal), digest contract, option recording, privacy-report
-passthrough, nil-bundle guards. `cmd/runopsy-agent`:
+passthrough, nil-bundle guards. `cmd/deprehendo-agent`:
 `TestAnalyzeDocumentMatchesWorkerPath` (CLI document == analysis package
 document). `internal/analyzer`: READY/REJECTED/FAILED_LIMIT/FAILED_CRASH
 statuses via the real built binary, schedule/stdin budgets, stderr
@@ -2801,8 +2801,8 @@ secondary's unblocked Phase 7 work. Full detail: `docs/reviews/phase7-secondary-
   endpoints except loopback; the token goes to the API calls only and never
   to the signed storage POST; cross-host redirects are refused so the bearer
   token cannot follow one.
-- **`runopsy-agent login` / `upload`** (7.11/7.12): credentials at
-  `~/.config/runopsy/config.json`, written atomically 0600 inside a 0700
+- **`deprehendo-agent login` / `upload`** (7.11/7.12): credentials at
+  `~/.config/deprehendo/config.json`, written atomically 0600 inside a 0700
   directory, and refused if group/other-readable. `upload` validates the
   bundle locally with `incident.Read`, hashes the exact bytes sent, prints
   `Uploading incident … / Validated / Uploaded / <url>`, reports a §6
@@ -2814,7 +2814,7 @@ secondary's unblocked Phase 7 work. Full detail: `docs/reviews/phase7-secondary-
   compatibility fields (`document_version`, engine identity, bundle
   `sha256`/`schema_version`/`format_version`) are pinned by JSON name.
 - **Review findings fixed in the §7.1 SQL**: the object-key check now pins
-  `orgs/{org}/bundles/{sha256}.runopsy` (the old `LIKE` admitted `..`), added
+  `orgs/{org}/bundles/{sha256}.deprehendo` (the old `LIKE` admitted `..`), added
   the missing `token_hash` partial index used to resolve bearer tokens, and
   gave `upload_usage` its organization foreign key. Left as recommendations:
   denormalising 7.6's list columns onto `incidents`, catching `23505` as a
@@ -2850,7 +2850,7 @@ Full detail in `docs/reviews/phase7-integration-e2e.md`; the numbers are in
   ~1.1 KB per event, with `analysis.Run` at 3 ms / 55 ms / 6.95 s. Paging the
   `timeline` and `series` arrays is therefore required above ~1,000 events; a
   200-event page is ~220 KB. Browser/DOM metrics are not measured and need
-  `web/`. The 10,000-event case is opt-in (`RUNOPSY_SCALE_10K=1`): run in the
+  `web/`. The 10,000-event case is opt-in (`DEPREHENDO_SCALE_10K=1`): run in the
   parallel suite, it starves two wall-clock tests; see the review §5.1.
 - **7.61 pipeline**: `tests/phase7_e2e_test.go` drives the real binary
   (`login`, `analyze --document`, `upload`) into a reference cloud that
@@ -2860,7 +2860,7 @@ Full detail in `docs/reviews/phase7-integration-e2e.md`; the numbers are in
   is `Already uploaded` with no second analysis, a dropped storage connection
   and a truncated bundle both fail cleanly without touching the local artifact,
   and local analysis still works with the cloud unreachable. No change was
-  needed in `internal/cloudclient` or `cmd/runopsy-agent/cloud.go`.
+  needed in `internal/cloudclient` or `cmd/deprehendo-agent/cloud.go`.
 - **Not done**: 7.62 (no real GitHub runner here; also waits on the open Phase
   6 real-runner correlation row), the rendering leg of 7.61 and browser metrics
   (wait on `web/`), the server-side breakage matrix (waits on engineering's upload flow

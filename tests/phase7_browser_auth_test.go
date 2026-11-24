@@ -1,4 +1,4 @@
-// gated test (RUNOPSY_CLOUD_TEST_DSN; `make test-cloud`) for browser sign-in
+// gated test (DEPREHENDO_CLOUD_TEST_DSN; `make test-cloud`) for browser sign-in
 // (contract §8.2: better auth session JWTs accepted beside personal tokens).
 // A local JWKS server stands in for the auth service; the tokens are real
 // Ed25519 JWTs in the shape neon's managed better auth issues.
@@ -19,8 +19,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/clouddb"
-	"runopsy/internal/cloudserver"
+	"deprehendo/internal/clouddb"
+	"deprehendo/internal/cloudserver"
 )
 
 func TestPhase7BrowserSessionsUseMembershipsAndOrganizationHeader(t *testing.T) {
@@ -73,7 +73,7 @@ func TestPhase7BrowserSessionsUseMembershipsAndOrganizationHeader(t *testing.T) 
 	if err := clouddb.EnsureMembership(ctx, h.DB, user, h.OrgB, "owner"); err != nil {
 		t.Fatal(err)
 	}
-	uploadid, incidentid := createAndStore(t, h, h.TokenA, filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy"))
+	uploadid, incidentid := createAndStore(t, h, h.TokenA, filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo"))
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, uploadid, 90*time.Second); status != http.StatusOK {
 		t.Fatalf("complete = %d %s", status, body)
 	}
@@ -154,7 +154,7 @@ func browserCall(t *testing.T, endpoint, method, path, bearer, org string) (int,
 	}
 	req.Header.Set("Authorization", "Bearer "+bearer)
 	if org != "" {
-		req.Header.Set("X-Runopsy-Organization", org)
+		req.Header.Set("X-Deprehendo-Organization", org)
 	}
 	resp, err := (&http.Client{Timeout: 30 * time.Second}).Do(req)
 	if err != nil {

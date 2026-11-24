@@ -1,18 +1,18 @@
 # GitHub Actions provider
 
-Runopsy's GitHub Actions integration is local-first. It discovers self-hosted
+Deprehendo's GitHub Actions integration is local-first. It discovers self-hosted
 runner processes, associates verified listener/worker incarnations with sampled
 process trees, parses bounded diagnostic-log facts, and stores typed provider
-evidence in the `.runopsy` bundle. The core recorder remains provider-neutral.
+evidence in the `.deprehendo` bundle. The core recorder remains provider-neutral.
 
 ## Commands
 
 ```sh
-runopsy-agent github discover
-runopsy-agent github doctor
-runopsy-agent github watch --interval 1s --window 2m
-runopsy-agent analyze incident.runopsy --report
-runopsy-agent timeline incident.runopsy --report
+deprehendo-agent github discover
+deprehendo-agent github doctor
+deprehendo-agent github watch --interval 1s --window 2m
+deprehendo-agent analyze incident.deprehendo --report
+deprehendo-agent timeline incident.deprehendo --report
 ```
 
 `discover` reports locally verified runner installations; `doctor` reports
@@ -22,7 +22,7 @@ foreground. `doctor` is discovery-only today: it deliberately shows worker,
 communication and overall health as UNKNOWN unless recording has collected
 evidence; it is not a live health probe. To attach to known listener PIDs
 explicitly, use
-`runopsy-agent start --github-watch --github-runner-pids 5218,6041`; supplied
+`deprehendo-agent start --github-watch --github-runner-pids 5218,6041`; supplied
 PIDs are still checked as listener processes. Stop recording with SIGINT or
 SIGTERM. Recording and offline analysis do not require GitHub credentials or
 network access. Captured bundles retain local provider events and can be
@@ -38,11 +38,11 @@ metadata. Unknown evidence remains UNKNOWN rather than being inferred.
 A saved provider section can be enriched after capture:
 
 ```sh
-runopsy-agent github api-enrich --output incident-enriched.runopsy incident.runopsy
+deprehendo-agent github api-enrich --output incident-enriched.deprehendo incident.deprehendo
 ```
 
-The token is read on demand from `RUNOPSY_GITHUB_TOKEN` or a mode-0600 file at
-`~/.runopsy/github-token` (or `--token-file`). The API is optional enrichment:
+The token is read on demand from `DEPREHENDO_GITHUB_TOKEN` or a mode-0600 file at
+`~/.deprehendo/github-token` (or `--token-file`). The API is optional enrichment:
 rate limits, permission errors, network failures, and service errors mark
 provider health degraded and do not discard the captured local evidence. API
 claims do not overwrite local runner-log facts; disagreements are recorded.
@@ -58,7 +58,7 @@ Local capture never learns a job's repository or its numeric run and job IDs
 look up until you name the repository:
 
 ```sh
-runopsy-agent github api-enrich --repo acme/service --output incident-enriched.runopsy incident.runopsy
+deprehendo-agent github api-enrich --repo acme/service --output incident-enriched.deprehendo incident.deprehendo
 ```
 
 `--repo` lists the repository's runs created in the 24 hours before each
@@ -77,16 +77,16 @@ level.
 
 ## Local fake runner (no GitHub required)
 
-`runopsy-sim github <scenario>` runs a fake runner installation so the provider
+`deprehendo-sim github <scenario>` runs a fake runner installation so the provider
 path can be exercised offline: it writes a real runner layout
 (`bin/Runner.Listener`, `bin/Runner.Worker`, `_work/`, `_diag/`, `.runner`),
 starts real processes with those names, writes real diagnostic lines, and holds
 a loopback broker-shaped connection.
 
 ```sh
-runopsy-sim github healthy-job --root /tmp/runner --keep
+deprehendo-sim github healthy-job --root /tmp/runner --keep
 # in another terminal, with the listener PID the harness printed:
-runopsy-agent start --github-runner-pids <listener-pid> --provider-identifiers
+deprehendo-agent start --github-runner-pids <listener-pid> --provider-identifiers
 ```
 
 Scenarios: `healthy-idle`, `healthy-job`, `assignment-stall`,
@@ -110,10 +110,10 @@ the `testdata/github/` fixtures rather than by the harness.
 ## End-to-end and performance checks
 
 The full local pipeline (fake runner → recorder → stored provider section →
-GitHub-aware report) is gated behind `RUNOPSY_E2E_GITHUB=1`:
+GitHub-aware report) is gated behind `DEPREHENDO_E2E_GITHUB=1`:
 
 ```sh
-RUNOPSY_E2E_GITHUB=1 go test ./tests -run TestPhase5GitHubEndToEnd -v
+DEPREHENDO_E2E_GITHUB=1 go test ./tests -run TestPhase5GitHubEndToEnd -v
 ```
 
 It asserts runner identity from the installation, worker→listener→runner

@@ -132,7 +132,7 @@ eBPF backend reports `unavailable` with a reason and `auto` falls back. If
 | Backend | Needs |
 |---|---|
 | eBPF | `CAP_BPF` and `CAP_PERFMON` (5.8+); `CAP_SYS_RESOURCE` too below 5.11 (memlock); `CAP_SYS_ADMIN` on older kernels. Lockdown in confidentiality mode blocks kernel reads: reported as unavailable. |
-| proc connector | No privilege on 6.18 **[6.18]**: uid 65534 with no `CAP_NET_ADMIN` subscribed and received events. Older kernels refuse an unprivileged listener; as far as I know the relaxation landed in 6.6. Ubuntu 22.04 (5.15) therefore needs `CAP_NET_ADMIN`. Check on the VM with `runopsy-trace capabilities` as a non-root user. Works only in the initial network namespace. |
+| proc connector | No privilege on 6.18 **[6.18]**: uid 65534 with no `CAP_NET_ADMIN` subscribed and received events. Older kernels refuse an unprivileged listener; as far as I know the relaxation landed in 6.6. Ubuntu 22.04 (5.15) therefore needs `CAP_NET_ADMIN`. Check on the VM with `deprehendo-trace capabilities` as a non-root user. Works only in the initial network namespace. |
 | proc connector receive buffer | The default netlink buffer (~208 KiB) dropped about 20% of the exits of a 200-process burst. The tracer now requests 16 MiB. `SO_RCVBUFFORCE` needs `CAP_NET_ADMIN`; otherwise the request is capped at `net.core.rmem_max`, which is 212992 on stock Ubuntu. Deployments without the capability should raise `net.core.rmem_max` to at least 16 MiB. Drops are visible either way (§7). |
 
 Both backends report PIDs in the initial PID namespace. **The tracer and the
@@ -359,7 +359,7 @@ Numbers are never reused. Fixtures are regenerated in the same commit as any
 schema change. The cross-language test must decode **production** bytes in
 both directions: Rust-encoded events in Go (done), and Go-encoded controls in
 the **production** Rust decoder (done: `wire_compat_test.rs` speaks Go's exact
-framing to the `runopsy-trace` server and asserts the ack field names).
+framing to the `deprehendo-trace` server and asserts the ack field names).
 
 ## 7. Loss and coverage (6.25–6.27)
 
@@ -580,7 +580,7 @@ Tracing adds exec paths, `comm`, signal numbers and PIDs.
 
 | Capability | Status |
 |---|---|
-| Rust tracer runs independently | ✅ (`runopsy-trace debug` verified on 6.18) |
+| Rust tracer runs independently | ✅ (`deprehendo-trace debug` verified on 6.18) |
 | Go↔Rust protocol versioned | ✅ |
 | Process exec captured | ✅ proc connector, verified 10,000/10,000 |
 | Process exit captured | ✅ after this review (it captured none on a real kernel before) |
@@ -591,7 +591,7 @@ Tracing adds exec paths, `comm`, signal numbers and PIDs.
 | Tracer crash doesn't kill the agent | ✅ (tested; §6.3 a/e landed — pdeathsig, supervision timer); events already written before a crash are delivered |
 | Tracing unavailable → polling | ✅ |
 | Event drops detectable | ✅ including kernel-side drops and a full kernel watch map; a dead watched PID no longer reports loss that did not happen |
-| Trace evidence enters `.runopsy` | ✅ events carry provenance in bundles, and `SIGNAL_SENT`/`OOM_KILL` now reach the causal graph with exact identity (November 4, 2026) |
+| Trace evidence enters `.deprehendo` | ✅ events carry provenance in bundles, and `SIGNAL_SENT`/`OOM_KILL` now reach the causal graph with exact identity (November 4, 2026) |
 | Phase 3 signatures consume it | ✅ signal-bound rules see TRACE_* exits; `OOM_KILL@5` consumes the tracer's victim-naming record as its own evidence (November 4, 2026) |
 | Phase 4 causality consumes it | ✅ EXEC/EXIT/STOPPED/RESUMED are kernel-direct; `SIGNAL_TERMINATES_PROCESS@1` and the direct-record path of `OOM_CAUSES_PROCESS_EXIT@2` are live (November 4, 2026) |
 | GitHub job correlation survives | ✅ verified on a real runner 2026-11-04 (Lima self-hosted, `selfhosted-e2e`): job accepted/assigned/completed `SUCCEEDED` correlated with tracing active (`proc_connector`, 280 traced exits, 0 lost) and **no failure claim**. The false `PROCESS_GROUP_TERMINATION` on a successful job's cleanup is fixed: a stated job outcome covers the job's observed tree, so the leftover job processes the runner SIGKILLs at job end (their own PGID, `signal:9`) are context. Run `41950041166` before (0.80 CRITICAL) and `41950705732` after (no match); fixture `testdata/github/selfhosted-e2e-job-success/` |

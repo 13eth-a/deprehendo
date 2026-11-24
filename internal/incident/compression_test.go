@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 // richSnapshot is a deliberately busy but policy-safe sample: the fields a

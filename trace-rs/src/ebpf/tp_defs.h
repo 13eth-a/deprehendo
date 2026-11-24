@@ -10,8 +10,8 @@
  * format before trusting the backend. verified on 6.18 (x86_64), where the
  * offsets match exactly.
  */
-#ifndef RUNOPSY_TP_DEFS_H
-#define RUNOPSY_TP_DEFS_H
+#ifndef DEPREHENDO_TP_DEFS_H
+#define DEPREHENDO_TP_DEFS_H
 
 /* sched:sched_process_exec: common + __data_loc filename + pid + old_pid */
 struct tp_exec {
@@ -158,4 +158,4 @@ struct tp_sys_exit {
 	long ret;
 };
 
-#endif /* RUNOPSY_TP_DEFS_H */
+#endif /* DEPREHENDO_TP_DEFS_H */

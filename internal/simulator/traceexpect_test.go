@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"runopsy/internal/trace"
+	"deprehendo/internal/trace"
 )
 
 // every registered scenario must state its trace expectation, so a new

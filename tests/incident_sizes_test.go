@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 func envDuration(name string, fallback time.Duration) time.Duration {
@@ -51,19 +51,19 @@ func bundleBytes(t *testing.T, i *incident.Incident, compressed bool) int {
 // TestPhase2BundleSizes measures the real pipeline for every phase 0 scenario.
 // it is opt-in because it runs live processes for a minute or more.
 //
-//	RUNOPSY_INCIDENT_SIZES=1 go test -run TestPhase2BundleSizes -v ./tests
+//	DEPREHENDO_INCIDENT_SIZES=1 go test -run TestPhase2BundleSizes -v ./tests
 //
-// RUNOPSY_INCIDENT_SAMPLES (default 120) and RUNOPSY_INCIDENT_INTERVAL
+// DEPREHENDO_INCIDENT_SAMPLES (default 120) and DEPREHENDO_INCIDENT_INTERVAL
 // (default 50ms) control the retained timeline length.
 func TestPhase2BundleSizes(t *testing.T) {
-	if os.Getenv("RUNOPSY_INCIDENT_SIZES") == "" {
-		t.Skip("set RUNOPSY_INCIDENT_SIZES=1 to measure live bundle sizes")
+	if os.Getenv("DEPREHENDO_INCIDENT_SIZES") == "" {
+		t.Skip("set DEPREHENDO_INCIDENT_SIZES=1 to measure live bundle sizes")
 	}
 	if testing.Short() {
 		t.Skip("live size measurement")
 	}
-	target := envInt("RUNOPSY_INCIDENT_SAMPLES", 120)
-	interval := envDuration("RUNOPSY_INCIDENT_INTERVAL", 50*time.Millisecond)
+	target := envInt("DEPREHENDO_INCIDENT_SAMPLES", 120)
+	interval := envDuration("DEPREHENDO_INCIDENT_INTERVAL", 50*time.Millisecond)
 	cases := []struct {
 		name string
 		args []string

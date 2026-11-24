@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // A stated SUCCEEDED job intends its worker's exit (the normal end of a job).

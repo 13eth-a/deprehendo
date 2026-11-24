@@ -1,11 +1,11 @@
 GO ?= go
 BIN_DIR ?= bin
-RUNOPSY := $(BIN_DIR)/runopsy-agent
-SIM := $(BIN_DIR)/runopsy-sim
-TRACE_RUST := $(BIN_DIR)/runopsy-trace
-CLOUD := $(BIN_DIR)/runopsy-cloud
-ANALYZER := $(BIN_DIR)/runopsy-analyzer
-COST := $(BIN_DIR)/runopsy-cost
+DEPREHENDO := $(BIN_DIR)/deprehendo-agent
+SIM := $(BIN_DIR)/deprehendo-sim
+TRACE_RUST := $(BIN_DIR)/deprehendo-trace
+CLOUD := $(BIN_DIR)/deprehendo-cloud
+ANALYZER := $(BIN_DIR)/deprehendo-analyzer
+COST := $(BIN_DIR)/deprehendo-cost
 
 .PHONY: all build test race vet fmt lint clean \
 	sim-normal sim-cpu sim-memory sim-freeze sim-orphan \
@@ -18,11 +18,11 @@ all: build
 
 build:
 	@mkdir -p $(BIN_DIR)
-	$(GO) build -o $(RUNOPSY) ./cmd/runopsy-agent
-	$(GO) build -o $(SIM) ./cmd/runopsy-sim
-	$(GO) build -o $(CLOUD) ./cmd/runopsy-cloud
-	$(GO) build -o $(ANALYZER) ./cmd/runopsy-analyzer
-	$(GO) build -o $(COST) ./cmd/runopsy-cost
+	$(GO) build -o $(DEPREHENDO) ./cmd/deprehendo-agent
+	$(GO) build -o $(SIM) ./cmd/deprehendo-sim
+	$(GO) build -o $(CLOUD) ./cmd/deprehendo-cloud
+	$(GO) build -o $(ANALYZER) ./cmd/deprehendo-analyzer
+	$(GO) build -o $(COST) ./cmd/deprehendo-cost
 test:
 	$(GO) test ./...
 
@@ -81,7 +81,7 @@ sim-signal: build
 trace-build:
 	cargo build --manifest-path trace-rs/Cargo.toml --target-dir trace-rs/target
 	@mkdir -p $(BIN_DIR)
-	cp trace-rs/target/debug/runopsy-trace $(TRACE_RUST)
+	cp trace-rs/target/debug/deprehendo-trace $(TRACE_RUST)
 
 trace-test: trace-build
 	cargo test --all-targets --manifest-path trace-rs/Cargo.toml
@@ -98,7 +98,7 @@ trace-fmt:
 trace-fixtures: trace-build trace-test
 	$(TRACE_RUST) genfixtures testdata/trace
 	mkdir -p $(BIN_DIR)
-	$(GO) run ./cmd/runopsy-agent trace replay testdata/trace/dropped-events.bin > /dev/null
+	$(GO) run ./cmd/deprehendo-agent trace replay testdata/trace/dropped-events.bin > /dev/null
 
 # performance budget (6.49/6.50) and the default churn size (6.51). the go
 # bridge tests need no kernel; trace-live adds the real tracer measurement.
@@ -107,19 +107,19 @@ trace-bench: trace-build
 	$(GO) test -run '^$$' -bench . -benchmem ./internal/trace
 
 trace-churn:
-	RUNOPSY_TRACE_CHURN=100000 $(GO) test -count=1 -run 'TestPipelineChurn' -v ./internal/trace
+	DEPREHENDO_TRACE_CHURN=100000 $(GO) test -count=1 -run 'TestPipelineChurn' -v ./internal/trace
 
 # the live 100k process run from contract §14: the real tracer, the real
 # kernel, as whatever user invokes it (the point is a non-root user with stock
 # net.core.rmem_max, where overruns become visible gaps). reports coverage and
 # accounted loss rather than asserting the environment was friendly.
 trace-churn-live: trace-build
-	RUNOPSY_TRACE_BINARY=$(abspath $(TRACE_RUST)) RUNOPSY_LIVE_CHURN=100000 \
+	DEPREHENDO_TRACE_BINARY=$(abspath $(TRACE_RUST)) DEPREHENDO_LIVE_CHURN=100000 \
 		$(GO) test -count=1 -timeout 20m -run 'TestLiveChurn' -v ./internal/trace
 
 # live measurements are Linux-only and skip with a reason elsewhere (6.37).
 trace-live: trace-build
-	RUNOPSY_TRACE_BINARY=$(abspath $(TRACE_RUST)) $(GO) test -count=1 -run 'TestLive' -v ./internal/trace
+	DEPREHENDO_TRACE_BINARY=$(abspath $(TRACE_RUST)) $(GO) test -count=1 -run 'TestLive' -v ./internal/trace
 
 # --- cloud backend (phase 7) ------------------------------------------------
 
@@ -129,31 +129,31 @@ trace-live: trace-build
 # through the worker, the failure combinations (storage/DB/analyzer) and the
 # local/cloud document equality check.
 # requires docker. skipped cleanly elsewhere: the tests skip without
-# RUNOPSY_CLOUD_TEST_DSN.
+# DEPREHENDO_CLOUD_TEST_DSN.
 #
 # the host port is deliberately not 5432: developers commonly run a local
 # postgres there, and a silent collision would point the tests at that server
 # (where the connecting role may not exist) instead of this container.
 CLOUD_TEST_PORT ?= 55432
 test-cloud: build force-run
-	docker rm -f runopsy-pg-test >/dev/null 2>&1 || true
-	docker run -d --rm --name runopsy-pg-test \
-		-e POSTGRES_PASSWORD=runopsy -e POSTGRES_DB=runopsy \
+	docker rm -f deprehendo-pg-test >/dev/null 2>&1 || true
+	docker run -d --rm --name deprehendo-pg-test \
+		-e POSTGRES_PASSWORD=deprehendo -e POSTGRES_DB=deprehendo \
 		-p $(CLOUD_TEST_PORT):5432 postgres:16-alpine >/dev/null
 	@# -h 127.0.0.1 matters: plain pg_isready talks to the unix socket, which
 	@# the initdb temporary server also answers, so it reports ready while the
 	@# real server is still starting up and the first migration gets 57P03.
 	@for i in $$(seq 1 60); do \
-		docker exec runopsy-pg-test pg_isready -h 127.0.0.1 -U postgres -d runopsy >/dev/null 2>&1 && break; sleep 1; done; \
-	docker exec runopsy-pg-test pg_isready -h 127.0.0.1 -U postgres -d runopsy >/dev/null 2>&1 || { \
-		echo "postgres container did not become ready"; docker logs runopsy-pg-test 2>&1 | tail -20; \
-		docker rm -f runopsy-pg-test >/dev/null 2>&1; exit 1; }
-	@DSN='postgres://postgres:runopsy@127.0.0.1:$(CLOUD_TEST_PORT)/runopsy?sslmode=disable'; \
+		docker exec deprehendo-pg-test pg_isready -h 127.0.0.1 -U postgres -d deprehendo >/dev/null 2>&1 && break; sleep 1; done; \
+	docker exec deprehendo-pg-test pg_isready -h 127.0.0.1 -U postgres -d deprehendo >/dev/null 2>&1 || { \
+		echo "postgres container did not become ready"; docker logs deprehendo-pg-test 2>&1 | tail -20; \
+		docker rm -f deprehendo-pg-test >/dev/null 2>&1; exit 1; }
+	@DSN='postgres://postgres:deprehendo@127.0.0.1:$(CLOUD_TEST_PORT)/deprehendo?sslmode=disable'; \
 	if ! ($(CLOUD) migrate -database "$$DSN" && $(CLOUD) migrate -database "$$DSN" && \
-		RUNOPSY_CLOUD_TEST_DSN="$$DSN" $(GO) test -count=1 -run 'TestPhase7' ./tests); then \
+		DEPREHENDO_CLOUD_TEST_DSN="$$DSN" $(GO) test -count=1 -run 'TestPhase7' ./tests); then \
 		status=1; else \
 		status=0; fi; \
-	docker rm -f runopsy-pg-test >/dev/null 2>&1 || true; exit $$status
+	docker rm -f deprehendo-pg-test >/dev/null 2>&1 || true; exit $$status
 
 # Point-in-time recovery rehearsal (7.56): a base backup plus archived WAL,
 # restored to a chosen timestamp, with the object store snapshotted and

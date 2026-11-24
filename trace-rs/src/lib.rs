@@ -1,6 +1,6 @@
-//! runopsy-trace library (finding O17): every module is exposed so the
+//! deprehendo-trace library (finding O17): every module is exposed so the
 //! integration tests decode with the *production* schema and framing, not a
-//! mirror of it. The `runopsy-trace` binary is a thin shell over this crate.
+//! mirror of it. The `deprehendo-trace` binary is a thin shell over this crate.
 //!
 //! Wire contract mirrored with `internal/trace` (Go): change both together
 //! (docs/tracing/protocol.md).

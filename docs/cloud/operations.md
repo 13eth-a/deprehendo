@@ -1,6 +1,6 @@
 # Cloud operations: migrations, backup, retention, telemetry (7.55–7.58)
 
-Audience: whoever deploys Runopsy Cloud. Everything here is the MVP-sized
+Audience: whoever deploys Deprehendo Cloud. Everything here is the MVP-sized
 answer: no backup infrastructure of our own, no retention daemon, no metrics
 server.
 
@@ -9,8 +9,8 @@ server.
 `db/migrations/NNNN_name.up.sql` / `.down.sql`, applied by the real binary:
 
 ```bash
-runopsy-cloud migrate -database "$DSN"          # apply everything pending
-runopsy-cloud migrate -database "$DSN" -down    # roll back every applied file
+deprehendo-cloud migrate -database "$DSN"          # apply everything pending
+deprehendo-cloud migrate -database "$DSN" -down    # roll back every applied file
 ```
 
 Rules the runner enforces (`internal/clouddb`):
@@ -45,7 +45,7 @@ Two stores, two answers:
   `incidents` row.
 - **Object storage** holds the immutable originals and the derived documents.
   Use the provider's durability/versioning; an original is written once under
-  `orgs/{org}/bundles/{sha256}.runopsy` and the store refuses a second write to
+  `orgs/{org}/bundles/{sha256}.deprehendo` and the store refuses a second write to
   the same key, which is what makes "the original never changes" true.
 
 An inconsistency between them is recoverable in one direction only: a bundle
@@ -66,8 +66,8 @@ the rows. If storage fails, it returns 503 and keeps the rows so deletion can
 be retried. The time-based sweep is the operator-run complement (no daemon):
 
 ```bash
-runopsy-cloud prune -database "$DSN" -older-than 90d -dry-run   # preview
-runopsy-cloud prune -database "$DSN" -older-than 90d [-limit 1000]
+deprehendo-cloud prune -database "$DSN" -older-than 90d -dry-run   # preview
+deprehendo-cloud prune -database "$DSN" -older-than 90d [-limit 1000]
 ```
 
 The dry run lists each upload it would delete (id, organization, timestamp,
@@ -125,10 +125,10 @@ the review of those call sites.
 ## Upload queue on the agent (7.46–7.49)
 
 ```bash
-runopsy-agent login -endpoint https://… -auto-upload   # opt in, writes auto_upload
-runopsy-agent queue                                   # report and drain now
-runopsy-agent queue --retry                           # reset failed entries
-runopsy-agent queue --no-drain                        # report only
+deprehendo-agent login -endpoint https://… -auto-upload   # opt in, writes auto_upload
+deprehendo-agent queue                                   # report and drain now
+deprehendo-agent queue --retry                           # reset failed entries
+deprehendo-agent queue --no-drain                        # report only
 ```
 
 - The queue file lives beside the credential file (`queue.json`, 0600, in a

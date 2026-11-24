@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 )
 
 func BenchmarkRuntimeSample(b *testing.B) {
@@ -29,8 +29,8 @@ func BenchmarkRuntimeSample(b *testing.B) {
 
 // Opt-in measurement, not a brittle machine-specific performance assertion.
 func TestRecorderResourceMeasurement(t *testing.T) {
-	if runtime.GOOS != "linux" || os.Getenv("RUNOPSY_MEASURE") != "1" {
-		t.Skip("set RUNOPSY_MEASURE=1 on Linux")
+	if runtime.GOOS != "linux" || os.Getenv("DEPREHENDO_MEASURE") != "1" {
+		t.Skip("set DEPREHENDO_MEASURE=1 on Linux")
 	}
 	r, err := New(Options{Interval: time.Second, Capacity: 120, Filter: collector.Filter{PIDs: []int{os.Getpid()}}})
 	if err != nil {

@@ -4,10 +4,10 @@
 > 6.18/x86_64).** `trace-rs/src/libbpf.rs` (hand-rolled FFI, no new crates:
 > crates.io stayed untouched, the backend links the system `libbpf-dev`
 > 1.x), `trace-rs/src/ebpf_backend.rs` (attach + ring pump + watch control)
-> and `trace-rs/src/ebpf/runopsy.bpf.c` (the kernel programs). The proc
+> and `trace-rs/src/ebpf/deprehendo.bpf.c` (the kernel programs). The proc
 > connector remains the automatic fallback.
 >
-> Verified live with `scripts/ebpf-e2e.sh`: `runopsy-trace capabilities`
+> Verified live with `scripts/ebpf-e2e.sh`: `deprehendo-trace capabilities`
 > unprivileged refuses with the privilege reason and selects the proc
 > connector; as root every claimed row reports `attached`, and a real
 > session captured for a watched subtree `PROCESS_EXEC /bin/sh`,
@@ -26,7 +26,7 @@
 >
 > **arm64, root (2026-11-04):** on the Lima VM (kernel 7.0.0-34-generic,
 > aarch64) the release tracer built against the system clang and libbpf 1.6.3,
-> `runopsy-trace capabilities` reported backend `ebpf` with all five capability
+> `deprehendo-trace capabilities` reported backend `ebpf` with all five capability
 > rows `attached`, and `sudo -n scripts/ebpf-e2e.sh` printed `EBPF-E2E-OK`
 > (exec/exit, in-kernel `SIGNAL_SENT`, exit-by-SIGTERM with `fact=2`,
 > stop/resume). Every claim in this document is now verified on x86_64 and
@@ -103,7 +103,7 @@ proc-connector events: watch-set filter → bounded queue → socket.
 
 Toolchain: system `clang -target bpf` (CO-RE, committed `vmlinux.h` from
 kernel 6.18) and the system libbpf (`libbpf-dev` ≥ 1.x). `build.rs` compiles
-`src/ebpf/runopsy.bpf.c` at cargo build time; a toolchain without clang
+`src/ebpf/deprehendo.bpf.c` at cargo build time; a toolchain without clang
 builds a binary that reports the backend `unavailable` with the honest
 reason while the rest keeps working. The crate stays dependency-free; no
 crates.io API or FFI-generator was added.

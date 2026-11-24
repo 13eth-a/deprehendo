@@ -1,8 +1,8 @@
 [package]
-name = "runopsy-trace"
+name = "deprehendo-trace"
 version = "0.1.0"
 edition = "2021"
-description = "Runopsy Phase 6 low-level lifecycle tracer (Linux-only sensor feeding the Go agent)"
+description = "Deprehendo Phase 6 low-level lifecycle tracer (Linux-only sensor feeding the Go agent)"
 license = "MIT"
 
 [dependencies]
@@ -13,7 +13,7 @@ serde_json = "1"
 tempfile = "3"
 
 [[bin]]
-name = "runopsy-trace"
+name = "deprehendo-trace"
 path = "src/main.rs"
 
 [profile.release]

@@ -7,7 +7,7 @@ package causal
 // the code as audited, so they are gated: by default each one skips with its
 // finding ID. run them with
 //
-//	RUNOPSY_REVIEW_AUDIT=1 go test ./internal/causal -run PrincipalAudit -v
+//	DEPREHENDO_REVIEW_AUDIT=1 go test ./internal/causal -run PrincipalAudit -v
 //
 // when a fix lands, delete that test's principalPending call so the test becomes
 // a permanent regression guard. do not weaken an assertion to make it pass;
@@ -20,15 +20,15 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 func principalPending(t *testing.T, finding string) {
 	t.Helper()
-	if os.Getenv("RUNOPSY_REVIEW_AUDIT") == "" {
-		t.Skipf("principal-AUDIT %s pending engineering implementation (set RUNOPSY_REVIEW_AUDIT=1 to run)", finding)
+	if os.Getenv("DEPREHENDO_REVIEW_AUDIT") == "" {
+		t.Skipf("principal-AUDIT %s pending engineering implementation (set DEPREHENDO_REVIEW_AUDIT=1 to run)", finding)
 	}
 }
 

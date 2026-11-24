@@ -114,7 +114,7 @@ fn handshake_version_negotiation() {
     let h = Handshake {
         protocol_version: PROTOCOL_VERSION,
         min_version: PROTOCOL_VERSION_MIN,
-        tracer_version: "runopsy-trace/0.1.0".into(),
+        tracer_version: "deprehendo-trace/0.1.0".into(),
         capabilities: default_capabilities(),
         monotonic_ns: 1,
         wall_unix_ms: 2,

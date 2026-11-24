@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 func writeEvaluationFixture(t *testing.T, dir, name string, i *incident.Incident, truth GroundTruth) string {
@@ -19,7 +19,7 @@ func writeEvaluationFixture(t *testing.T, dir, name string, i *incident.Incident
 	if err := incident.Encode(&data, i, true); err != nil {
 		t.Fatal(err)
 	}
-	path := filepath.Join(dir, name+".runopsy")
+	path := filepath.Join(dir, name+".deprehendo")
 	if err := os.WriteFile(path, data.Bytes(), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +59,7 @@ func TestEvaluateDirectoryGroundTruthConfusionAndOrdering(t *testing.T) {
 	if result.Total != 2 || result.CorrectTop != 2 || result.Unknown != 1 || result.FalsePositives != 0 {
 		t.Errorf("summary: %+v", result)
 	}
-	if len(result.Cases) != 2 || filepath.Base(result.Cases[0].Path) != "a-frozen.runopsy" || filepath.Base(result.Cases[1].Path) != "z-healthy.runopsy" {
+	if len(result.Cases) != 2 || filepath.Base(result.Cases[0].Path) != "a-frozen.deprehendo" || filepath.Base(result.Cases[1].Path) != "z-healthy.deprehendo" {
 		t.Errorf("cases not sorted: %+v", result.Cases)
 	}
 	if result.Confusion[string(SignatureFrozenProcess)][string(SignatureFrozenProcess)] != 1 || result.Confusion["NO_KNOWN_FAILURE"]["UNKNOWN"] != 1 {

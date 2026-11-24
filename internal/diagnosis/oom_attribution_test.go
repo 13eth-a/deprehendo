@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 // principal review of secondary L2 (2026-11-02). L2 lets the sample in which the victim

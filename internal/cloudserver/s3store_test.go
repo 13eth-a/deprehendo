@@ -139,7 +139,7 @@ func (f *fakeProvider) signatureValid(r *http.Request, body []byte) bool {
 func newTestStore(t *testing.T, secret string) (*s3Store, *fakeProvider, *httptest.Server) {
 	t.Helper()
 	fake := &fakeProvider{
-		bucket:    "runopsy-test",
+		bucket:    "deprehendo-test",
 		accessKey: "AKIATESTKEY",
 		secretKey: "test-secret-value",
 		objects:   map[string][]byte{},
@@ -149,7 +149,7 @@ func newTestStore(t *testing.T, secret string) (*s3Store, *fakeProvider, *httpte
 	store, err := NewS3Store(S3Config{
 		Endpoint:  srv.URL,
 		Region:    "eu-west-1",
-		Bucket:    "runopsy-test",
+		Bucket:    "deprehendo-test",
 		AccessKey: "AKIATESTKEY",
 		SecretKey: secret,
 	})
@@ -162,7 +162,7 @@ func newTestStore(t *testing.T, secret string) (*s3Store, *fakeProvider, *httpte
 	return s, fake, srv
 }
 
-const testKey = "orgs/org_a1/bundles/" + "0000000000000000000000000000000000000000000000000000000000000000" + ".runopsy"
+const testKey = "orgs/org_a1/bundles/" + "0000000000000000000000000000000000000000000000000000000000000000" + ".deprehendo"
 
 func TestS3StoreRoundTrip(t *testing.T) {
 	store, fake, _ := newTestStore(t, "test-secret-value")
@@ -227,7 +227,7 @@ func TestS3StoreWrongSecretIsRefused(t *testing.T) {
 func TestS3StoreRefusesUnsafeKeysBeforeNetwork(t *testing.T) {
 	store, fake, _ := newTestStore(t, "test-secret-value")
 	ctx := context.Background()
-	for _, key := range []string{"../etc/passwd.runopsy", "orgs/../x.runopsy", "/abs.runopsy", "no-dot-name", "orgs/A/x.runopsy"} {
+	for _, key := range []string{"../etc/passwd.deprehendo", "orgs/../x.deprehendo", "/abs.deprehendo", "no-dot-name", "orgs/A/x.deprehendo"} {
 		if _, err := store.Put(ctx, key, []byte("x")); err == nil {
 			t.Errorf("Put accepted unsafe key %q", key)
 		}
@@ -242,7 +242,7 @@ func TestS3StoreRefusesUnsafeKeysBeforeNetwork(t *testing.T) {
 
 func TestNewS3StoreValidatesConfig(t *testing.T) {
 	good := S3Config{
-		Endpoint: "https://s3.example.com", Region: "us-east-1", Bucket: "runopsy-assets",
+		Endpoint: "https://s3.example.com", Region: "us-east-1", Bucket: "deprehendo-assets",
 		AccessKey: "AK", SecretKey: "SK",
 	}
 	if _, err := NewS3Store(good); err != nil {
@@ -286,7 +286,7 @@ func TestS3StoreConflictIsImmutable(t *testing.T) {
 	}))
 	defer srv.Close()
 	store, err := NewS3Store(S3Config{
-		Endpoint: srv.URL, Region: "eu-west-1", Bucket: "runopsy-test",
+		Endpoint: srv.URL, Region: "eu-west-1", Bucket: "deprehendo-test",
 		AccessKey: "AK", SecretKey: "SK",
 	})
 	if err != nil {
@@ -312,7 +312,7 @@ func TestS3StoreDoesNotFollowRedirects(t *testing.T) {
 	}))
 	defer redirector.Close()
 	store, err := NewS3Store(S3Config{
-		Endpoint: redirector.URL, Region: "eu-west-1", Bucket: "runopsy-test",
+		Endpoint: redirector.URL, Region: "eu-west-1", Bucket: "deprehendo-test",
 		AccessKey: "AK", SecretKey: "SK",
 	})
 	if err != nil {

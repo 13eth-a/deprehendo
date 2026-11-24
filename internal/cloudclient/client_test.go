@@ -21,14 +21,14 @@ func TestNormalizeEndpoint(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"https://runopsy.example.com/", "https://runopsy.example.com", false},
-		{"https://runopsy.example.com/api/", "https://runopsy.example.com/api", false},
+		{"https://deprehendo.example.com/", "https://deprehendo.example.com", false},
+		{"https://deprehendo.example.com/api/", "https://deprehendo.example.com/api", false},
 		{"http://127.0.0.1:8787", "http://127.0.0.1:8787", false},
 		{"http://localhost:8787/", "http://localhost:8787", false},
 		{"http://[::1]:8787", "http://[::1]:8787", false},
-		{"http://runopsy.example.com", "", true},
-		{"ftp://runopsy.example.com", "", true},
-		{"runopsy.example.com", "", true},
+		{"http://deprehendo.example.com", "", true},
+		{"ftp://deprehendo.example.com", "", true},
+		{"deprehendo.example.com", "", true},
 		{"", "", true},
 	}
 	for _, tc := range cases {
@@ -60,7 +60,7 @@ func TestNewRejectsEmptyTokenAndHostlessEndpoint(t *testing.T) {
 
 // F1 (docs/cloud/secrets-audit.md): endpoint errors must not echo userinfo.
 func TestNormalizeEndpointErrorHidesUserinfo(t *testing.T) {
-	for _, in := range []string{"http://user:secret@runopsy.example.com", "https://user:secret@runopsy.example.com:9/oops", "ftp://user:secret@runopsy.example.com"} {
+	for _, in := range []string{"http://user:secret@deprehendo.example.com", "https://user:secret@deprehendo.example.com:9/oops", "ftp://user:secret@deprehendo.example.com"} {
 		_, err := NormalizeEndpoint(in)
 		if err == nil {
 			t.Errorf("NormalizeEndpoint(%q) accepted", in)
@@ -69,16 +69,16 @@ func TestNormalizeEndpointErrorHidesUserinfo(t *testing.T) {
 		if strings.Contains(err.Error(), "secret") || strings.Contains(err.Error(), "user:") {
 			t.Errorf("error %q leaks endpoint userinfo", err)
 		}
-		if !strings.Contains(err.Error(), "runopsy.example.com") {
+		if !strings.Contains(err.Error(), "deprehendo.example.com") {
 			t.Errorf("error %q lost the redacted host", err)
 		}
 	}
 	// the normalized endpoint keeps no credentials.
-	if got, err := NormalizeEndpoint("https://runopsy.example.com/api/"); err != nil || got != "https://runopsy.example.com/api" {
+	if got, err := NormalizeEndpoint("https://deprehendo.example.com/api/"); err != nil || got != "https://deprehendo.example.com/api" {
 		t.Errorf("NormalizeEndpoint clean endpoint = %q, %v", got, err)
 	}
 	// hostless garbage cannot echo the input either.
-	_, err := NormalizeEndpoint("runopsy.example.com user:secret")
+	_, err := NormalizeEndpoint("deprehendo.example.com user:secret")
 	if err == nil || strings.Contains(err.Error(), "secret") {
 		t.Errorf("error %q leaked input", err)
 	}
@@ -89,7 +89,7 @@ func TestNormalizeEndpointErrorHidesUserinfo(t *testing.T) {
 func TestStorageFailureDoesNotLeakPresignedURL(t *testing.T) {
 	target := &Target{URL: "http://127.0.0.1:1/bucket/signature=SECRET", Fields: map[string]string{"key": "k"}}
 	c, _ := New("http://127.0.0.1:1", "tok")
-	path := filepath.Join(t.TempDir(), "incident.runopsy")
+	path := filepath.Join(t.TempDir(), "incident.deprehendo")
 	if err := os.WriteFile(path, []byte("bytes"), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -169,10 +169,10 @@ func (f *fakeCloud) handler() http.Handler {
 		scheme := "http://" + r.Host
 		writeJSON(w, http.StatusCreated, Upload{
 			UploadID:  "upl_new",
-			ObjectKey: "orgs/org_1/bundles/" + f.create.SHA256 + ".runopsy",
+			ObjectKey: "orgs/org_1/bundles/" + f.create.SHA256 + ".deprehendo",
 			Upload: &Target{
 				URL:    scheme + "/storage",
-				Fields: map[string]string{"key": "orgs/org_1/bundles/x.runopsy", "policy": "c2lnbmVk"},
+				Fields: map[string]string{"key": "orgs/org_1/bundles/x.deprehendo", "policy": "c2lnbmVk"},
 			},
 		})
 	})
@@ -237,8 +237,8 @@ func writeError(w http.ResponseWriter, status int, code, message string) {
 
 func testBundleFile(t *testing.T) (string, []byte) {
 	t.Helper()
-	data := []byte("runopsy bundle bytes")
-	path := filepath.Join(t.TempDir(), "incident.runopsy")
+	data := []byte("deprehendo bundle bytes")
+	path := filepath.Join(t.TempDir(), "incident.deprehendo")
 	if err := os.WriteFile(path, data, 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -279,7 +279,7 @@ func TestUploadRoundTrip(t *testing.T) {
 	if fake.storageAuth != "" {
 		t.Errorf("storage request carried Authorization %q; the signed URL must not receive the token", fake.storageAuth)
 	}
-	if fake.storageField["policy"] != "c2lnbmVk" || fake.storageField["key"] != "orgs/org_1/bundles/x.runopsy" {
+	if fake.storageField["policy"] != "c2lnbmVk" || fake.storageField["key"] != "orgs/org_1/bundles/x.deprehendo" {
 		t.Errorf("storage fields = %v", fake.storageField)
 	}
 

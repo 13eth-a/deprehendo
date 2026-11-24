@@ -1,13 +1,13 @@
-// runopsy-trace: linux high-resolution lifecycle tracer (phase 6).
+// deprehendo-trace: linux high-resolution lifecycle tracer (phase 6).
 //
 // binary entry point. command modes:
-//   runopsy-trace --socket PATH [--unix-socket PATH]  serve the go agent over a unix socket (standalone)
-//   runopsy-trace --supervised --socket PATH          one session, dies with the agent (§6.3 a)
-//   runopsy-trace debug                               command-line live feed (acceptance POC)
-//   runopsy-trace replay FILE                         replay a captured event stream (6.45)
-//   runopsy-trace capabilities                        print the probed capability set (6.58)
-//   runopsy-trace status                              short health line
-//   runopsy-trace genfixtures DIR                     write the wire fixtures (6.44)
+//   deprehendo-trace --socket PATH [--unix-socket PATH]  serve the go agent over a unix socket (standalone)
+//   deprehendo-trace --supervised --socket PATH          one session, dies with the agent (§6.3 a)
+//   deprehendo-trace debug                               command-line live feed (acceptance POC)
+//   deprehendo-trace replay FILE                         replay a captured event stream (6.45)
+//   deprehendo-trace capabilities                        print the probed capability set (6.58)
+//   deprehendo-trace status                              short health line
+//   deprehendo-trace genfixtures DIR                     write the wire fixtures (6.44)
 //
 // the library (src/lib.rs) exposes every module for the integration tests
 // and the go cross-language suite; this binary is a thin shell over it
@@ -21,19 +21,19 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
-use runopsy_trace::framing::{
+use deprehendo_trace::framing::{
     decode_event, encode_event, write_frames, Framer, ProtocolError, ReadOutcome, Result,
 };
-use runopsy_trace::schema::*;
-use runopsy_trace::transport::Tracer;
-use runopsy_trace::watch::WatchSet;
-use runopsy_trace::LossCounters;
+use deprehendo_trace::schema::*;
+use deprehendo_trace::transport::Tracer;
+use deprehendo_trace::watch::WatchSet;
+use deprehendo_trace::LossCounters;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(|s| s.as_str()) {
         Some("--version") | Some("version") => {
-            println!("runopsy-trace {}", env!("CARGO_PKG_VERSION"));
+            println!("deprehendo-trace {}", env!("CARGO_PKG_VERSION"));
         }
         Some("capabilities") => {
             // the attach IS the probe (contract §2.1): a capability is
@@ -42,7 +42,7 @@ fn main() {
             run_caps_command();
         }
         Some("status") => {
-            let sel = runopsy_trace::backend::select_backend();
+            let sel = deprehendo_trace::backend::select_backend();
             if !sel.selection_reason.is_empty() {
                 eprintln!("selection: {}", sel.selection_reason);
             }
@@ -55,19 +55,19 @@ fn main() {
         }
         Some("debug") => {
             if let Err(e) = debug_mode() {
-                eprintln!("runopsy-trace: debug: {}", e);
+                eprintln!("deprehendo-trace: debug: {}", e);
                 std::process::exit(1);
             }
         }
         Some("replay") => {
             if let Err(e) = replay_mode(args.get(2)) {
-                eprintln!("runopsy-trace: replay: {}", e);
+                eprintln!("deprehendo-trace: replay: {}", e);
                 std::process::exit(1);
             }
         }
         Some("genfixtures") => {
             if let Err(e) = genfixtures(args.get(2)) {
-                eprintln!("runopsy-trace: genfixtures: {}", e);
+                eprintln!("deprehendo-trace: genfixtures: {}", e);
                 std::process::exit(1);
             }
         }
@@ -89,7 +89,7 @@ fn main() {
             let path = match path {
                 Some(p) => p,
                 None => {
-                    eprintln!("runopsy-trace: --socket requires a path");
+                    eprintln!("deprehendo-trace: --socket requires a path");
                     std::process::exit(2);
                 }
             };
@@ -100,22 +100,22 @@ fn main() {
                 tracer.serve()
             };
             if let Err(e) = result {
-                eprintln!("runopsy-trace: {}", e);
+                eprintln!("deprehendo-trace: {}", e);
                 std::process::exit(1);
             }
         }
         _ => {
-            eprintln!("usage: runopsy-trace [--socket PATH | --supervised --socket PATH | debug | replay FILE | capabilities | status | genfixtures DIR | --version]");
+            eprintln!("usage: deprehendo-trace [--socket PATH | --supervised --socket PATH | debug | replay FILE | capabilities | status | genfixtures DIR | --version]");
             std::process::exit(2);
         }
     }
 }
 
-/// `runopsy-trace capabilities`: a real attach attempt, then detach.
+/// `deprehendo-trace capabilities`: a real attach attempt, then detach.
 /// Reports per-capability `{state, reason}` honestly, plus the selection
 /// reason when the primary backend was refused (contract §2.1).
 fn run_caps_command() {
-    let sel = runopsy_trace::backend::select_backend();
+    let sel = deprehendo_trace::backend::select_backend();
     if !sel.selection_reason.is_empty() {
         eprintln!("selection: {}", sel.selection_reason);
     }
@@ -170,14 +170,14 @@ fn yesno(v: bool) -> &'static str {
     }
 }
 
-/// `runopsy-trace debug`: stream matched exec/exit events to stdout so the
+/// `deprehendo-trace debug`: stream matched exec/exit events to stdout so the
 /// tracer can be validated end to end without the Go agent (6.19 POC).
 /// Ctrl-C ends the session cleanly: the exit-event stream is flushed to
 /// EOF and the process leaves with a normal status.
 fn debug_mode() -> Result<()> {
     // name the real refusal (6.53), not a generic one: the operator needs
     // to know whether the kernel or the privilege level said no.
-    let (caps, refusal) = runopsy_trace::backend::probe_with_reason();
+    let (caps, refusal) = deprehendo_trace::backend::probe_with_reason();
     if caps.unsupported {
         let why = refusal.unwrap_or_else(|| "the tracer gave no reason".into());
         return Err(ProtocolError(format!(
@@ -194,14 +194,14 @@ fn debug_mode() -> Result<()> {
     // SIGINT/SIGTERM set SIGNALLED; the loop below polls it. (principal review:
     // the handler used to set a flag nothing read, so Ctrl-C did nothing.)
     signal_setup();
-    eprintln!("runopsy-trace: streaming exec/exit events (Ctrl-C to stop)");
+    eprintln!("deprehendo-trace: streaming exec/exit events (Ctrl-C to stop)");
     let (tx, rx) = std::sync::mpsc::sync_channel::<TraceEvent>(1024);
     // selection here too: debug streams from whichever backend attached
     // (eBPF primary, proc connector fallback), and says which.
-    let mut chosen = runopsy_trace::backend::select_backend();
-    eprintln!("runopsy-trace: backend {}", chosen.caps.backend);
+    let mut chosen = deprehendo_trace::backend::select_backend();
+    eprintln!("deprehendo-trace: backend {}", chosen.caps.backend);
     if !chosen.selection_reason.is_empty() {
-        eprintln!("runopsy-trace: {}", chosen.selection_reason);
+        eprintln!("deprehendo-trace: {}", chosen.selection_reason);
     }
     let collector = {
         let watch = Arc::clone(&watch);
@@ -251,7 +251,7 @@ fn debug_mode() -> Result<()> {
     drop(collector);
     let dropped = loss.total();
     if dropped > 0 {
-        eprintln!("runopsy-trace: {} events dropped", dropped);
+        eprintln!("deprehendo-trace: {} events dropped", dropped);
     }
     Ok(())
 }
@@ -287,7 +287,7 @@ extern "C" fn sig_handler(_sig: i32) {
 #[cfg(not(target_os = "linux"))]
 fn signal_setup() {}
 
-/// `runopsy-trace replay FILE`: read the same framed format the Go agent
+/// `deprehendo-trace replay FILE`: read the same framed format the Go agent
 /// writes for raw trace capture (6.45) and dump events as text.
 ///
 /// Bad-sample policy is the Go decoder's (`internal/trace/replay.go`), on
@@ -341,7 +341,7 @@ fn replay_mode(path: Option<&String>) -> Result<()> {
     Ok(())
 }
 
-/// `runopsy-trace genfixtures DIR` (6.44/6.56): write the long-term fixture
+/// `deprehendo-trace genfixtures DIR` (6.44/6.56): write the long-term fixture
 /// set with the *production* encoder, so the Go suite decodes exactly what
 /// the Rust tracer emits, a real cross-language check, not a mirror of
 /// mirrored structs. Files (matching testdata/trace):

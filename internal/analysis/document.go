@@ -7,18 +7,18 @@ import (
 	"strings"
 	"time"
 
-	"runopsy/internal/causal"
-	"runopsy/internal/collector"
-	"runopsy/internal/diagnosis"
-	"runopsy/internal/incident"
-	"runopsy/internal/provider"
+	"deprehendo/internal/causal"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/diagnosis"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/provider"
 )
 
 // DocumentVersion identifies the schema of document in this file.
 //
 // history:
 //
-//	1: initial runopsy.analysis v1 (phase 7, contract docs/cloud/contract.md
+//	1: initial deprehendo.analysis v1 (phase 7, contract docs/cloud/contract.md
 //	   §3.3).
 const DocumentVersion = 1
 

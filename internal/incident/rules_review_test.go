@@ -1,8 +1,8 @@
 package incident
 
 import (
-	"runopsy/internal/collector"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/platform"
 	"testing"
 	"time"
 )

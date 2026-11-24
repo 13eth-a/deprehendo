@@ -1,6 +1,6 @@
 // package trace implements the go half of the phase 6 tracer contract:
 // framing, handshake, controls and clock-offset bookkeeping towards the
-// runopsy-trace rust component. the rust side mirrors schema.go and
+// deprehendo-trace rust component. the rust side mirrors schema.go and
 // framing.go exactly (docs/tracing/protocol.md).
 package trace
 

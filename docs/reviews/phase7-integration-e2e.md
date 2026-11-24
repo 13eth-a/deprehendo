@@ -14,7 +14,7 @@ rejection-status row behavior.
 ## 1. Verdict
 
 **The pipeline now runs end to end and agrees from the first byte to the last
-rendered value.** A checked-in bundle goes through the real `runopsy-agent`
+rendered value.** A checked-in bundle goes through the real `deprehendo-agent`
 binary — `login`, `analyze --document`, `upload` — into the reference cloud
 *and* into engineering's real `internal/cloudserver` behind Postgres; the document the
 real server serves is byte-identical to the laptop's document, and the web
@@ -44,7 +44,7 @@ isolation or organization scoping.
 | 7.61 pipeline | `tests/phase7_e2e_test.go` | bundle → CLI document → client → reference cloud → stored original + document, plus dedupe, network loss, invalid bundle, offline |
 | 7.61 dashboard | `tests/phase7_dashboard_render_test.go` + `web/test/render-document.tsx` | the CLI's document, rendered by the dashboard components: same headline, band, unknown flag, incident, timeline total and page size |
 | 7.61 server failure matrix | `tests/phase7_failures_test.go` | analyzer reject/limit/timeout/crash, storage read failure, document write failure, DB write lost after storage, membership change across every access path |
-| 7.61 SQL invariant | `tests/phase7_server_test.go` | the real server's `/analysis` bytes equal `runopsy-agent analyze --document` |
+| 7.61 SQL invariant | `tests/phase7_server_test.go` | the real server's `/analysis` bytes equal `deprehendo-agent analyze --document` |
 | 7.40 review | `tests/phase7_upload_corpus_test.go`, `docs/cloud/upload-corpus.md` | §5.5 cases driven through the worker, with the HTTP answer and the resulting dashboard row asserted |
 
 The demo manifest is deliberately not a second corpus: every entry points into
@@ -57,7 +57,7 @@ accuracy harness can never disagree about what a bundle contains.
 (with dedupe by SHA-256), presigned POST, complete (recompute digest, run
 `incident.Read` + `analysis.Run`, store the document) and one read endpoint. It
 is a contract fixture, not engineering's server: its value is that it exercises
-`internal/cloudclient` and `cmd/runopsy-agent cloud.go` without changing
+`internal/cloudclient` and `cmd/deprehendo-agent cloud.go` without changing
 either. The real server is exercised separately by the gated suite, so the
 client contract and the deployed behavior are both covered.
 
@@ -69,9 +69,9 @@ driven as subprocesses; nothing about the cloud is mocked inside the CLI.
 
 | Step | Result |
 |---|---|
-| `runopsy-agent login -endpoint … -token-file …` | exit 0, credential file `0600` |
-| `runopsy-agent analyze --document local.json frozen-worker.runopsy` | exit 0, document rendered locally |
-| `runopsy-agent upload -config … frozen-worker.runopsy` | `Uploading incident inc_…`, `Validated`, `Uploaded` |
+| `deprehendo-agent login -endpoint … -token-file …` | exit 0, credential file `0600` |
+| `deprehendo-agent analyze --document local.json frozen-worker.deprehendo` | exit 0, document rendered locally |
+| `deprehendo-agent upload -config … frozen-worker.deprehendo` | `Uploading incident inc_…`, `Validated`, `Uploaded` |
 | cloud stores the original | bytes equal the file's, digest equal to its SHA-256 (L4) |
 | reference cloud stores the document | **byte-identical** to `local.json` (L2, 7.43) |
 | real server `/api/incidents/{id}/analysis` | **byte-identical** to `local.json` (7.43, 7.61) |
@@ -83,7 +83,7 @@ driven as subprocesses; nothing about the cloud is mocked inside the CLI.
 
 No token appeared in any output, and the token never reached the storage
 endpoint. The server-side matrix runs in `make test-cloud` against a throwaway
-Postgres 16 (`ok runopsy/tests 9.5s` for the gated set, `8.4s` for `make
+Postgres 16 (`ok deprehendo/tests 9.5s` for the gated set, `8.4s` for `make
 test-cloud` end to end).
 
 ## 4. Findings
@@ -160,7 +160,7 @@ bundle bytes:
 | 1,000 | 1,001 | 120 | 7.3 KB | 1.22 MB | 1,216 | 55 ms |
 | 10,000 | 10,001 | 120 | 56 KB | 10.86 MB | 1,086 | 6.95–13.2 s |
 
-The 10,000-event case is opt-in (`RUNOPSY_SCALE_10K=1`): it spends about seven
+The 10,000-event case is opt-in (`DEPREHENDO_SCALE_10K=1`): it spends about seven
 seconds of CPU and starves the suite's wall-clock tests when packages run in
 parallel. That is a measurement, not a regression guard; CI runs the cheap
 sizes.
@@ -197,7 +197,7 @@ unmeasured and are not claimed.
 
 Run on 2026-11-05 in this tree, with a follow-up cloud-suite run on 2026-11-06:
 
-- `make test-cloud` — pass: migrations applied twice, then `ok runopsy/tests`
+- `make test-cloud` — pass: migrations applied twice, then `ok deprehendo/tests`
   (9.5 s for `-run TestPhase7`, including the corpus, the failure matrix and
   the local/cloud byte equality).
 - Follow-up `make test-cloud` on 2026-11-06 — pass with the real analyzer

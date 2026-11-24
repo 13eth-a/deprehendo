@@ -72,8 +72,8 @@ func TestGoldenFixtureRemovalNeverStrengthens(t *testing.T) {
 		}
 		fixture := fixture
 		t.Run(fixture.Name, func(t *testing.T) {
-			if fixture.Gate != "" && os.Getenv("RUNOPSY_REVIEW_AUDIT") == "" {
-				t.Skip("gated fixture (set RUNOPSY_REVIEW_AUDIT=1 to run)")
+			if fixture.Gate != "" && os.Getenv("DEPREHENDO_REVIEW_AUDIT") == "" {
+				t.Skip("gated fixture (set DEPREHENDO_REVIEW_AUDIT=1 to run)")
 			}
 			if fixture.Mode == "events" {
 				t.Skip("events-mode fixture: no bundle timeline to vary")

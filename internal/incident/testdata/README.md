@@ -1,4 +1,4 @@
-`v1-minimal.runopsy` is a fixed format-v1/schema-v1/json-v1 compatibility fixture.
+`v1-minimal.deprehendo` is a fixed format-v1/schema-v1/json-v1 compatibility fixture.
 It contains one synthetic Linux process sample and an incident-triggered event
 at 2026-10-26T12:00:00Z. All identifiers and metrics are synthetic; identifying
 strings contain conservative-v1 redaction placeholders. The fixture is decoded

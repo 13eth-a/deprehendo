@@ -9,7 +9,7 @@ import (
 	"syscall"
 )
 
-const tokenEnvironment = "RUNOPSY_GITHUB_TOKEN"
+const tokenEnvironment = "DEPREHENDO_GITHUB_TOKEN"
 
 // TokenSource obtains credentials at request time. it never includes token
 // bytes in returned errors, logs, or persistent state.
@@ -34,7 +34,7 @@ func (s TokenSource) Token(ctx context.Context) (string, error) {
 		if err != nil || home == "" {
 			return "", fmt.Errorf("github: no token source configured")
 		}
-		path = filepath.Join(home, ".runopsy", "github-token")
+		path = filepath.Join(home, ".deprehendo", "github-token")
 	}
 	info, err := os.Lstat(path)
 	if err != nil {

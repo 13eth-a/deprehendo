@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/trace"
+	"deprehendo/internal/trace"
 )
 
 // tracer helpers ------------------------------------------------------------

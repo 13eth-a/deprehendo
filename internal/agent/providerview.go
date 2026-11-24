@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"runopsy/internal/platform"
-	"runopsy/internal/provider"
-	"runopsy/internal/provider/evidence"
+	"deprehendo/internal/platform"
+	"deprehendo/internal/provider"
+	"deprehendo/internal/provider/evidence"
 )
 
 // agentHostView is the agent's provider.HostView (phase 5 §4.2). it exposes

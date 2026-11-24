@@ -48,7 +48,7 @@ func multipartBody(t *testing.T, fields [][2]string, filePos int, file []byte) (
 	var body bytes.Buffer
 	w := multipart.NewWriter(&body)
 	writefile := func() {
-		part, err := w.CreateFormFile("file", "bundle.runopsy")
+		part, err := w.CreateFormFile("file", "bundle.deprehendo")
 		if err != nil {
 			t.Fatal(err)
 		}

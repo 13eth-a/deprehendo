@@ -25,7 +25,7 @@ Go polling  = broad, inexpensive system state (whole-host truth)
 Rust tracer = precise high-frequency lifecycle events (scoped, filtered)
 ```
 
-The rest of Runopsy does not care which language produced the evidence;
+The rest of Deprehendo does not care which language produced the evidence;
 both feed the same event stream, timeline, signatures and causal engine.
 
 ## Component boundaries
@@ -93,7 +93,7 @@ The agent must degrade gracefully on capability loss:
 
 ```text
 eBPF/tracing unavailable → polling-only mode
-not: eBPF/tracing unavailable → Runopsy unusable
+not: eBPF/tracing unavailable → Deprehendo unusable
 ```
 
 ## Watch-set and filtering (6.22/6.23)
@@ -110,7 +110,7 @@ identity level (`start_ticks` + PID), not a kernel-filter property.
 ### Fixtures
 
 `testdata/trace/*.bin` are written by the **production Rust encoder**
-(`runopsy-trace genfixtures testdata/trace`), not by a mirrored Go struct, so
+(`deprehendo-trace genfixtures testdata/trace`), not by a mirrored Go struct, so
 the Go suite decodes exactly what the tracer emits. They cover one event
 each: exec, exit-by-signal, SIGNAL_SENT, observed stop, OOM, a deliberate
 sequence gap (`dropped-events.bin`) and a mis-versioned payload
@@ -128,8 +128,8 @@ as any framing or schema edit, in both languages.
 Both sides read the same framed wire format:
 
 ```sh
-runopsy-trace replay trace.bin          # Rust decoder, per-event text
-runopsy-agent trace replay trace.bin    # Go decoder (the incident data path)
+deprehendo-trace replay trace.bin          # Rust decoder, per-event text
+deprehendo-agent trace replay trace.bin    # Go decoder (the incident data path)
 ```
 
 The Go form also summarises frame counts, bad samples, and the sequence-gap
@@ -138,8 +138,8 @@ loss total so evidence completeness is visible without re-parsing (6.26/6.27).
 ### Debug CLI
 
 ```sh
-runopsy-agent trace capabilities   # runopsy-trace's capability report
-runopsy-agent trace status         # mode + binary the agent would use
+deprehendo-agent trace capabilities   # deprehendo-trace's capability report
+deprehendo-agent trace status         # mode + binary the agent would use
 ```
 
 Both resolve the tracer binary the way the supervisor does; a missing binary
@@ -148,7 +148,7 @@ is a degraded message, not a fatal error.
 ### Agent wiring and debug recording (6.21/6.46)
 
 ```sh
-runopsy-agent start --tracing auto --trace-debug-output /tmp/trace.bin
+deprehendo-agent start --tracing auto --trace-debug-output /tmp/trace.bin
 ```
 
 `start` supervises the tracer next to the recorder (`trace.Manager`): mode

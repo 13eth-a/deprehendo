@@ -146,7 +146,7 @@ stall; their labels were not rewritten to make the matrix look perfect. Run:
 ```sh
 go test -race -count=1 ./internal/diagnosis
 go test -run 'TestConfidenceCalibration|TestCalibration|TestImplementation|TestGroupDepartureWindow|TestCgroupHypothesis' -v ./internal/diagnosis
-runopsy-agent evaluate ./testdata/incidents
+deprehendo-agent evaluate ./testdata/incidents
 ```
 
 The corpus and calibration variants are authored regression cases, not estimates

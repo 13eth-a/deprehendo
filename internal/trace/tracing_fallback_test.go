@@ -77,11 +77,11 @@ func TestFallbackOnRealKernelRefusal(t *testing.T) {
 	if err != nil {
 		t.Skipf("unshare not available: %v", err)
 	}
-	bin, why := ResolveBinary(os.Getenv("RUNOPSY_TRACE_BINARY"))
+	bin, why := ResolveBinary(os.Getenv("DEPREHENDO_TRACE_BINARY"))
 	if bin == "" {
 		t.Skipf("tracer binary not available: %s", why)
 	}
-	wrapper := filepath.Join(t.TempDir(), "runopsy-trace-netns")
+	wrapper := filepath.Join(t.TempDir(), "deprehendo-trace-netns")
 	script := "#!/bin/sh\nexec " + unshare + " -n " + bin + " \"$@\"\n"
 	if err := os.WriteFile(wrapper, []byte(script), 0o755); err != nil {
 		t.Fatalf("write wrapper: %v", err)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"runopsy/internal/collector"
+	"deprehendo/internal/collector"
 )
 
 // networkStallThreshold is how long a socket that previously made progress

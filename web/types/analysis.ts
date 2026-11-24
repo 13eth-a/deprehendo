@@ -1,4 +1,4 @@
-// types for the runopsy.analysis document, version 1 (docs/cloud/contract.md §3.3).
+// types for the deprehendo.analysis document, version 1 (docs/cloud/contract.md §3.3).
 //
 // the document is produced by the go analyzer (internal/analysis.Run). this
 // file only describes its JSON so the dashboard can read it. it never

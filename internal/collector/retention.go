@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"runopsy/internal/platform"
+	"deprehendo/internal/platform"
 )
 
 func cloneSnapshot(s Snapshot) Snapshot {

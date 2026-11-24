@@ -43,7 +43,7 @@ mask() {
 		cut -c1-200
 }
 
-say "runopsy real-runner verification report"
+say "deprehendo real-runner verification report"
 say "generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 say "platform:  $(uname -s) $(uname -m)"
 
@@ -157,11 +157,11 @@ if [ "${#logs[@]}" -gt 0 ]; then
 		grep -E '^\[' | sed -E 's/^\[[^]]*\] ?//' | mask | sort | uniq -c | sort -rn | head -60 >&3
 fi
 
-section "7. runopsy discovery (if runopsy-agent is on PATH)"
-if command -v runopsy-agent >/dev/null 2>&1; then
-	runopsy-agent github discover >&3 2>&1 || say "github discover exited non-zero"
+section "7. deprehendo discovery (if deprehendo-agent is on PATH)"
+if command -v deprehendo-agent >/dev/null 2>&1; then
+	deprehendo-agent github discover >&3 2>&1 || say "github discover exited non-zero"
 else
-	say "runopsy-agent not on PATH; skipped"
+	say "deprehendo-agent not on PATH; skipped"
 fi
 
 exec 3>&-

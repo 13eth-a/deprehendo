@@ -33,7 +33,7 @@ id, err := capture.Trigger(incident.Trigger{Type: "manual"})
 The agent wires a `SnapshotRule` pipeline (`agent.NewIncidentPipeline`) so the
 same callback feeds prehistory, evaluates factual triggers, and reports the
 saved path. The control socket exposes `POST /trigger` and `GET /incident`;
-`runopsy-agent trigger [--note TEXT]` polls the latter until the bundle is published. Notes are explicitly supplied user text and may contain sensitive information; they are not secret-scanned. They are bounded to 1024 UTF-8 bytes, and Unicode control, format and line/paragraph separator characters are normalized before export.
+`deprehendo-agent trigger [--note TEXT]` polls the latter until the bundle is published. Notes are explicitly supplied user text and may contain sensitive information; they are not secret-scanned. They are bounded to 1024 UTF-8 bytes, and Unicode control, format and line/paragraph separator characters are normalized before export.
 
 The completed-sample callback receives detached data outside the scheduler's
 history lock, serialized with collection. It must return promptly and must not
@@ -100,7 +100,7 @@ sees "already active" rather than a second incident.
 
 ### Directory and retention
 
-- `DefaultDir` resolves `~/.runopsy/incidents`; `EnsureDir` creates missing
+- `DefaultDir` resolves `~/.deprehendo/incidents`; `EnsureDir` creates missing
   parents with mode 0700 and rejects an existing group/world-accessible
   directory.
 - `CleanupStaleTemps(dir, cutoff)` removes only writer-owned temp files older
@@ -109,20 +109,20 @@ sees "already active" rather than a second incident.
   a bundle.
 - `RetentionPolicy{MaxIncidents, MaxAge}` is applied by `Prune`. Zero disables
   that limit; both zero disables pruning. Only regular files named
-  `inc_<32 hex>.runopsy` are candidates; symlinks, directories, temp files and
+  `inc_<32 hex>.deprehendo` are candidates; symlinks, directories, temp files and
   unrelated names are ignored. Removal is oldest-first, deterministic on equal
   timestamps, and returns all removal errors after processing the candidates.
 - The agent applies retention once at startup (before writers) and after each
   completed save. A prune failure is logged and never changes a successful save
   into a failed incident.
 
-## `.runopsy` v1 format
+## `.deprehendo` v1 format
 
 ZIP with Store (measurement) or Deflate (default); exactly five regular members:
 
 | Member | Contents |
 |---|---|
-| `manifest.json` | format=`runopsy`, format_version=1, schema_version=1, snapshot_encoding=`json-v1`, ID/time, agent/platform/architecture, SHA-256 and expanded byte sizes |
+| `manifest.json` | format=`deprehendo`, format_version=1, schema_version=1, snapshot_encoding=`json-v1`, ID/time, agent/platform/architecture, SHA-256 and expanded byte sizes |
 | `metadata.json` | incident header, capture bounds/window, trigger, host and process identities; snapshots/events fields are null here |
 | `snapshots.json` | JSON array of Phase 1 snapshot structs, durations as integer nanoseconds, timestamps RFC3339 |
 | `events.jsonl` | typed factual JSON event stream, chronological (ties allowed) |
@@ -132,7 +132,7 @@ Archive, evidence schema, snapshot encoding, and agent version are distinct.
 V1 is strict: unknown fields/members, duplicate JSON keys and unsupported versions
 are errors, not silently ignored evidence. New fields need an explicit schema /
 encoding decision. An old v1 reader rejects v2 rather than interpreting it as v1.
-A checked-in `testdata/v1-minimal.runopsy` artifact is decoded independently of
+A checked-in `testdata/v1-minimal.deprehendo` artifact is decoded independently of
 the current encoder as a v1 compatibility regression. No compatibility with a
 hypothetical pre-v1 format is claimed. There are no
 attachments, arbitrary metadata maps, raw environment, executable paths or command
@@ -174,7 +174,7 @@ and UID collection is deliberately omitted under the approved privacy scope.
 
 ## Atomic persistence and crash semantics
 
-Existing private directory only. Unique `.runopsy-*.tmp` (0600), encode, file
+Existing private directory only. Unique `.deprehendo-*.tmp` (0600), encode, file
 fsync, close, atomic same-filesystem **hard link without overwrite**, remove temp,
 then directory fsync. A collision fails without changing an existing artifact.
 Requires a filesystem supporting hard links/fsync; unsupported storage fails.

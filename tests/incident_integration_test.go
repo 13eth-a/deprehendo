@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/agent"
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
+	"deprehendo/internal/agent"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
 )
 
 func TestIncidentRecorderSimulatorPipeline(t *testing.T) {

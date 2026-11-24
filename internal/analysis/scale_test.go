@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"runopsy/internal/collector"
-	"runopsy/internal/incident"
-	"runopsy/internal/platform"
+	"deprehendo/internal/collector"
+	"deprehendo/internal/incident"
+	"deprehendo/internal/platform"
 )
 
 // the dashboard receives exactly one array per event class (contract §3.3), so
@@ -124,13 +124,13 @@ func scaleDocument(t *testing.T, events int) (rawBytes, documentBytes int, run t
 // a regression guard, so CI runs the cheap sizes and the 10,000-event numbers
 // in docs/cloud/performance.md are regenerated on demand:
 //
-//	RUNOPSY_SCALE_10K=1 go test -run TestDocumentScalePayload -v ./internal/analysis
+//	DEPREHENDO_SCALE_10K=1 go test -run TestDocumentScalePayload -v ./internal/analysis
 func TestDocumentScalePayload(t *testing.T) {
 	if testing.Short() {
 		t.Skip("renders document-scale bundles")
 	}
 	sizes := []int{100, 1000}
-	if os.Getenv("RUNOPSY_SCALE_10K") != "" {
+	if os.Getenv("DEPREHENDO_SCALE_10K") != "" {
 		sizes = append(sizes, 10000)
 	}
 	for _, events := range sizes {

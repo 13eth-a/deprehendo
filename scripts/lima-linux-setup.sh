@@ -87,7 +87,7 @@ cmd_runner() {
     rm -f runner.tgz
   fi
   ./config.sh --unattended --url "https://github.com/${repo}" --token "$token" \
-    --name "runopsy-$(hostname)" --labels "runopsy-linux" --replace
+    --name "deprehendo-$(hostname)" --labels "deprehendo-linux" --replace
   sudo ./svc.sh install
   echo "runner configured in $RUNNER_DIR (not started). Start: cd $RUNNER_DIR && sudo ./svc.sh start"
 }

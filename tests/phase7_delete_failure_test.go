@@ -20,7 +20,7 @@ func TestPhase7DeleteKeepsRecordWhenStorageFails(t *testing.T) {
 		t.Fatal(err)
 	}
 	h := newCloudHarness(t, dsn, nil)
-	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.runopsy")
+	bundlepath := filepath.Join(root, "testdata", "incidents", "frozen-worker.deprehendo")
 	uploadid, incidentid := createAndStore(t, h, h.TokenA, bundlepath)
 	if status, body := postComplete(t, h.Endpoint, h.TokenA, uploadid, 90*time.Second); status != http.StatusOK {
 		t.Fatalf("complete = %d %s, want 200", status, body)

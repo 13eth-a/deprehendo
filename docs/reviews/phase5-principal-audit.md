@@ -12,7 +12,7 @@ adversarial review) and secondary's final-audit share.
 
 **Update 2026-10-31 (evening):** F1–F5 are fixed, G1–G4 are closed, and 5.45 (a stated timeout suppresses the kill as a failure) is verified end to end. Phase 5 acceptance now waits only on B3 (the remaining real-runner scenarios) and secondary's final-audit share.
 
-**Update 2026-10-31 (final audit, §5):** B1, B2, G1 and G3 are closed; G2 and G4 are implemented with three open findings (F2–F4, executable under `RUNOPSY_REVIEW_AUDIT=1`). Acceptance now waits on B3 (a real runner, runbook ready), F2 and F3, and secondary's audit share.
+**Update 2026-10-31 (final audit, §5):** B1, B2, G1 and G3 are closed; G2 and G4 are implemented with three open findings (F2–F4, executable under `DEPREHENDO_REVIEW_AUDIT=1`). Acceptance now waits on B3 (a real runner, runbook ready), F2 and F3, and secondary's audit share.
 
 **Update 2026-11-02:** F2–F5 are fixed, B3 is closed on a real runner, and secondary's
 final-audit share is delivered with L1–L6 fixed. **Phase 5 is accepted.**
@@ -50,7 +50,7 @@ case. **S3** means a fidelity issue.
 | R12b | S2 | An override whose install root could not be resolved was tagged with an empty runner, which invalidated the whole section (supervisor → UNAVAILABLE). | Without an identity there is no tag (C1). | same |
 | R13 | S2 | API enrichment wrote a local SUCCEEDED or FAILED outcome verbatim as a conflict claim. That value is outside the claim vocabulary, so enriching a finished job failed with "output validation failed". | Outcomes are mapped onto the claim vocabulary. | `TestAuditR13EnrichmentConflictUsesClaimVocabulary` |
 | R14 | S2 | `Discover` skipped the C2 executable and layout checks on non-Linux platforms, so a name-only process became a runner. | The same rule now applies on every platform, matching the live session. | covered by the existing discovery tests and the R12 case |
-| R15 | S2 | A provider whose `Discover` panicked crashed `runopsy-agent start`. Only `Detect` was guarded. | `Discover` is guarded for panics and has a 5 s bound. | `TestAuditR15DiscoverPanicDoesNotCrashStart` |
+| R15 | S2 | A provider whose `Discover` panicked crashed `deprehendo-agent start`. Only `Detect` was guarded. | `Discover` is guarded for panics and has a 5 s bound. | `TestAuditR15DiscoverPanicDoesNotCrashStart` |
 | R16 | S1 | JOB_STATE conflicts counted the worker's exit as a job-state claim (`EXITED`, which is not in the vocabulary). Once R6 made the code reachable, every cancelled job that ended normally produced an invalid section. T4 (an intent that arrives after the death) was not implemented. | Exit is no longer a job-state claim. The same result stated twice is agreement, not conflict. T4 is implemented: a worker that died more than 2 s (up to 60 s) before a cancellation or timeout record gets a TERMINATION_INTENT conflict. `EXITED` is now a registered claim value for that case. | `TestAuditR16TerminationIntentAfterDeathIsAConflict` |
 | R17 | S2 | Defect in my 5.1 code: `Section.Validate` rejected any provider not compiled into the reading binary. One bundle with a GitHub section therefore failed in any reader without the GitHub vocabulary, such as an older agent, the `tests` harness or a third-party tool. This surfaced as a flaky `TestPhase2AcceptanceMatrix` when a fake runner from another package was alive on the host. | An unregistered provider is validated structurally (name and token shape, refs, bounds, privacy). `InterpretAll` still reports it UNAVAILABLE, so unknown evidence never strengthens a diagnosis. Writers stay strict. | `TestUnregisteredProviderSectionValidatesStructurally` |
 
@@ -75,7 +75,7 @@ files must be 0600 and owned by the agent user. No finding.
   acceptable for v1.
 - **5.32 (restart / multiple runners):** the `two-runners` fixture pins
   worker → listener, and R11 covers restart.
-- **5.43 (E2E):** `RUNOPSY_E2E_GITHUB=1` passes on Linux. The harness now
+- **5.43 (E2E):** `DEPREHENDO_E2E_GITHUB=1` passes on Linux. The harness now
   writes the real record format.
 - **5.1 isolation:** supervisor, capture freeze bound and import boundaries
   are unchanged and hold.
@@ -90,7 +90,7 @@ files must be 0600 and owned by the agent user. No finding.
 | G1 | **Closed 2026-10-31.** `github api-enrich --repo OWNER/NAME` locates each recorded job by local start time (±30 s) and runner name when known, then enriches it. Unique match or nothing; ambiguity is counted, never resolved. | principal | — |
 | G2 | **Closed 2026-10-31.** Container steps link through docker cgroups plus a witnessed docker client; every job whose container membership could not be verified (no cgroup identity, or an unattributed container step while it ran) carries `CONTAINER_LINKAGE_UNAVAILABLE` (F2 fixed). Other runtimes are not linked (documented). | engineering, principal | — |
 | G3 | **Closed (documented).** macOS limits now state that identity is the PID alone there (`docs/providers/github-actions.md`). | doc | — |
-| G4 | **Closed 2026-10-31.** `RUNOPSY_GITHUB_STALL_WINDOW` overrides the C11 window with a 10 s floor (F3), and the window in force is recorded in the section (F4). | engineering, principal | — |
+| G4 | **Closed 2026-10-31.** `DEPREHENDO_GITHUB_STALL_WINDOW` overrides the C11 window with a 10 s floor (F3), and the window in force is recorded in the section (F4). | engineering, principal | — |
 
 ## 4. Verification
 
@@ -101,8 +101,8 @@ Linux (sandbox), Go 1.24 local override:
   platform tests (`/proc/1/fd` permission and no cgroup2), unchanged from
   Phase 4.
 - `go test -race` passes on `internal/provider/...` and `internal/agent`.
-- The gated runs pass: `RUNOPSY_E2E_GITHUB=1`, `RUNOPSY_E2E_CAUSAL=1` and
-  `RUNOPSY_REVIEW_AUDIT=1` (`./tests`, `./internal/causal`).
+- The gated runs pass: `DEPREHENDO_E2E_GITHUB=1`, `DEPREHENDO_E2E_CAUSAL=1` and
+  `DEPREHENDO_REVIEW_AUDIT=1` (`./tests`, `./internal/causal`).
 - **Mutation check:** all 13 positive regression tests fail when run against
   the pre-fix tree (a worktree at the received state, plus only a field shim
   so the test file compiles). R15 panics there. The negative guard R6b passes
@@ -151,7 +151,7 @@ corrections. **Phase 5 acceptance stands** once those corrections are in.
 
 | ID | Sev | Where | Finding | Status | Test |
 |---|---|---|---|---|---|
-| O1 | S1 | `cmd/runopsy-agent/provider_report.go` (L6) | `jobInWindow` judged a job only by its API timestamps. A capture without API enrichment, which is the default, dropped every job from the report header, including the job the incident is about. `TestPhase5GitHubEndToEnd/healthy-job` failed under `RUNOPSY_E2E_GITHUB=1`. | **Fixed.** `jobsForSectionWindow` also counts the job's section events and its worker's lifetime. A worker still running at the window start keeps its job in the header. | `TestJobsForSectionWindowUsesLocalEvidence`; the gated E2E passes |
+| O1 | S1 | `cmd/deprehendo-agent/provider_report.go` (L6) | `jobInWindow` judged a job only by its API timestamps. A capture without API enrichment, which is the default, dropped every job from the report header, including the job the incident is about. `TestPhase5GitHubEndToEnd/healthy-job` failed under `DEPREHENDO_E2E_GITHUB=1`. | **Fixed.** `jobsForSectionWindow` also counts the job's section events and its worker's lifetime. A worker still running at the window start keeps its job in the header. | `TestJobsForSectionWindowUsesLocalEvidence`; the gated E2E passes |
 | O2 | S1 | `internal/diagnosis/context.go` `kernelOOMRise` (L2) | L2 let the victim's last sample carry its own kill, which is correct for S11. But the same reading gave a cgroup's kill to any member still listed in that sample. A step shell that outlived the real victim by one sample got `KERNEL_OOM_COUNTER_ROSE`. | **Fixed.** When another member of the same cgroup departed in that interval, the baseline moves to the process's own last sample. A rise read in the victim's final sample still counts. | `TestOOMRiseIsNotGivenToASiblingThatOutlivedTheVictim` (fails on L2), `TestOOMRiseInTheVictimsFinalSampleStillCounts` |
 | O3 | S3 | §10A.5, `timeline.go` | `JOB_SUCCEEDED` is a new intent. It covers the job's worker and job processes for exits up to 2 min before the stated success. This extends §10A.5, which listed only cancellation, timeout and runner-stop intents. One consequence: an OOM-killed child inside a step that still succeeds (`|| true`) becomes context, not a causal failure anchor. The diagnosis signature `OOM_KILL` is independent and still reports it. | **Documented** in §10A.5. Kept, because a stated success is the provider's own statement that the job ended as intended. | `intent_cover_test.go` |
 | O4 | S3 | `signatures_files.go` `groupMemberSurvived` (L1) | Group survival is judged by PGID. A PGID reused by an unrelated process after the group died would read as a survivor and cancel the group-kill label (a false negative, never a false label). | **Open, accepted.** PGID reuse inside one capture window needs PID wrap. | — |
@@ -165,5 +165,5 @@ layout, and `AnalyzerVersion` 0.3.3 / `SignatureVersion` 4.
 Verification on the corrected tree: `go vet ./...` and gofmt are clean.
 `go test ./...` and `-race` pass, except the two live-host tests that need a
 real cgroup2 mount and `/proc` access, which this review sandbox lacks. The
-gated suites (`RUNOPSY_E2E_GITHUB=1 RUNOPSY_E2E_CAUSAL=1 RUNOPSY_REVIEW_AUDIT=1`)
+gated suites (`DEPREHENDO_E2E_GITHUB=1 DEPREHENDO_E2E_CAUSAL=1 DEPREHENDO_REVIEW_AUDIT=1`)
 pass, and `GOOS=darwin go build ./...` succeeds.

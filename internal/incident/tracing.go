@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"runopsy/internal/trace"
+	"deprehendo/internal/trace"
 )
 
 // TraceReliability is the tracer component's stamped self-report in a bundle
